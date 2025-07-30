@@ -152,7 +152,7 @@ const Blog = () => {
             <p className="academic-text">Loading blog posts...</p>
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 items-stretch">
             {filteredPosts.map((post) => (
               <BlogCard key={post.id} {...post} />
             ))}

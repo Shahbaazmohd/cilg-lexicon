@@ -23,6 +23,7 @@ export type Database = {
           created_at: string
           excerpt: string | null
           featured: boolean
+          featured_order: number | null
           id: string
           status: string
           title: string
@@ -36,6 +37,7 @@ export type Database = {
           created_at?: string
           excerpt?: string | null
           featured?: boolean
+          featured_order?: number | null
           id?: string
           status?: string
           title: string
@@ -49,6 +51,7 @@ export type Database = {
           created_at?: string
           excerpt?: string | null
           featured?: boolean
+          featured_order?: number | null
           id?: string
           status?: string
           title?: string

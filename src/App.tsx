@@ -26,8 +26,15 @@ import AdminBulletin from "./pages/AdminBulletin";
 import AdminDrafts from "./pages/AdminDrafts";
 import AdminFeatured from "./pages/AdminFeatured";
 import AdminAnalytics from "./pages/AdminAnalytics";
+import { useScrollToTop } from "./hooks/useScrollToTop";
 
 const queryClient = new QueryClient();
+
+// Component to handle scroll-to-top functionality
+const ScrollToTopWrapper = () => {
+  useScrollToTop();
+  return null;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -35,6 +42,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ScrollToTopWrapper />
         <div className="min-h-screen flex flex-col">
           <Navbar />
           <main className="flex-1">

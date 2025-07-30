@@ -6,17 +6,21 @@ import BlogCard from '@/components/BlogCard';
 import NewsTicker from '@/components/NewsTicker';
 import { SettingsService } from '@/lib/settingsService';
 
-import { featuredPosts, recentPosts } from '@/data/blogData';
 import heroImage from '@/assets/hero-image.jpg';
 import academicBuilding from '@/assets/academic-building.jpg';
 import lawBooks from '@/assets/law-books.jpg';
+import { supabase } from '@/integrations/supabase/client';
+import { getImageWithFallback } from '@/lib/imageUtils';
 
 const Home = () => {
   const [heroImageUrl, setHeroImageUrl] = useState(heroImage);
+  const [featuredPosts, setFeaturedPosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   // Load hero image from settings on component mount
   useEffect(() => {
     loadHeroImage();
+    fetchBlogPosts();
   }, []);
 
   const loadHeroImage = async () => {
@@ -26,6 +30,55 @@ const Home = () => {
     } catch (error) {
       console.error('Error loading hero image:', error);
       setHeroImageUrl(heroImage);
+    }
+  };
+
+  const fetchBlogPosts = async () => {
+    try {
+      // Fetch featured posts only
+      let { data: featuredData, error: featuredError } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .eq('featured', true)
+        .eq('status', 'approved')
+        .order('featured_order', { ascending: true, nullsLast: true })
+        .order('created_at', { ascending: false });
+
+      // If featured_order doesn't exist, fallback to created_at ordering
+      if (featuredError && featuredError.message.includes('featured_order')) {
+        const { data: fallbackData, error: fallbackError } = await supabase
+          .from('blog_posts')
+          .select('*')
+          .eq('featured', true)
+          .eq('status', 'approved')
+          .order('created_at', { ascending: false });
+
+        if (fallbackError) {
+          console.error('Error fetching featured posts:', fallbackError);
+        } else {
+          featuredData = fallbackData;
+        }
+      } else if (featuredError) {
+        console.error('Error fetching featured posts:', featuredError);
+      }
+
+      // Transform data to match BlogCard props
+      const transformPost = (post: any) => ({
+        id: post.id,
+        title: post.title,
+        excerpt: post.excerpt || post.content.substring(0, 150) + '...',
+        author: post.author_name || 'Anonymous',
+        date: new Date(post.created_at).toLocaleDateString(),
+        category: post.category,
+        featured: post.featured,
+        image: getImageWithFallback(undefined, post.category)
+      });
+
+      setFeaturedPosts((featuredData || []).map(transformPost));
+    } catch (error) {
+      console.error('Error fetching blog posts:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -137,19 +190,48 @@ const Home = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {featuredPosts.map((post) => (
-              <BlogCard key={post.id} {...post} />
-            ))}
-            {recentPosts.slice(1).map((post) => (
-              <BlogCard key={post.id} {...post} />
-            ))}
+          <div className="relative">
+            {/* Gradient fade indicators for scroll */}
+            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-background to-transparent pointer-events-none z-10"></div>
+            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none z-10"></div>
+            <div className="overflow-x-auto scroll-smooth pb-4 mb-12 scrollbar-thin">
+              <div className="flex gap-6 min-w-max px-4">
+              {loading ? (
+                // Loading skeleton - show 6 cards horizontally
+                Array.from({ length: 6 }).map((_, index) => (
+                  <div key={index} className="bg-muted rounded-lg p-6 animate-pulse cursor-pointer hover:shadow-lg transition-all duration-300 min-w-[300px] max-w-[350px] flex-shrink-0 h-full flex flex-col">
+                    <div className="h-48 bg-muted-foreground/20 rounded mb-4 flex-shrink-0"></div>
+                    <div className="flex flex-col flex-grow">
+                      <div className="h-4 bg-muted-foreground/20 rounded mb-2"></div>
+                      <div className="h-4 bg-muted-foreground/20 rounded mb-2 w-3/4"></div>
+                      <div className="h-4 bg-muted-foreground/20 rounded mb-2"></div>
+                      <div className="h-4 bg-muted-foreground/20 rounded mb-2 w-2/3"></div>
+                      <div className="h-4 bg-muted-foreground/20 rounded mb-2 w-1/2"></div>
+                      <div className="mt-auto">
+                        <div className="h-4 bg-muted-foreground/20 rounded w-24"></div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : featuredPosts.length > 0 ? (
+                // Show only featured posts
+                featuredPosts.map((post) => (
+                  <BlogCard key={post.id} {...post} />
+                ))
+              ) : (
+                // No featured posts available
+                <div className="min-w-full text-center py-12">
+                  <p className="text-muted-foreground">No featured articles available at the moment.</p>
+                </div>
+              )}
+            </div>
+          </div>
           </div>
 
-          <div className="text-center mt-12">
-            <Button asChild variant="outline" size="lg">
+          <div className="text-center">
+            <Button asChild variant="outline" size="lg" className="cursor-pointer hover:shadow-md transition-shadow duration-300">
               <Link to="/blog" className="flex items-center space-x-2">
-                <span>View All Articles</span>
+                <span>View All Blogs</span>
                 <ArrowRight className="h-5 w-5" />
               </Link>
             </Button>
