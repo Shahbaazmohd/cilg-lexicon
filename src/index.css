@@ -223,3 +223,48 @@ All colors MUST be HSL.
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
   background: hsl(var(--foreground));
 }
+
+/* Mobile navbar improvements */
+@media (max-width: 1024px) {
+  .mobile-dropdown-enter {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  
+  .mobile-dropdown-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 200ms ease-out, transform 200ms ease-out;
+  }
+  
+  .mobile-dropdown-exit {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .mobile-dropdown-exit-active {
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 200ms ease-in, transform 200ms ease-in;
+  }
+}
+
+/* Touch-friendly mobile interactions */
+@media (max-width: 1024px) {
+  .touch-manipulation {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Ensure dropdowns don't get cut off */
+  .mobile-nav-dropdown {
+    position: relative;
+    z-index: 1000;
+  }
+  
+  /* Improve mobile menu scrolling */
+  .mobile-menu-scroll {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+}
