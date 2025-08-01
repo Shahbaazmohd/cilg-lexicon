@@ -118,7 +118,7 @@ const Home = () => {
                 <ArrowRight className="h-5 w-5" />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-navy">
+            <Button asChild variant="outline" size="lg" className="border-white text-black hover:bg-white hover:text-navy">
               <Link to="/submit-blog">Submit Manuscript</Link>
             </Button>
           </div>
@@ -309,7 +309,7 @@ const Home = () => {
             Submit your research or join our upcoming events.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary">
+            <Button asChild size="lg" variant="outline" className="border-primary-foreground text-black hover:bg-primary-foreground hover:text-primary">
               <Link to="/submit-blog">Submit Research</Link>
             </Button>
             <Button asChild size="lg" className="bg-academic hover:bg-academic/90">

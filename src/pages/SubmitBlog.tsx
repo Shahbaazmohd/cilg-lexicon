@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import emailjs from '@emailjs/browser';
+import { emailService } from '@/lib/emailService';
 
 const SubmitBlog = () => {
   const { toast } = useToast();
@@ -70,30 +70,48 @@ const SubmitBlog = () => {
         throw error;
       }
 
-      // Send email notification using EmailJS
-      try {
-        await emailjs.send(
-          'service_your_service_id', // You'll need to replace this
-          'template_your_template_id', // You'll need to replace this
-          {
-            from_name: formData.authorName,
-            from_email: formData.authorEmail,
-            title: formData.title,
-            category: formData.category,
-            content: formData.content.substring(0, 500) + '...',
-            to_email: 'admin@cilg.org' // Replace with your admin email
-          },
-          'your_user_id' // You'll need to replace this
-        );
-      } catch (emailError) {
-        console.log('Email notification failed:', emailError);
-        // Don't fail the whole submission if email fails
-      }
-
-      toast({
-        title: "Submission Successful!",
-        description: "Your blog post has been submitted for review. You'll receive an email confirmation shortly.",
+      // Send email notifications
+      const submissionDate = new Date().toLocaleDateString();
+      
+      // Send confirmation email to user
+      const userEmailSent = await emailService.sendSubmissionConfirmation({
+        title: formData.title,
+        authorName: formData.authorName,
+        authorEmail: formData.authorEmail,
+        category: formData.category,
+        content: formData.content,
+        excerpt: excerpt,
+        submissionDate: submissionDate
       });
+
+      // Send notification to admin
+      const adminEmailSent = await emailService.sendAdminNotification({
+        title: formData.title,
+        authorName: formData.authorName,
+        authorEmail: formData.authorEmail,
+        category: formData.category,
+        content: formData.content,
+        excerpt: excerpt,
+        submissionDate: submissionDate
+      });
+
+      // Show appropriate toast message based on email status
+      if (userEmailSent && adminEmailSent) {
+        toast({
+          title: "Submission Successful!",
+          description: "Your blog post has been submitted for review. You'll receive an email confirmation shortly.",
+        });
+      } else if (userEmailSent) {
+        toast({
+          title: "Submission Successful!",
+          description: "Your blog post has been submitted for review. You'll receive an email confirmation shortly. (Admin notification failed)",
+        });
+      } else {
+        toast({
+          title: "Submission Successful!",
+          description: "Your blog post has been submitted for review. Email notifications may be delayed.",
+        });
+      }
 
       // Reset form
       setFormData({

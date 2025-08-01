@@ -1,5 +1,319 @@
+// import { useState, useEffect, useRef } from 'react';
+// import { Link, useLocation, useNavigate } from 'react-router-dom';
+// import { Menu, X, ChevronDown } from 'lucide-react';
+// import { Button } from '@/components/ui/button';
+
+// const Navbar = () => {
+//   const [isOpen, setIsOpen] = useState(false);
+//   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+//   const location = useLocation();
+//   const navigate = useNavigate();
+//   const dropdownRef = useRef<HTMLDivElement>(null);
+//   const mobileDropdownRef = useRef<HTMLDivElement>(null);
+
+//   const navigation = [
+//     { name: 'About', href: '/about' },
+//     { 
+//       name: 'Blog', 
+//       href: '/blog',
+//       hasDropdown: true,
+//       subItems: [
+//         { name: 'Blog Posts', href: '/blog' },
+//         { name: 'About the Blog', href: '/blog/about' },
+//         { name: 'CILG Blog', href: '/blog/cilg' }
+//       ]
+//     },
+//     { 
+//       name: 'Blog Submissions', 
+//       href: '/submissions',
+//       hasDropdown: true,
+//       subItems: [
+//         { name: 'Submission Guidelines', href: '/submissions/guidelines' },
+//         { name: 'Submit a Manuscript', href: '/submit-blog' }
+//       ]
+//     },
+//     { name: 'Cosmopolitan Bulletin', href: '/bulletin' },
+//     { name: 'Events & Notices', href: '/events' },
+//     { name: 'Meet the Team', href: '/team' },
+//     { name: 'Resources', href: '/resources' },
+//     { name: 'Contact', href: '/contact' },
+//   ];
+
+//   const isActive = (path: string) => location.pathname === path;
+//   const isDropdownActive = (subItems: any[]) => subItems.some(item => isActive(item.href));
+
+//   // Handle click outside to close dropdowns
+//   useEffect(() => {
+//     const handleClickOutside = (event: MouseEvent) => {
+//       const target = event.target as Node;
+      
+//       // Close desktop dropdown
+//       if (dropdownRef.current && !dropdownRef.current.contains(target)) {
+//         setOpenDropdown(null);
+//       }
+      
+//       // Close mobile dropdown
+//       if (mobileDropdownRef.current && !mobileDropdownRef.current.contains(target)) {
+//         setOpenDropdown(null);
+//       }
+//     };
+
+//     document.addEventListener('mousedown', handleClickOutside);
+//     document.addEventListener('touchstart', handleClickOutside);
+    
+//     return () => {
+//       document.removeEventListener('mousedown', handleClickOutside);
+//       document.removeEventListener('touchstart', handleClickOutside);
+//     };
+//   }, []);
+
+//   // Handle escape key to close dropdowns
+//   useEffect(() => {
+//     const handleEscape = (event: KeyboardEvent) => {
+//       if (event.key === 'Escape') {
+//         setOpenDropdown(null);
+//         setIsOpen(false);
+//       }
+//     };
+
+//     document.addEventListener('keydown', handleEscape);
+//     return () => {
+//       document.removeEventListener('keydown', handleEscape);
+//     };
+//   }, []);
+
+//   // Close mobile menu when route changes
+//   useEffect(() => {
+//     setIsOpen(false);
+//     setOpenDropdown(null);
+//   }, [location.pathname]);
+
+//   const toggleDropdown = (dropdownName: string) => {
+//     setOpenDropdown(openDropdown === dropdownName ? null : dropdownName);
+//   };
+
+//   const closeDropdown = () => {
+//     setOpenDropdown(null);
+//   };
+
+//   const handleMobileDropdownToggle = (dropdownName: string, event?: React.MouseEvent | React.TouchEvent | React.KeyboardEvent) => {
+//     // Prevent event bubbling
+//     event?.preventDefault();
+//     event?.stopPropagation();
+//     toggleDropdown(dropdownName);
+//   };
+
+//   // Handle mobile menu close when clicking outside
+//   const handleMobileMenuClose = () => {
+//     setIsOpen(false);
+//     setOpenDropdown(null);
+//   };
+
+//   // Handle mobile navigation
+//   const handleMobileNavigation = (href: string) => {
+//     console.log('Navigating to:', href);
+//     handleMobileMenuClose();
+//     navigate(href);
+//   };
+
+//   return (
+//     <nav className="bg-background border-b border-border sticky top-0 z-50 backdrop-blur-sm bg-background/95">
+//       <div className="academic-container">
+//         <div className="flex justify-between h-16">
+//           {/* Logo */}
+//           <div className="flex items-center">
+//             <Link to="/" className="flex items-center space-x-3">
+//               <img 
+//                 src="/lovable-uploads/a8a8f724-8489-4325-bccb-3c63dd8bd236.png" 
+//                 alt="CILG Logo" 
+//                 className="w-10 h-10"
+//               />
+//               <div className="hidden sm:block">
+//                 <p className="text-xs text-muted-foreground leading-tight">Centre for International<br />Law & Governance</p>
+//               </div>
+//             </Link>
+//           </div>
+
+//           {/* Desktop Navigation */}
+//           <div className="hidden lg:flex items-center space-x-1" ref={dropdownRef}>
+//             {navigation.map((item) => (
+//               <div key={item.name} className="relative">
+//                 {item.hasDropdown ? (
+//                   <div>
+//                     <button
+//                       onClick={() => toggleDropdown(item.name)}
+//                       onKeyDown={(e) => {
+//                         if (e.key === 'Enter' || e.key === ' ') {
+//                           e.preventDefault();
+//                           toggleDropdown(item.name);
+//                         }
+//                       }}
+//                       className={`flex items-center space-x-1 px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
+//                         isDropdownActive(item.subItems) || openDropdown === item.name
+//                           ? 'text-primary bg-primary/5'
+//                           : 'text-foreground hover:text-primary hover:bg-primary/5'
+//                       }`}
+//                       aria-expanded={openDropdown === item.name}
+//                       aria-haspopup="true"
+//                     >
+//                       <span>{item.name}</span>
+//                       <ChevronDown className={`h-3 w-3 transition-transform ${
+//                         openDropdown === item.name ? 'rotate-180' : ''
+//                       }`} />
+//                     </button>
+                    
+//                     {/* Dropdown Menu */}
+//                     {openDropdown === item.name && (
+//                       <div className="absolute top-full left-0 mt-1 w-48 bg-background border border-border rounded-md shadow-lg z-50">
+//                         <div className="py-1">
+//                           {item.subItems.map((subItem, index) => (
+//                             <Link
+//                               key={subItem.name}
+//                               to={subItem.href}
+//                               onClick={closeDropdown}
+//                               onKeyDown={(e) => {
+//                                 if (e.key === 'Enter') {
+//                                   closeDropdown();
+//                                 }
+//                               }}
+//                               className={`block px-4 py-2 text-sm transition-colors duration-200 focus:outline-none focus:bg-primary/5 ${
+//                                 isActive(subItem.href)
+//                                   ? 'text-primary bg-primary/5'
+//                                   : 'text-foreground hover:text-primary hover:bg-primary/5'
+//                               }`}
+//                               tabIndex={0}
+//                             >
+//                               {subItem.name}
+//                             </Link>
+//                           ))}
+//                         </div>
+//                       </div>
+//                     )}
+//                   </div>
+//                 ) : (
+//                   <Link
+//                     to={item.href}
+//                     className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
+//                       isActive(item.href)
+//                         ? 'text-primary bg-primary/5'
+//                         : 'text-foreground hover:text-primary hover:bg-primary/5'
+//                     }`}
+//                   >
+//                     {item.name}
+//                   </Link>
+//                 )}
+//               </div>
+//             ))}
+//           </div>
+
+//           {/* Right Side Actions */}
+//           <div className="flex items-center space-x-3">
+//             {/* Mobile menu button */}
+//             <div className="lg:hidden">
+//               <Button
+//                 variant="ghost"
+//                 size="sm"
+//                 onClick={() => setIsOpen(!isOpen)}
+//                 className="h-9 w-9 p-0"
+//                 aria-label={isOpen ? 'Close menu' : 'Open menu'}
+//                 aria-expanded={isOpen}
+//               >
+//                 {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+//               </Button>
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* Mobile Navigation */}
+//         {isOpen && (
+//           <div className="lg:hidden border-t border-border mobile-nav-dropdown" ref={mobileDropdownRef}>
+//             <div className="px-2 pt-2 pb-3 space-y-1 max-h-[calc(100vh-4rem)] overflow-y-auto mobile-menu-scroll">
+//               {navigation.map((item) => (
+//                 <div key={item.name}>
+//                   {item.hasDropdown ? (
+//                     <div className="relative">
+//                       <button
+//                         className={`flex items-center justify-between w-full px-3 py-3 text-sm font-medium rounded-md transition-colors duration-200 touch-manipulation ${
+//                           isDropdownActive(item.subItems) || openDropdown === item.name
+//                             ? 'text-primary bg-primary/5'
+//                             : 'text-foreground hover:text-primary hover:bg-primary/5'
+//                         }`}
+//                         onClick={(e) => {
+//                           e.preventDefault();
+//                           e.stopPropagation();
+//                           handleMobileDropdownToggle(item.name, e);
+//                         }}
+//                         onTouchEnd={(e) => {
+//                           e.preventDefault();
+//                           e.stopPropagation();
+//                           handleMobileDropdownToggle(item.name, e);
+//                         }}
+//                         onKeyDown={(e) => {
+//                           if (e.key === 'Enter' || e.key === ' ') {
+//                             e.preventDefault();
+//                             handleMobileDropdownToggle(item.name, e);
+//                           }
+//                         }}
+//                         aria-expanded={openDropdown === item.name}
+//                         aria-haspopup="true"
+//                         aria-label={`${item.name} menu`}
+//                       >
+//                         <span>{item.name}</span>
+//                         <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${
+//                           openDropdown === item.name ? 'rotate-180' : ''
+//                         }`} />
+//                       </button>
+                      
+//                       {/* Mobile Dropdown Menu */}
+//                       {openDropdown === item.name && (
+//                         <div className="mt-1 ml-4 space-y-1 bg-muted/30 rounded-md p-2 mobile-dropdown-enter mobile-dropdown-enter-active">
+//                           {item.subItems.map((subItem) => (
+//                             <button
+//                               key={subItem.name}
+//                               className={`block w-full text-left px-3 py-3 text-sm rounded-md transition-colors duration-200 touch-manipulation cursor-pointer ${
+//                                 isActive(subItem.href)
+//                                   ? 'text-primary bg-primary/10 font-medium'
+//                                   : 'text-foreground hover:text-primary hover:bg-primary/5'
+//                               }`}
+//                               onClick={() => handleMobileNavigation(subItem.href)}
+//                               onTouchEnd={() => handleMobileNavigation(subItem.href)}
+//                             >
+//                               {subItem.name}
+//                             </button>
+//                           ))}
+//                         </div>
+//                       )}
+//                     </div>
+//                   ) : (
+//                     <Link
+//                       to={item.href}
+//                       className={`block px-3 py-3 text-sm font-medium rounded-md transition-colors duration-200 touch-manipulation ${
+//                         isActive(item.href)
+//                           ? 'text-primary bg-primary/5'
+//                           : 'text-foreground hover:text-primary hover:bg-primary/5'
+//                       }`}
+//                       onClick={handleMobileMenuClose}
+//                     >
+//                       {item.name}
+//                     </Link>
+//                   )}
+//                 </div>
+//               ))}
+//             </div>
+//           </div>
+//         )}
+//       </div>
+//     </nav>
+//   );
+// };
+
+// export default Navbar;
+
+
+
+
 import { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -7,6 +321,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const location = useLocation();
+  const navigate = useNavigate();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const mobileDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -41,47 +356,7 @@ const Navbar = () => {
   const isActive = (path: string) => location.pathname === path;
   const isDropdownActive = (subItems: any[]) => subItems.some(item => isActive(item.href));
 
-  // Handle click outside to close dropdowns
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
-      
-      // Close desktop dropdown
-      if (dropdownRef.current && !dropdownRef.current.contains(target)) {
-        setOpenDropdown(null);
-      }
-      
-      // Close mobile dropdown
-      if (mobileDropdownRef.current && !mobileDropdownRef.current.contains(target)) {
-        setOpenDropdown(null);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('touchstart', handleClickOutside);
-    
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      document.removeEventListener('touchstart', handleClickOutside);
-    };
-  }, []);
-
-  // Handle escape key to close dropdowns
-  useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setOpenDropdown(null);
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener('keydown', handleEscape);
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-    };
-  }, []);
-
-  // Close mobile menu when route changes
+  // Close menu when route changes
   useEffect(() => {
     setIsOpen(false);
     setOpenDropdown(null);
@@ -91,27 +366,21 @@ const Navbar = () => {
     setOpenDropdown(openDropdown === dropdownName ? null : dropdownName);
   };
 
-  const closeDropdown = () => {
-    setOpenDropdown(null);
-  };
-
-  const handleMobileDropdownToggle = (dropdownName: string) => {
-    // Prevent event bubbling
-    event?.preventDefault();
-    event?.stopPropagation();
-    toggleDropdown(dropdownName);
-  };
-
-  // Handle mobile menu close when clicking outside
   const handleMobileMenuClose = () => {
     setIsOpen(false);
     setOpenDropdown(null);
+  };
+
+  const handleMobileNavigation = (href: string) => {
+    handleMobileMenuClose();
+    navigate(href);
   };
 
   return (
     <nav className="bg-background border-b border-border sticky top-0 z-50 backdrop-blur-sm bg-background/95">
       <div className="academic-container">
         <div className="flex justify-between h-16">
+
           {/* Logo */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-3">
@@ -121,7 +390,9 @@ const Navbar = () => {
                 className="w-10 h-10"
               />
               <div className="hidden sm:block">
-                <p className="text-xs text-muted-foreground leading-tight">Centre for International<br />Law & Governance</p>
+                <p className="text-xs text-muted-foreground leading-tight">
+                  Centre for International<br />Law & Governance
+                </p>
               </div>
             </Link>
           </div>
@@ -134,12 +405,6 @@ const Navbar = () => {
                   <div>
                     <button
                       onClick={() => toggleDropdown(item.name)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          toggleDropdown(item.name);
-                        }
-                      }}
                       className={`flex items-center space-x-1 px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
                         isDropdownActive(item.subItems) || openDropdown === item.name
                           ? 'text-primary bg-primary/5'
@@ -149,31 +414,27 @@ const Navbar = () => {
                       aria-haspopup="true"
                     >
                       <span>{item.name}</span>
-                      <ChevronDown className={`h-3 w-3 transition-transform ${
-                        openDropdown === item.name ? 'rotate-180' : ''
-                      }`} />
+                      <ChevronDown
+                        className={`h-3 w-3 transition-transform ${
+                          openDropdown === item.name ? 'rotate-180' : ''
+                        }`}
+                      />
                     </button>
                     
-                    {/* Dropdown Menu */}
+                    {/* Desktop Dropdown */}
                     {openDropdown === item.name && (
                       <div className="absolute top-full left-0 mt-1 w-48 bg-background border border-border rounded-md shadow-lg z-50">
                         <div className="py-1">
-                          {item.subItems.map((subItem, index) => (
+                          {item.subItems.map((subItem) => (
                             <Link
                               key={subItem.name}
                               to={subItem.href}
-                              onClick={closeDropdown}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                  closeDropdown();
-                                }
-                              }}
-                              className={`block px-4 py-2 text-sm transition-colors duration-200 focus:outline-none focus:bg-primary/5 ${
+                              onClick={() => setOpenDropdown(null)}
+                              className={`block px-4 py-2 text-sm transition-colors duration-200 ${
                                 isActive(subItem.href)
                                   ? 'text-primary bg-primary/5'
                                   : 'text-foreground hover:text-primary hover:bg-primary/5'
                               }`}
-                              tabIndex={0}
                             >
                               {subItem.name}
                             </Link>
@@ -198,34 +459,34 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Right Side Actions */}
-          <div className="flex items-center space-x-3">
-            {/* Mobile menu button */}
-            <div className="lg:hidden">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setIsOpen(!isOpen)}
-                className="h-9 w-9 p-0"
-                aria-label={isOpen ? 'Close menu' : 'Open menu'}
-                aria-expanded={isOpen}
-              >
-                {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              </Button>
-            </div>
+          {/* Mobile menu button */}
+          <div className="lg:hidden">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsOpen(!isOpen)}
+              className="h-9 w-9 p-0"
+              aria-label={isOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={isOpen}
+            >
+              {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
           </div>
         </div>
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="lg:hidden border-t border-border mobile-nav-dropdown" ref={mobileDropdownRef}>
-            <div className="px-2 pt-2 pb-3 space-y-1 max-h-[calc(100vh-4rem)] overflow-y-auto mobile-menu-scroll">
+          <div
+            className="lg:hidden border-t border-border"
+            ref={mobileDropdownRef}
+          >
+            <div className="px-2 pt-2 pb-3 space-y-1 max-h-[calc(100vh-4rem)] overflow-y-auto">
               {navigation.map((item) => (
                 <div key={item.name}>
                   {item.hasDropdown ? (
                     <div className="relative">
                       <button
-                        className={`flex items-center justify-between w-full px-3 py-3 text-sm font-medium rounded-md transition-colors duration-200 touch-manipulation ${
+                        className={`flex items-center justify-between w-full px-3 py-3 text-sm font-medium rounded-md transition-colors duration-200 ${
                           isDropdownActive(item.subItems) || openDropdown === item.name
                             ? 'text-primary bg-primary/5'
                             : 'text-foreground hover:text-primary hover:bg-primary/5'
@@ -233,52 +494,34 @@ const Navbar = () => {
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          handleMobileDropdownToggle(item.name);
-                        }}
-                        onTouchEnd={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          handleMobileDropdownToggle(item.name);
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            handleMobileDropdownToggle(item.name);
-                          }
+                          toggleDropdown(item.name);
                         }}
                         aria-expanded={openDropdown === item.name}
                         aria-haspopup="true"
-                        aria-label={`${item.name} menu`}
                       >
                         <span>{item.name}</span>
-                        <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${
-                          openDropdown === item.name ? 'rotate-180' : ''
-                        }`} />
+                        <ChevronDown
+                          className={`h-4 w-4 transition-transform duration-200 ${
+                            openDropdown === item.name ? 'rotate-180' : ''
+                          }`}
+                        />
                       </button>
-                      
-                      {/* Mobile Dropdown Menu */}
+
+                      {/* Mobile Dropdown Items */}
                       {openDropdown === item.name && (
-                        <div className="mt-1 ml-4 space-y-1 bg-muted/30 rounded-md p-2 mobile-dropdown-enter mobile-dropdown-enter-active">
+                        <div className="mt-1 ml-4 space-y-1 bg-muted/30 rounded-md p-2">
                           {item.subItems.map((subItem) => (
-                            <Link
+                            <button
                               key={subItem.name}
-                              to={subItem.href}
-                              className={`block px-3 py-2 text-sm rounded-md transition-colors duration-200 touch-manipulation ${
+                              className={`block w-full text-left px-3 py-3 text-sm rounded-md transition-colors duration-200 cursor-pointer ${
                                 isActive(subItem.href)
                                   ? 'text-primary bg-primary/10 font-medium'
                                   : 'text-foreground hover:text-primary hover:bg-primary/5'
                               }`}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleMobileMenuClose();
-                              }}
-                              onTouchEnd={(e) => {
-                                e.stopPropagation();
-                                handleMobileMenuClose();
-                              }}
+                              onClick={() => handleMobileNavigation(subItem.href)}
                             >
                               {subItem.name}
-                            </Link>
+                            </button>
                           ))}
                         </div>
                       )}
@@ -286,7 +529,7 @@ const Navbar = () => {
                   ) : (
                     <Link
                       to={item.href}
-                      className={`block px-3 py-3 text-sm font-medium rounded-md transition-colors duration-200 touch-manipulation ${
+                      className={`block px-3 py-3 text-sm font-medium rounded-md transition-colors duration-200 ${
                         isActive(item.href)
                           ? 'text-primary bg-primary/5'
                           : 'text-foreground hover:text-primary hover:bg-primary/5'

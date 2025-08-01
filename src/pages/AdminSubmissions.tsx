@@ -4,9 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import AdminSidebar from '@/components/AdminSidebar';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { emailService } from '@/lib/emailService';
 
 interface BlogPost {
   id: string;
@@ -25,6 +28,10 @@ const AdminSubmissions = () => {
   const { toast } = useToast();
   const [submissions, setSubmissions] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedSubmission, setSelectedSubmission] = useState<BlogPost | null>(null);
+  const [adminComments, setAdminComments] = useState('');
+  const [showCommentsDialog, setShowCommentsDialog] = useState(false);
+  const [pendingAction, setPendingAction] = useState<'approve' | 'reject' | null>(null);
 
   useEffect(() => {
     fetchSubmissions();
@@ -51,7 +58,11 @@ const AdminSubmissions = () => {
   };
 
   const handleStatusChange = async (id: string, newStatus: 'approved' | 'rejected') => {
+    const submission = submissions.find(s => s.id === id);
+    if (!submission) return;
+
     try {
+      // Update status in database
       const { error } = await supabase
         .from('blog_posts')
         .update({ status: newStatus })
@@ -61,6 +72,7 @@ const AdminSubmissions = () => {
         throw error;
       }
 
+      // Update local state
       setSubmissions(prev => 
         prev.map(submission => 
           submission.id === id 
@@ -69,10 +81,46 @@ const AdminSubmissions = () => {
         )
       );
 
-      toast({
-        title: "Status Updated",
-        description: `Blog post ${newStatus} successfully.`,
-      });
+      // Send email notification to author
+      let emailSent = false;
+      if (newStatus === 'approved') {
+        emailSent = await emailService.sendApprovalNotification({
+          title: submission.title,
+          authorName: submission.author_name,
+          authorEmail: submission.author_email,
+          status: 'approved',
+          adminComments: adminComments || undefined,
+          publishUrl: `https://cilg.org/blog/${submission.id}` // Replace with actual URL structure
+        });
+      } else {
+        emailSent = await emailService.sendRejectionNotification({
+          title: submission.title,
+          authorName: submission.author_name,
+          authorEmail: submission.author_email,
+          status: 'rejected',
+          adminComments: adminComments || undefined
+        });
+      }
+
+      // Show appropriate toast message
+      if (emailSent) {
+        toast({
+          title: "Status Updated",
+          description: `Blog post ${newStatus} successfully. Email notification sent to author.`,
+        });
+      } else {
+        toast({
+          title: "Status Updated",
+          description: `Blog post ${newStatus} successfully. Email notification failed.`,
+        });
+      }
+
+      // Reset dialog state
+      setShowCommentsDialog(false);
+      setSelectedSubmission(null);
+      setAdminComments('');
+      setPendingAction(null);
+
     } catch (error: any) {
       toast({
         title: "Error",
@@ -80,6 +128,12 @@ const AdminSubmissions = () => {
         variant: "destructive"
       });
     }
+  };
+
+  const handleApproveReject = (submission: BlogPost, action: 'approve' | 'reject') => {
+    setSelectedSubmission(submission);
+    setPendingAction(action);
+    setShowCommentsDialog(true);
   };
 
   const toggleFeatured = async (id: string) => {
@@ -233,7 +287,7 @@ const AdminSubmissions = () => {
                           <Button
                             variant="default"
                             size="sm"
-                            onClick={() => handleStatusChange(submission.id, 'approved')}
+                            onClick={() => handleApproveReject(submission, 'approve')}
                           >
                             <Check className="h-4 w-4 mr-2" />
                             Approve
@@ -241,7 +295,7 @@ const AdminSubmissions = () => {
                           <Button
                             variant="destructive"
                             size="sm"
-                            onClick={() => handleStatusChange(submission.id, 'rejected')}
+                            onClick={() => handleApproveReject(submission, 'reject')}
                           >
                             <X className="h-4 w-4 mr-2" />
                             Reject
@@ -268,6 +322,68 @@ const AdminSubmissions = () => {
           </div>
         </div>
       </div>
+
+      {/* Comments Dialog */}
+      <Dialog open={showCommentsDialog} onOpenChange={setShowCommentsDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {pendingAction === 'approve' ? 'Approve' : 'Reject'} Article
+            </DialogTitle>
+            <DialogDescription>
+              {selectedSubmission && (
+                <>
+                  <strong>{selectedSubmission.title}</strong> by {selectedSubmission.author_name}
+                </>
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="adminComments">
+                Comments (Optional)
+              </Label>
+              <Textarea
+                id="adminComments"
+                value={adminComments}
+                onChange={(e) => setAdminComments(e.target.value)}
+                placeholder={
+                  pendingAction === 'approve' 
+                    ? "Add any comments for the author (optional)..."
+                    : "Please provide feedback for the author (optional)..."
+                }
+                className="min-h-[100px]"
+              />
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowCommentsDialog(false);
+                  setSelectedSubmission(null);
+                  setAdminComments('');
+                  setPendingAction(null);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant={pendingAction === 'approve' ? 'default' : 'destructive'}
+                onClick={() => {
+                  if (selectedSubmission && pendingAction) {
+                    handleStatusChange(
+                      selectedSubmission.id, 
+                      pendingAction === 'approve' ? 'approved' : 'rejected'
+                    );
+                  }
+                }}
+              >
+                {pendingAction === 'approve' ? 'Approve' : 'Reject'} Article
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
