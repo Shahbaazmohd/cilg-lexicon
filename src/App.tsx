@@ -26,10 +26,7 @@ import AdminBulletin from "./pages/AdminBulletin";
 import AdminDrafts from "./pages/AdminDrafts";
 import AdminFeatured from "./pages/AdminFeatured";
 import AdminAnalytics from "./pages/AdminAnalytics";
-import EmailTest from "./components/EmailTest";
-import EmailDebug from "./components/EmailDebug";
-import SimpleEmailTest from "./components/SimpleEmailTest";
-import EmailTestWithTo from "./components/EmailTestWithTo";
+
 import { useScrollToTop } from "./hooks/useScrollToTop";
 
 const queryClient = new QueryClient();
@@ -71,10 +68,7 @@ const App = () => (
               <Route path="/admin/drafts" element={<AdminDrafts />} />
               <Route path="/admin/featured" element={<AdminFeatured />} />
               <Route path="/admin/analytics" element={<AdminAnalytics />} />
-              <Route path="/email-test" element={<EmailTest />} />
-              <Route path="/email-debug" element={<EmailDebug />} />
-              <Route path="/simple-email-test" element={<SimpleEmailTest />} />
-              <Route path="/email-test-to" element={<EmailTestWithTo />} />
+
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
