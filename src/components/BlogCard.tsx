@@ -39,7 +39,7 @@ const BlogCard = ({ id, title, excerpt, author, date, image, category, featured 
           {/* Content */}
           <div className={`p-6 flex flex-col flex-grow ${featured ? 'md:w-1/2' : ''}`}>
             {/* Meta */}
-            <div className="flex items-center space-x-4 text-sm text-muted-foreground mb-3">
+            <div className="flex flex-col space-y-1 text-sm text-muted-foreground mb-3">
               <div className="flex items-center space-x-1">
                 <User className="h-3 w-3" />
                 <span className="truncate">{author}</span>

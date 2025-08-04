@@ -258,23 +258,8 @@ const Home = () => {
                 image: lawBooks,
               },
               {
-                title: 'Environmental Governance',
-                description: 'Legal frameworks for addressing climate change and environmental challenges',
-                image: academicBuilding,
-              },
-              {
                 title: 'Human Rights Law',
                 description: 'Contemporary issues in human rights protection and implementation',
-                image: lawBooks,
-              },
-              {
-                title: 'Trade & Economic Law',
-                description: 'International trade regulations and economic governance mechanisms',
-                image: academicBuilding,
-              },
-              {
-                title: 'Digital Rights',
-                description: 'Legal challenges in the digital age and cyber governance',
                 image: lawBooks,
               },
               {

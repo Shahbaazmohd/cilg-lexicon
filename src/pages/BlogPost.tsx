@@ -13,6 +13,7 @@ interface BlogPost {
   content: string;
   author_name: string;
   author_email: string;
+  author_designation?: string;
   category: string;
   excerpt: string;
   status: string;
@@ -174,10 +175,7 @@ const BlogPost = () => {
               <div className="flex-1">
                 <h3 className="academic-heading text-xl mb-2">{post.author_name}</h3>
                 <p className="academic-text">
-                  {post.author_name.includes('Dr.') || post.author_name.includes('Prof.') 
-                    ? 'Senior Researcher and Academic at the Centre for International Law and Governance'
-                    : 'Researcher at the Centre for International Law and Governance'
-                  }
+                  {post.author_designation || 'Researcher at the Centre for International Law and Governance'}
                 </p>
               </div>
             </div>

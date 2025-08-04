@@ -18,6 +18,7 @@ const SubmitBlog = () => {
     content: '',
     authorName: '',
     authorEmail: '',
+    authorDesignation: '',
     category: '',
     excerpt: '',
     imageUrl: ''
@@ -59,6 +60,7 @@ const SubmitBlog = () => {
             content: formData.content,
             author_name: formData.authorName,
             author_email: formData.authorEmail,
+            author_designation: formData.authorDesignation,
             category: formData.category,
             excerpt: excerpt,
             status: 'pending'
@@ -119,6 +121,7 @@ const SubmitBlog = () => {
         content: '',
         authorName: '',
         authorEmail: '',
+        authorDesignation: '',
         category: '',
         excerpt: '',
         imageUrl: ''
@@ -137,7 +140,7 @@ const SubmitBlog = () => {
   };
 
   const isFormValid = formData.title && formData.content && formData.authorName && 
-                     formData.authorEmail && formData.category;
+                     formData.authorEmail && formData.authorDesignation && formData.category;
 
   return (
     <div className="min-h-screen py-12">
@@ -236,6 +239,22 @@ const SubmitBlog = () => {
                         required
                       />
                     </div>
+                  </div>
+
+                  {/* Author Designation */}
+                  <div className="space-y-2">
+                    <Label htmlFor="authorDesignation" className="flex items-center gap-2">
+                      <User className="h-4 w-4" />
+                      Author Designation *
+                    </Label>
+                    <Input
+                      id="authorDesignation"
+                      type="text"
+                      value={formData.authorDesignation}
+                      onChange={(e) => handleInputChange('authorDesignation', e.target.value)}
+                      placeholder="e.g., Professor, Researcher, Student, Legal Practitioner"
+                      required
+                    />
                   </div>
 
                   {/* Article Details */}
