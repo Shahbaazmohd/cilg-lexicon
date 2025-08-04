@@ -13,6 +13,7 @@ import academicBuilding from '@/assets/academic-building.jpg';
 import lawBooks from '@/assets/law-books.jpg';
 import { supabase } from '@/integrations/supabase/client';
 import { getImageWithFallback } from '@/lib/imageUtils';
+import { BlogImageService } from '@/lib/blogImageService';
 
 const Home = () => {
   const [heroImageUrl, setHeroImageUrl] = useState(heroImage);
@@ -95,7 +96,7 @@ const Home = () => {
         date: new Date(post.created_at).toLocaleDateString(),
         category: post.category,
         featured: post.featured,
-        image: getImageWithFallback(undefined, post.category)
+        image: BlogImageService.getImageUrlWithFallback(post.image_url, post.category)
       });
 
       setFeaturedPosts((featuredData || []).map(transformPost));

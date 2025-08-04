@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Eye, Check, X, Star, Clock, User, Mail, Calendar, Trash2 } from 'lucide-react';
+import { Eye, Check, X, Star, Clock, User, Mail, Calendar, Trash2, ZoomIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -19,6 +19,7 @@ interface BlogPost {
   author_email: string;
   category: string;
   excerpt: string;
+  image_url?: string;
   status: 'pending' | 'approved' | 'rejected';
   featured: boolean;
   created_at: string;
@@ -34,6 +35,9 @@ const AdminSubmissions = () => {
   const [pendingAction, setPendingAction] = useState<'approve' | 'reject' | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [submissionToDelete, setSubmissionToDelete] = useState<BlogPost | null>(null);
+  const [showImageDialog, setShowImageDialog] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<{ url: string; title: string } | null>(null);
+  const [imageLoading, setImageLoading] = useState(false);
 
   useEffect(() => {
     fetchSubmissions();
@@ -309,6 +313,42 @@ const AdminSubmissions = () => {
                             </DialogDescription>
                           </DialogHeader>
                           <div className="space-y-4">
+                            {/* Featured Image */}
+                            {submission.image_url && (
+                              <div className="mb-4">
+                                <div className="relative group">
+                                  <img
+                                    src={submission.image_url}
+                                    alt={submission.title}
+                                    className="w-full h-48 object-cover rounded-lg cursor-pointer transition-transform hover:scale-105"
+                                    onClick={() => {
+                                      setImageLoading(true);
+                                      setSelectedImage({
+                                        url: submission.image_url!,
+                                        title: submission.title
+                                      });
+                                      setShowImageDialog(true);
+                                    }}
+                                    onError={(e) => {
+                                      console.error('Image failed to load in preview:', submission.image_url);
+                                      e.currentTarget.style.display = 'none';
+                                    }}
+                                    onLoad={() => {
+                                      console.log('Preview image loaded successfully:', submission.image_url);
+                                    }}
+                                  />
+                                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors rounded-lg flex items-center justify-center">
+                                    <ZoomIn className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                                  </div>
+                                </div>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  Click image to view full size
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                  Image URL: {submission.image_url}
+                                </p>
+                              </div>
+                            )}
                             <div className="prose max-w-none">
                               <p className="whitespace-pre-wrap">{submission.content}</p>
                             </div>
@@ -474,6 +514,74 @@ const AdminSubmissions = () => {
                 onClick={confirmDelete}
               >
                 Delete Permanently
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Full Size Image Dialog */}
+      <Dialog open={showImageDialog} onOpenChange={(open) => {
+        setShowImageDialog(open);
+        if (!open) {
+          setImageLoading(false);
+        }
+      }}>
+        <DialogContent className="max-w-[95vw] max-h-[95vh] p-0 overflow-hidden">
+          <DialogHeader className="p-6 pb-0">
+            <DialogTitle>{selectedImage?.title}</DialogTitle>
+            <DialogDescription>
+              Click outside or press ESC to close
+            </DialogDescription>
+          </DialogHeader>
+          <div className="relative">
+            {selectedImage && (
+              <div className="flex items-center justify-center min-h-[60vh]">
+                {imageLoading && (
+                  <div className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                    <span className="ml-2">Loading image...</span>
+                  </div>
+                )}
+                <img
+                  src={selectedImage.url}
+                  alt={selectedImage.title}
+                  className={`max-w-full max-h-[80vh] object-contain ${imageLoading ? 'hidden' : ''}`}
+                  onError={(e) => {
+                    console.error('Image failed to load:', selectedImage.url);
+                    e.currentTarget.style.display = 'none';
+                    setImageLoading(false);
+                  }}
+                  onLoad={() => {
+                    console.log('Image loaded successfully:', selectedImage.url);
+                    setImageLoading(false);
+                  }}
+                />
+              </div>
+            )}
+            <div className="absolute top-4 right-4 flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="bg-white/90 hover:bg-white"
+                onClick={() => {
+                  if (selectedImage) {
+                    const link = document.createElement('a');
+                    link.href = selectedImage.url;
+                    link.download = selectedImage.title + '.jpg';
+                    link.click();
+                  }
+                }}
+              >
+                Download
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="bg-white/90 hover:bg-white"
+                onClick={() => setShowImageDialog(false)}
+              >
+                <X className="h-4 w-4" />
               </Button>
             </div>
           </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Upload, FileText, Mail, User, BookOpen, Tag, Send } from 'lucide-react';
+import { Upload, FileText, Mail, User, BookOpen, Tag, Send, Image as ImageIcon, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { emailService } from '@/lib/emailService';
+import { BlogImageService } from '@/lib/blogImageService';
 
 const SubmitBlog = () => {
   const { toast } = useToast();
@@ -24,6 +25,9 @@ const SubmitBlog = () => {
     imageUrl: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [uploadedImage, setUploadedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const categories = [
     'International Law',
@@ -43,11 +47,95 @@ const SubmitBlog = () => {
     }));
   };
 
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Use the enhanced validation from BlogImageService
+    const validation = BlogImageService.validateImage(file);
+    
+    if (!validation.isValid) {
+      toast({
+        title: "Image Upload Failed",
+        description: validation.error,
+        variant: "destructive"
+      });
+      
+      // Show additional compression tips
+      setTimeout(() => {
+        toast({
+          title: "Compression Tips",
+          description: "Try using TinyPNG, Squoosh.app, or resize your image to 1200x800px",
+          variant: "default"
+        });
+      }, 1000);
+      
+      return;
+    }
+
+    // Show recommendations if any
+    if (validation.recommendations && validation.recommendations.length > 0) {
+      toast({
+        title: "Image Upload Tips",
+        description: validation.recommendations[0], // Show first recommendation
+        variant: "default"
+      });
+    }
+
+    setIsUploadingImage(true);
+    setUploadedImage(file);
+
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setImagePreview(e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+
+    setIsUploadingImage(false);
+  };
+
+  const handleRemoveImage = () => {
+    setUploadedImage(null);
+    setImagePreview(null);
+    setFormData(prev => ({ ...prev, imageUrl: '' }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
     try {
+      let imageUrl = '';
+
+      // Upload image if provided
+      if (uploadedImage) {
+        const uploadResult = await BlogImageService.uploadImage(uploadedImage);
+        if (uploadResult.success && uploadResult.imageUrl) {
+          imageUrl = uploadResult.imageUrl;
+        } else {
+          toast({
+            title: "Image Upload Failed",
+            description: uploadResult.error || "Failed to upload image. Please compress your image and try again.",
+            variant: "destructive"
+          });
+          
+          // Show compression tips if available
+          if (uploadResult.recommendations && uploadResult.recommendations.length > 0) {
+            setTimeout(() => {
+              toast({
+                title: "Compression Help",
+                description: uploadResult.recommendations![0],
+                variant: "default"
+              });
+            }, 1000);
+          }
+          
+          setIsSubmitting(false);
+          return;
+        }
+      }
+
       // Generate excerpt if not provided
       const excerpt = formData.excerpt || formData.content.substring(0, 200) + '...';
       
@@ -63,6 +151,7 @@ const SubmitBlog = () => {
             author_designation: formData.authorDesignation,
             category: formData.category,
             excerpt: excerpt,
+            image_url: imageUrl,
             status: 'pending'
           }
         ])
@@ -126,6 +215,8 @@ const SubmitBlog = () => {
         excerpt: '',
         imageUrl: ''
       });
+      setUploadedImage(null);
+      setImagePreview(null);
 
     } catch (error: any) {
       console.error('Submission error:', error);
@@ -303,6 +394,94 @@ const SubmitBlog = () => {
                       placeholder="Brief summary of your article (optional - will be auto-generated if left blank)"
                       className="min-h-[80px]"
                     />
+                  </div>
+
+                  {/* Featured Image Upload */}
+                  <div className="space-y-2">
+                    <Label htmlFor="featuredImage" className="flex items-center gap-2">
+                      <ImageIcon className="h-4 w-4" />
+                      Featured Image (Optional)
+                    </Label>
+                    <div className="space-y-4">
+                      {imagePreview ? (
+                        <div className="relative">
+                          <img
+                            src={imagePreview}
+                            alt="Preview"
+                            className="w-full h-48 object-cover rounded-lg border border-border"
+                          />
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="sm"
+                            className="absolute top-2 right-2"
+                            onClick={handleRemoveImage}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
+                          <ImageIcon className="h-8 w-8 mx-auto mb-3 text-muted-foreground" />
+                          <p className="text-sm text-muted-foreground mb-3">
+                            Click to upload or drag and drop
+                          </p>
+                          <p className="text-xs text-muted-foreground mb-4">
+                            PNG, JPG, WebP up to <strong>3MB maximum</strong> (recommended: under 1MB)
+                          </p>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            disabled={isUploadingImage}
+                            className="hidden"
+                            id="featuredImage"
+                          />
+                          <label htmlFor="featuredImage">
+                            <Button 
+                              type="button"
+                              disabled={isUploadingImage}
+                              className="cursor-pointer"
+                              asChild
+                            >
+                              <span>
+                                {isUploadingImage ? (
+                                  <>
+                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                    Uploading...
+                                  </>
+                                ) : (
+                                  <>
+                                    <Upload className="h-4 w-4 mr-2" />
+                                    Choose Image
+                                  </>
+                                )}
+                              </span>
+                            </Button>
+                          </label>
+                        </div>
+                      )}
+                      <p className="text-xs text-muted-foreground">
+                        Upload a featured image for your article. This will be displayed alongside your article.
+                      </p>
+                      
+                      {/* Image Optimization Tips */}
+                      <Alert className="bg-blue-50 border-blue-200">
+                        <ImageIcon className="h-4 w-4 text-blue-600" />
+                        <AlertDescription className="text-blue-800">
+                          <div className="space-y-1">
+                            <p className="font-medium">Image Optimization Tips:</p>
+                                                         <ul className="text-xs space-y-1">
+                               <li>• <strong>Maximum size: 3MB</strong> (recommended: under 1MB)</li>
+                               <li>• Recommended dimensions: 1200x800px</li>
+                               <li>• Best formats: JPEG for photos, WebP for modern browsers</li>
+                               <li>• Use descriptive filenames for better SEO</li>
+                               <li>• <strong>Images over 3MB will be rejected</strong></li>
+                             </ul>
+                          </div>
+                        </AlertDescription>
+                      </Alert>
+                    </div>
                   </div>
 
                   <div className="space-y-2">

@@ -16,6 +16,7 @@ interface BlogPost {
   author_designation?: string;
   category: string;
   excerpt: string;
+  image_url?: string;
   status: string;
   featured: boolean;
   created_at: string;
@@ -149,6 +150,17 @@ const BlogPost = () => {
 
         {/* Article Content */}
         <div className="max-w-4xl mx-auto">
+          {/* Featured Image */}
+          {post.image_url && (
+            <div className="mb-8">
+              <img
+                src={post.image_url}
+                alt={post.title}
+                className="w-full h-64 md:h-96 object-cover rounded-lg shadow-lg"
+              />
+            </div>
+          )}
+
           <article className="prose prose-lg max-w-none">
             <div className="academic-text text-lg leading-relaxed whitespace-pre-wrap">
               {post.content}

@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import BlogCard from '@/components/BlogCard';
 import { supabase } from '@/integrations/supabase/client';
 import { getImageWithFallback } from '@/lib/imageUtils';
+import { BlogImageService } from '@/lib/blogImageService';
 
 const Blog = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -40,7 +41,7 @@ const Blog = () => {
         date: new Date(post.created_at).toLocaleDateString(),
         category: post.category,
         featured: post.featured,
-        image: getImageWithFallback(undefined, post.category) // Use category-based image since blog_posts doesn't have image_url
+        image: BlogImageService.getImageUrlWithFallback(post.image_url, post.category)
       }));
 
       setBlogPosts(transformedPosts);
