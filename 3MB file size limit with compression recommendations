@@ -1,0 +1,9 @@
+BLOG_IMAGE_FEATURE.md
+IMAGE_OPTIMIZATION_GUIDE.md
+src/lib/blogImageService.ts
+src/pages/AdminSubmissions.tsx
+src/pages/Blog.tsx
+src/pages/BlogPost.tsx
+src/pages/Home.tsx
+src/pages/SubmitBlog.tsx
+supabase/migrations/20250101000003-add-blog-images-support.sql

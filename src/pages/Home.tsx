@@ -7,6 +7,7 @@ import NewsTicker from '@/components/NewsTicker';
 import CosmopolitanBulletin from '@/components/CosmopolitanBulletin';
 import { SettingsService } from '@/lib/settingsService';
 import { DynamicImageService } from '@/lib/dynamicImageService';
+import { BlogSection } from '@/components/ui/blog-section';
 
 import heroImage from '@/assets/hero-image.jpg';
 import academicBuilding from '@/assets/academic-building.jpg';
@@ -87,7 +88,7 @@ const Home = () => {
         console.error('Error fetching featured posts:', featuredError);
       }
 
-      // Transform data to match BlogCard props
+      // Transform data to match BlogSection props
       const transformPost = (post: any) => ({
         id: post.id,
         title: post.title,
@@ -96,7 +97,8 @@ const Home = () => {
         date: new Date(post.created_at).toLocaleDateString(),
         category: post.category,
         featured: post.featured,
-        image: BlogImageService.getImageUrlWithFallback(post.image_url, post.category)
+        image_url: BlogImageService.getImageUrlWithFallback(post.image_url, post.category),
+        created_at: post.created_at
       });
 
       setFeaturedPosts((featuredData || []).map(transformPost));
@@ -212,62 +214,43 @@ const Home = () => {
       </section>
 
       {/* Featured Blog Posts */}
-      <section className="py-16 bg-muted/30">
-        <div className="academic-container">
-          <div className="text-center mb-12">
-            <h2 className="academic-heading text-3xl md:text-4xl mb-4">Featured Research</h2>
-            <p className="academic-text text-lg max-w-2xl mx-auto">
-              Explore our latest scholarly contributions to international law and governance
-            </p>
-          </div>
-
-          <div className="relative">
-            {/* Gradient fade indicators for scroll */}
-            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-background to-transparent pointer-events-none z-10"></div>
-            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none z-10"></div>
-            <div className="overflow-x-auto scroll-smooth pb-4 mb-12 scrollbar-thin">
-              <div className="flex gap-6 min-w-max px-4">
-              {loading ? (
-                // Loading skeleton - show 6 cards horizontally
-                Array.from({ length: 6 }).map((_, index) => (
-                  <div key={index} className="bg-muted rounded-lg p-6 animate-pulse cursor-pointer hover:shadow-lg transition-all duration-300 min-w-[300px] max-w-[350px] flex-shrink-0 h-full flex flex-col">
-                    <div className="h-48 bg-muted-foreground/20 rounded mb-4 flex-shrink-0"></div>
-                    <div className="flex flex-col flex-grow">
-                      <div className="h-4 bg-muted-foreground/20 rounded mb-2"></div>
-                      <div className="h-4 bg-muted-foreground/20 rounded mb-2 w-3/4"></div>
-                      <div className="h-4 bg-muted-foreground/20 rounded mb-2"></div>
-                      <div className="h-4 bg-muted-foreground/20 rounded mb-2 w-2/3"></div>
-                      <div className="h-4 bg-muted-foreground/20 rounded mb-2 w-1/2"></div>
-                      <div className="mt-auto">
-                        <div className="h-4 bg-muted-foreground/20 rounded w-24"></div>
+      <section className="bg-muted/30">
+        {loading ? (
+          <div className="academic-container py-16">
+            <div className="text-center mb-12">
+              <div className="h-8 bg-muted-foreground/20 rounded mb-4 w-64 mx-auto"></div>
+              <div className="h-4 bg-muted-foreground/20 rounded w-96 mx-auto"></div>
+            </div>
+            <div className="relative">
+              <div className="overflow-x-auto scroll-smooth pb-4 scrollbar-thin">
+                <div className="flex gap-6 min-w-max px-4">
+                  {Array.from({ length: 6 }).map((_, index) => (
+                    <div key={index} className="bg-muted rounded-lg p-6 animate-pulse cursor-pointer hover:shadow-lg transition-all duration-300 min-w-[300px] max-w-[350px] flex-shrink-0 h-full flex flex-col">
+                      <div className="h-48 bg-muted-foreground/20 rounded mb-4 flex-shrink-0"></div>
+                      <div className="flex flex-col flex-grow">
+                        <div className="h-4 bg-muted-foreground/20 rounded mb-2"></div>
+                        <div className="h-4 bg-muted-foreground/20 rounded mb-2 w-3/4"></div>
+                        <div className="h-4 bg-muted-foreground/20 rounded mb-2"></div>
+                        <div className="h-4 bg-muted-foreground/20 rounded mb-2 w-2/3"></div>
+                        <div className="h-4 bg-muted-foreground/20 rounded mb-2 w-1/2"></div>
+                        <div className="mt-auto">
+                          <div className="h-4 bg-muted-foreground/20 rounded w-24"></div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))
-              ) : featuredPosts.length > 0 ? (
-                // Show only featured posts
-                featuredPosts.map((post) => (
-                  <BlogCard key={post.id} {...post} />
-                ))
-              ) : (
-                // No featured posts available
-                <div className="min-w-full text-center py-12">
-                  <p className="text-muted-foreground">No featured articles available at the moment.</p>
+                  ))}
                 </div>
-              )}
+              </div>
             </div>
           </div>
-          </div>
-
-          <div className="text-center">
-            <Button asChild variant="outline" size="lg" className="cursor-pointer hover:shadow-md transition-shadow duration-300">
-              <Link to="/blog" className="flex items-center space-x-2">
-                <span>View All Blogs</span>
-                <ArrowRight className="h-5 w-5" />
-              </Link>
-            </Button>
-          </div>
-        </div>
+        ) : (
+                     <BlogSection 
+             posts={featuredPosts} 
+             title="Featured Research"
+             showViewAll={true}
+             maxPosts={8}
+           />
+        )}
       </section>
 
       {/* Research Areas */}
