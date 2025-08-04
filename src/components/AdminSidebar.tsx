@@ -8,7 +8,8 @@ import {
   Star, 
   BarChart3,
   LogOut,
-  Users
+  Users,
+  Image
 } from 'lucide-react';
 
 const AdminSidebar = () => {
@@ -21,6 +22,7 @@ const AdminSidebar = () => {
     { name: 'Cosmopolitan Bulletin', href: '/admin/bulletin', icon: Newspaper },
     { name: 'Draft Blogs', href: '/admin/drafts', icon: Edit3 },
     { name: 'Featured Blogs', href: '/admin/featured', icon: Star },
+    { name: 'Image Management', href: '/admin/images', icon: Image },
     { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
   ];
 

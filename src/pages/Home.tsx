@@ -6,6 +6,7 @@ import BlogCard from '@/components/BlogCard';
 import NewsTicker from '@/components/NewsTicker';
 import CosmopolitanBulletin from '@/components/CosmopolitanBulletin';
 import { SettingsService } from '@/lib/settingsService';
+import { DynamicImageService } from '@/lib/dynamicImageService';
 
 import heroImage from '@/assets/hero-image.jpg';
 import academicBuilding from '@/assets/academic-building.jpg';
@@ -15,22 +16,44 @@ import { getImageWithFallback } from '@/lib/imageUtils';
 
 const Home = () => {
   const [heroImageUrl, setHeroImageUrl] = useState(heroImage);
+  const [aboutImageUrl, setAboutImageUrl] = useState(academicBuilding);
+  const [researchAreaImages, setResearchAreaImages] = useState({
+    'research-area-1': lawBooks,
+    'research-area-2': lawBooks,
+    'research-area-3': academicBuilding,
+  });
   const [featuredPosts, setFeaturedPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Load hero image from settings on component mount
+  // Load dynamic images on component mount
   useEffect(() => {
-    loadHeroImage();
+    loadDynamicImages();
     fetchBlogPosts();
   }, []);
 
-  const loadHeroImage = async () => {
+  const loadDynamicImages = async () => {
     try {
-      const url = await SettingsService.getHeroImageUrl();
-      setHeroImageUrl(url);
+      // Load hero image
+      const heroUrl = await DynamicImageService.getImageUrlWithFallback('hero');
+      setHeroImageUrl(heroUrl);
+
+      // Load about image
+      const aboutUrl = await DynamicImageService.getImageUrlWithFallback('about');
+      setAboutImageUrl(aboutUrl);
+
+      // Load research area images
+      const researchArea1Url = await DynamicImageService.getImageUrlWithFallback('research-area-1');
+      const researchArea2Url = await DynamicImageService.getImageUrlWithFallback('research-area-2');
+      const researchArea3Url = await DynamicImageService.getImageUrlWithFallback('research-area-3');
+
+      setResearchAreaImages({
+        'research-area-1': researchArea1Url,
+        'research-area-2': researchArea2Url,
+        'research-area-3': researchArea3Url,
+      });
     } catch (error) {
-      console.error('Error loading hero image:', error);
-      setHeroImageUrl(heroImage);
+      console.error('Error loading dynamic images:', error);
+      // Keep default images if loading fails
     }
   };
 
@@ -42,7 +65,7 @@ const Home = () => {
         .select('*')
         .eq('featured', true)
         .eq('status', 'approved')
-        .order('featured_order', { ascending: true, nullsLast: true })
+        .order('featured_order', { ascending: true })
         .order('created_at', { ascending: false });
 
       // If featured_order doesn't exist, fallback to created_at ordering
@@ -94,11 +117,17 @@ const Home = () => {
     <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative h-[70vh] flex items-center justify-center overflow-hidden">
+        {/* Full Screen Hero Image */}
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${heroImageUrl})` }}
+          style={{ 
+            backgroundImage: `url(${heroImageUrl})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }}
         >
-          <div className="absolute inset-0 bg-navy/70"></div>
+          <div className="absolute inset-0 bg-navy/60"></div>
         </div>
         
 
@@ -127,7 +156,7 @@ const Home = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-muted/30">
+      <section className="py-12 bg-muted/30">
         <div className="academic-container">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
@@ -144,7 +173,7 @@ const Home = () => {
       </section>
 
       {/* About Preview */}
-      <section className="py-20">
+      <section className="py-16">
         <div className="academic-container">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
@@ -172,7 +201,7 @@ const Home = () => {
             </div>
             <div className="relative">
               <img
-                src={academicBuilding}
+                src={aboutImageUrl}
                 alt="Academic Building"
                 className="rounded-lg shadow-lg w-full"
               />
@@ -182,7 +211,7 @@ const Home = () => {
       </section>
 
       {/* Featured Blog Posts */}
-      <section className="py-20 bg-muted/30">
+      <section className="py-16 bg-muted/30">
         <div className="academic-container">
           <div className="text-center mb-12">
             <h2 className="academic-heading text-3xl md:text-4xl mb-4">Featured Research</h2>
@@ -241,7 +270,7 @@ const Home = () => {
       </section>
 
       {/* Research Areas */}
-      <section className="py-20">
+      <section className="py-16">
         <div className="academic-container">
           <div className="text-center mb-12">
             <h2 className="academic-heading text-3xl md:text-4xl mb-4">Research Areas</h2>
@@ -255,17 +284,17 @@ const Home = () => {
               {
                 title: 'International Criminal Law',
                 description: 'Exploring justice mechanisms and accountability in international crimes',
-                image: lawBooks,
+                image: researchAreaImages['research-area-1'],
               },
               {
                 title: 'Human Rights Law',
                 description: 'Contemporary issues in human rights protection and implementation',
-                image: lawBooks,
+                image: researchAreaImages['research-area-2'],
               },
               {
                 title: 'Conflict Resolution',
                 description: 'Legal approaches to international dispute resolution and peacebuilding',
-                image: academicBuilding,
+                image: researchAreaImages['research-area-3'],
               },
             ].map((area, index) => (
               <div key={index} className="academic-card p-6 group hover:shadow-lg transition-shadow duration-300">
@@ -285,7 +314,7 @@ const Home = () => {
       </section>
 
       {/* Call to Action */}
-      <section className="py-20 bg-primary text-primary-foreground">
+      <section className="py-16 bg-primary text-primary-foreground">
         <div className="academic-container text-center">
           <h2 className="font-serif font-bold text-3xl md:text-4xl mb-6">
             Join Our Academic Community
