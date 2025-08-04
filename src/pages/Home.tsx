@@ -4,6 +4,7 @@ import { ArrowRight, BookOpen, Users, Calendar, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import BlogCard from '@/components/BlogCard';
 import NewsTicker from '@/components/NewsTicker';
+import CosmopolitanBulletin from '@/components/CosmopolitanBulletin';
 import { SettingsService } from '@/lib/settingsService';
 
 import heroImage from '@/assets/hero-image.jpg';
@@ -321,6 +322,9 @@ const Home = () => {
 
       {/* News Ticker */}
       <NewsTicker />
+      
+      {/* Cosmopolitan Bulletin */}
+      <CosmopolitanBulletin />
     </div>
   );
 };
