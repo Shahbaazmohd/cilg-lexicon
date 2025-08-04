@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Eye, Check, X, Star, Clock, User, Mail, Calendar } from 'lucide-react';
+import { Eye, Check, X, Star, Clock, User, Mail, Calendar, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -32,6 +32,8 @@ const AdminSubmissions = () => {
   const [adminComments, setAdminComments] = useState('');
   const [showCommentsDialog, setShowCommentsDialog] = useState(false);
   const [pendingAction, setPendingAction] = useState<'approve' | 'reject' | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [submissionToDelete, setSubmissionToDelete] = useState<BlogPost | null>(null);
 
   useEffect(() => {
     fetchSubmissions();
@@ -171,6 +173,47 @@ const AdminSubmissions = () => {
     }
   };
 
+  const handleDelete = async (submission: BlogPost) => {
+    setSubmissionToDelete(submission);
+    setShowDeleteDialog(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!submissionToDelete) return;
+
+    try {
+      const { error } = await supabase
+        .from('blog_posts')
+        .delete()
+        .eq('id', submissionToDelete.id);
+
+      if (error) {
+        throw error;
+      }
+
+      // Remove from local state
+      setSubmissions(prev => 
+        prev.filter(submission => submission.id !== submissionToDelete.id)
+      );
+
+      toast({
+        title: "Blog Post Deleted",
+        description: `"${submissionToDelete.title}" has been permanently deleted.`,
+      });
+
+      // Reset dialog state
+      setShowDeleteDialog(false);
+      setSubmissionToDelete(null);
+
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete blog post.",
+        variant: "destructive"
+      });
+    }
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'pending':
@@ -302,6 +345,15 @@ const AdminSubmissions = () => {
                           </Button>
                         </>
                       )}
+                      
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDelete(submission)}
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        Delete
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
@@ -379,6 +431,49 @@ const AdminSubmissions = () => {
                 }}
               >
                 {pendingAction === 'approve' ? 'Approve' : 'Reject'} Article
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Blog Post</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to permanently delete this blog post? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            {submissionToDelete && (
+              <div className="p-4 bg-muted rounded-lg">
+                <h4 className="font-semibold mb-2">{submissionToDelete.title}</h4>
+                <p className="text-sm text-muted-foreground">
+                  By {submissionToDelete.author_name} • {submissionToDelete.category}
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Status: {submissionToDelete.status.charAt(0).toUpperCase() + submissionToDelete.status.slice(1)}
+                  {submissionToDelete.featured && ' • Featured'}
+                </p>
+              </div>
+            )}
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowDeleteDialog(false);
+                  setSubmissionToDelete(null);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={confirmDelete}
+              >
+                Delete Permanently
               </Button>
             </div>
           </div>
