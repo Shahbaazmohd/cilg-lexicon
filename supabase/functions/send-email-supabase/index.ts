@@ -1,4 +1,5 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 serve(async (req) => {
   // Handle CORS
@@ -31,29 +32,24 @@ serve(async (req) => {
       })
     }
 
-    // Send email using Resend API
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${Deno.env.get('RESEND_API_KEY')}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from: 'CILG <noreply@cilg.org>', // You can use your own domain
-        to: [to],
-        subject: subject,
-        html: html,
-      }),
+    // Create Supabase client
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const supabase = createClient(supabaseUrl, supabaseServiceKey)
+
+    // Send email using Supabase Auth
+    const { data, error } = await supabase.auth.admin.sendRawEmail({
+      to: [to],
+      subject: subject,
+      html: html,
+      from: 'noreply@cilg.org'
     })
 
-    if (!response.ok) {
-      const errorData = await response.json()
-      throw new Error(`Resend API error: ${errorData.message}`)
+    if (error) {
+      throw new Error(`Supabase email error: ${error.message}`)
     }
 
-    const result = await response.json()
-    
-    return new Response(JSON.stringify({ success: true, id: result.id }), {
+    return new Response(JSON.stringify({ success: true, data }), {
       headers: { 
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*'
