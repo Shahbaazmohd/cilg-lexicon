@@ -283,6 +283,14 @@ const ModernNavbar = () => {
                   ? "opacity-100 visible" 
                   : "opacity-0 invisible pointer-events-none"
               )}>
+              {/* Mobile Menu Close Button */}
+              <button
+                onClick={() => setMenuState(false)}
+                aria-label="Close Menu"
+                className="absolute top-4 right-4 z-50 p-2 rounded-full bg-background/80 backdrop-blur-sm border border-border hover:bg-background transition-colors duration-200 touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center">
+                <X className="h-6 w-6" />
+              </button>
+              
               <div className="flex flex-col h-full pt-20 pb-6 px-6 overflow-y-auto">
                 {/* Mobile Navigation Links */}
                 <div className="flex-1">
