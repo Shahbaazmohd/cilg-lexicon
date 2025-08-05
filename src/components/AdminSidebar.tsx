@@ -26,6 +26,7 @@ const AdminSidebar = ({ onLogout }: AdminSidebarProps) => {
     { name: 'Cosmopolitan Bulletin', href: '/admin/bulletin', icon: Newspaper },
     { name: 'Draft Blogs', href: '/admin/drafts', icon: Edit3 },
     { name: 'Featured Blogs', href: '/admin/featured', icon: Star },
+    { name: 'Team Management', href: '/admin/team', icon: Users },
     { name: 'Image Management', href: '/admin/images', icon: Image },
     { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
   ];

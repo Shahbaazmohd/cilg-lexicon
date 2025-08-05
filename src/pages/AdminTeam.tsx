@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminSidebar from '@/components/AdminSidebar';
-import ImageManagementDashboard from '@/components/ImageManagementDashboard';
+import TeamMemberManager from '@/components/TeamMemberManager';
 import { sessionService } from '@/lib/sessionService';
 
-const AdminImages = () => {
+const AdminTeam = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,18 +29,18 @@ const AdminImages = () => {
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-serif font-bold text-foreground">Image Management</h1>
+            <h1 className="text-3xl font-serif font-bold text-foreground">Team Management</h1>
             <p className="text-muted-foreground mt-2">
-              Manage all images across the website including page images and team member photos
+              Manage team members, their roles, and profile images
             </p>
           </div>
 
-          {/* Image Management Dashboard */}
-          <ImageManagementDashboard />
+          {/* Team Member Manager */}
+          <TeamMemberManager />
         </div>
       </div>
     </div>
   );
 };
 
-export default AdminImages; 
+export default AdminTeam; 

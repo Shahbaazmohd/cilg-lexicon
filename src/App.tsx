@@ -27,6 +27,7 @@ import AdminDrafts from "./pages/AdminDrafts";
 import AdminFeatured from "./pages/AdminFeatured";
 import AdminAnalytics from "./pages/AdminAnalytics";
 import AdminImages from "./pages/AdminImages";
+import AdminTeam from "./pages/AdminTeam";
 
 import { useScrollToTop } from "./hooks/useScrollToTop";
 
@@ -68,6 +69,7 @@ const App = () => (
               <Route path="/admin/bulletin" element={<AdminBulletin />} />
               <Route path="/admin/drafts" element={<AdminDrafts />} />
               <Route path="/admin/featured" element={<AdminFeatured />} />
+              <Route path="/admin/team" element={<AdminTeam />} />
               <Route path="/admin/images" element={<AdminImages />} />
               <Route path="/admin/analytics" element={<AdminAnalytics />} />
 
