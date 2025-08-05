@@ -3,16 +3,24 @@ import { useNavigate } from 'react-router-dom';
 import AdminSidebar from '@/components/AdminSidebar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { FileText, Newspaper, Edit3, Star, Users, Eye } from 'lucide-react';
+import { sessionService } from '@/lib/sessionService';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const isLoggedIn = localStorage.getItem('adminLoggedIn');
-    if (!isLoggedIn) {
+    // Check if user is logged in using session service
+    if (!sessionService.isLoggedIn()) {
       navigate('/admin/login');
     }
   }, [navigate]);
+
+  const handleLogout = () => {
+    sessionService.clearSession();
+    // Dispatch custom event to notify navbar
+    window.dispatchEvent(new CustomEvent('sessionChange'));
+    navigate('/admin/login');
+  };
 
   const stats = [
     {
@@ -61,7 +69,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-background flex">
-      <AdminSidebar />
+      <AdminSidebar onLogout={handleLogout} />
       
       <div className="flex-1 p-8">
         <div className="max-w-7xl mx-auto">
@@ -99,26 +107,32 @@ const AdminDashboard = () => {
               <CardHeader>
                 <CardTitle>Recent Submissions</CardTitle>
                 <CardDescription>
-                  Latest blog submissions requiring review
+                  Latest blog post submissions awaiting review
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {[
-                    { title: 'Climate Justice and International Law', author: 'Dr. Sarah Smith', time: '2 hours ago' },
-                    { title: 'Digital Rights in the Modern Era', author: 'Prof. Michael Johnson', time: '5 hours ago' },
-                    { title: 'Trade Agreements and Sovereignty', author: 'Dr. Emily Chen', time: '1 day ago' }
-                  ].map((submission, index) => (
-                    <div key={index} className="flex items-center space-x-4">
-                      <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium">{submission.title}</p>
-                        <p className="text-xs text-muted-foreground">
-                          by {submission.author} • {submission.time}
-                        </p>
-                      </div>
+                  <div className="flex items-center space-x-4">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">International Trade Law Analysis</p>
+                      <p className="text-xs text-muted-foreground">Submitted 2 hours ago</p>
                     </div>
-                  ))}
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">Human Rights in Digital Age</p>
+                      <p className="text-xs text-muted-foreground">Submitted 5 hours ago</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">Environmental Law Perspectives</p>
+                      <p className="text-xs text-muted-foreground">Approved 1 day ago</p>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -132,17 +146,32 @@ const AdminDashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
-                  <button className="w-full text-left p-3 rounded-md border border-border hover:bg-muted transition-colors">
-                    <div className="font-medium text-sm">Review Submissions</div>
-                    <div className="text-xs text-muted-foreground">12 pending reviews</div>
+                  <button className="w-full text-left p-3 rounded-lg border hover:bg-muted transition-colors">
+                    <div className="flex items-center space-x-3">
+                      <Edit3 className="h-4 w-4 text-blue-600" />
+                      <div>
+                        <p className="text-sm font-medium">Review Submissions</p>
+                        <p className="text-xs text-muted-foreground">12 pending reviews</p>
+                      </div>
+                    </div>
                   </button>
-                  <button className="w-full text-left p-3 rounded-md border border-border hover:bg-muted transition-colors">
-                    <div className="font-medium text-sm">Update Featured Posts</div>
-                    <div className="text-xs text-muted-foreground">Manage homepage content</div>
+                  <button className="w-full text-left p-3 rounded-lg border hover:bg-muted transition-colors">
+                    <div className="flex items-center space-x-3">
+                      <Star className="h-4 w-4 text-yellow-600" />
+                      <div>
+                        <p className="text-sm font-medium">Manage Featured Posts</p>
+                        <p className="text-xs text-muted-foreground">8 featured articles</p>
+                      </div>
+                    </div>
                   </button>
-                  <button className="w-full text-left p-3 rounded-md border border-border hover:bg-muted transition-colors">
-                    <div className="font-medium text-sm">Add Bulletin Article</div>
-                    <div className="text-xs text-muted-foreground">Cosmopolitan Bulletin</div>
+                  <button className="w-full text-left p-3 rounded-lg border hover:bg-muted transition-colors">
+                    <div className="flex items-center space-x-3">
+                      <Newspaper className="h-4 w-4 text-green-600" />
+                      <div>
+                        <p className="text-sm font-medium">Update Bulletin</p>
+                        <p className="text-xs text-muted-foreground">23 bulletin articles</p>
+                      </div>
+                    </div>
                   </button>
                 </div>
               </CardContent>

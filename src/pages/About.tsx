@@ -1,8 +1,44 @@
+import { useState, useEffect } from 'react';
 import { Users, Target, BookOpen, Globe } from 'lucide-react';
+import { DynamicImageService } from '@/lib/dynamicImageService';
 import academicBuilding from '@/assets/academic-building.jpg';
 import lawBooks from '@/assets/law-books.jpg';
 
 const About = () => {
+  const [researchAreaImages, setResearchAreaImages] = useState({
+    'research-area-1': lawBooks,
+    'research-area-2': lawBooks,
+    'research-area-3': academicBuilding,
+  });
+  const [storyImageUrl, setStoryImageUrl] = useState(academicBuilding);
+
+  // Load dynamic images on component mount
+  useEffect(() => {
+    loadDynamicImages();
+  }, []);
+
+  const loadDynamicImages = async () => {
+    try {
+      // Load story image
+      const storyUrl = await DynamicImageService.getImageUrlWithFallback('about-story');
+      setStoryImageUrl(storyUrl);
+
+      // Load research area images
+      const researchArea1Url = await DynamicImageService.getImageUrlWithFallback('research-area-1');
+      const researchArea2Url = await DynamicImageService.getImageUrlWithFallback('research-area-2');
+      const researchArea3Url = await DynamicImageService.getImageUrlWithFallback('research-area-3');
+
+      setResearchAreaImages({
+        'research-area-1': researchArea1Url,
+        'research-area-2': researchArea2Url,
+        'research-area-3': researchArea3Url,
+      });
+    } catch (error) {
+      console.error('Error loading dynamic images:', error);
+      // Keep default images if loading fails
+    }
+  };
+
   return (
     <div className="min-h-screen py-12">
       <div className="academic-container">
@@ -72,7 +108,7 @@ const About = () => {
           </div>
           <div>
             <img
-              src={academicBuilding}
+              src={storyImageUrl}
               alt="CILG Building"
               className="rounded-lg shadow-lg w-full"
             />
@@ -116,58 +152,100 @@ const About = () => {
           </div>
         </div>
 
-        {/* Research Areas */}
-        <div className="mb-20">
-          <h2 className="academic-heading text-3xl text-center mb-12">Research Focus Areas</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                title: 'International Criminal Justice',
-                description: 'Examining accountability mechanisms and justice processes in international crimes.',
-                image: lawBooks
-              },
-              {
-                title: 'Climate Governance',
-                description: 'Legal frameworks for addressing environmental challenges and climate change.',
-                image: academicBuilding
-              },
-              {
-                title: 'Human Rights Protection',
-                description: 'Contemporary challenges in human rights law and implementation.',
-                image: lawBooks
-              },
-              {
-                title: 'Trade & Economic Law',
-                description: 'International economic governance and trade regulation mechanisms.',
-                image: academicBuilding
-              },
-              {
-                title: 'Digital Governance',
-                description: 'Legal challenges in cyberspace and digital rights protection.',
-                image: lawBooks
-              },
-              {
-                title: 'Conflict Resolution',
-                description: 'International dispute resolution and peacebuilding through law.',
-                image: academicBuilding
-              }
-            ].map((area, index) => (
-              <div key={index} className="academic-card overflow-hidden group">
-                <div className="aspect-video overflow-hidden">
-                  <img
-                    src={area.image}
-                    alt={area.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <div className="p-6">
+        {/* Research Areas - Same as Home page */}
+        <section className="py-16">
+          <div className="academic-container">
+            <div className="text-center mb-12">
+              <h2 className="academic-heading text-3xl md:text-4xl mb-4">Research Areas</h2>
+              <p className="academic-text text-lg max-w-2xl mx-auto">
+                Our research spans across multiple disciplines within international law and governance
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[
+                {
+                  title: 'International Criminal Law',
+                  description: 'Exploring justice mechanisms and accountability in international crimes',
+                  image: researchAreaImages['research-area-1'],
+                },
+                {
+                  title: 'Human Rights Law',
+                  description: 'Contemporary issues in human rights protection and implementation',
+                  image: researchAreaImages['research-area-2'],
+                },
+                {
+                  title: 'Conflict Resolution',
+                  description: 'Legal approaches to international dispute resolution and peacebuilding',
+                  image: researchAreaImages['research-area-3'],
+                },
+              ].map((area, index) => (
+                <div key={index} className="academic-card p-6 group hover:shadow-lg transition-shadow duration-300">
+                  <div className="aspect-video relative overflow-hidden rounded-lg mb-4">
+                    <img
+                      src={area.image}
+                      alt={area.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
                   <h3 className="academic-heading text-xl mb-3">{area.title}</h3>
                   <p className="academic-text">{area.description}</p>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        </section>
+
+        {/* Brochure Section */}
+        <section className="py-16 bg-muted/30">
+          <div className="academic-container">
+            <div className="text-center mb-12">
+              <h2 className="academic-heading text-3xl md:text-4xl mb-4">Our Brochure</h2>
+              <p className="academic-text text-lg max-w-2xl mx-auto">
+                Download our comprehensive brochure to learn more about our programs, research initiatives, and academic excellence
+              </p>
+            </div>
+            
+                         <div className="max-w-4xl mx-auto">
+               <div className="academic-card p-8 text-center">
+                
+                <div className="bg-background rounded-lg border border-border p-6 mb-6">
+                  <iframe
+                    src="https://drive.google.com/file/d/1Cuu0cqRsHZJLd6zqsCZN_QmCh626oioU/preview"
+                    width="100%"
+                    height="600"
+                    className="rounded-lg shadow-lg"
+                    title="CILG Brochure"
+                    allow="autoplay"
+                  ></iframe>
+                </div>
+                
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <a
+                    href="https://drive.google.com/file/d/1Cuu0cqRsHZJLd6zqsCZN_QmCh626oioU/view"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors font-medium"
+                  >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    View in Google Drive
+                  </a>
+                  <a
+                    href="https://drive.google.com/uc?export=download&id=1Cuu0cqRsHZJLd6zqsCZN_QmCh626oioU"
+                    className="inline-flex items-center justify-center px-6 py-3 border border-border text-foreground rounded-md hover:bg-muted/50 transition-colors font-medium"
+                  >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Download PDF
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* Call to Action */}
         <div className="text-center bg-muted/30 rounded-lg p-12">

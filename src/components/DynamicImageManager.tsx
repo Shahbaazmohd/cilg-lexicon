@@ -119,6 +119,7 @@ const DynamicImageManager = () => {
     const pageCategories: Record<string, string> = {
       'hero': 'Home Page',
       'about': 'Home Page',
+      'about-story': 'About Page',
       'research-area-1': 'Home Page',
       'research-area-2': 'Home Page',
       'research-area-3': 'Home Page',
@@ -130,6 +131,7 @@ const DynamicImageManager = () => {
     const descriptions: Record<string, string> = {
       'hero': 'Main hero image at the top of the homepage',
       'about': 'Image in the about section',
+      'about-story': 'Image in the Our Story section of the About page',
       'research-area-1': 'International Criminal Law section',
       'research-area-2': 'Human Rights Law section',
       'research-area-3': 'Conflict Resolution section',

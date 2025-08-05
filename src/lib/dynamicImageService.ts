@@ -190,6 +190,7 @@ export class DynamicImageService {
     const fallbackImages: Record<string, string> = {
       'hero': '/src/assets/hero-image.jpg',
       'about': '/src/assets/academic-building.jpg',
+      'about-story': '/src/assets/academic-building.jpg',
       'research-area-1': '/src/assets/law-books.jpg',
       'research-area-2': '/src/assets/law-books.jpg',
       'research-area-3': '/src/assets/academic-building.jpg',

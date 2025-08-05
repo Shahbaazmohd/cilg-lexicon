@@ -12,7 +12,11 @@ import {
   Image
 } from 'lucide-react';
 
-const AdminSidebar = () => {
+interface AdminSidebarProps {
+  onLogout?: () => void;
+}
+
+const AdminSidebar = ({ onLogout }: AdminSidebarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -29,8 +33,13 @@ const AdminSidebar = () => {
   const isActive = (path: string) => location.pathname === path;
 
   const handleLogout = () => {
-    localStorage.removeItem('adminLoggedIn');
-    navigate('/admin/login');
+    if (onLogout) {
+      onLogout();
+    } else {
+      // Fallback logout if no onLogout prop provided
+      localStorage.removeItem('adminLoggedIn');
+      navigate('/admin/login');
+    }
   };
 
   return (

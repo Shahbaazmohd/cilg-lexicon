@@ -224,6 +224,52 @@ All colors MUST be HSL.
   background: hsl(var(--foreground));
 }
 
+/* Modern hero section utilities */
+.inset-shadow-2xs {
+  box-shadow: inset 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+.dark .inset-shadow-white\/20 {
+  box-shadow: inset 0 1px 2px 0 rgb(255 255 255 / 0.2);
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Modern navbar animations */
+.in-data-\[state\=active\]\:rotate-180 {
+  transform: rotate(180deg);
+}
+
+.group-data-\[state\=active\]\:scale-0 {
+  transform: scale(0);
+}
+
+.group-data-\[state\=active\]\:opacity-0 {
+  opacity: 0;
+}
+
+.group-data-\[state\=active\]\:rotate-0 {
+  transform: rotate(0deg);
+}
+
+.group-data-\[state\=active\]\:scale-100 {
+  transform: scale(1);
+}
+
+.group-data-\[state\=active\]\:opacity-100 {
+  opacity: 1;
+}
+
+.group-data-\[state\=active\]\:block {
+  display: block;
+}
+
+.group-data-\[state\=active\]\:flex {
+  display: flex;
+}
+
 /* Mobile navbar improvements */
 @media (max-width: 1024px) {
   .mobile-dropdown-enter {
@@ -266,5 +312,75 @@ All colors MUST be HSL.
   .mobile-menu-scroll {
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
+  }
+  
+  /* Mobile menu optimizations */
+  [data-mobile-menu] {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+  
+  /* Larger touch targets for mobile */
+  [data-mobile-menu] button,
+  [data-mobile-menu] a {
+    min-height: 44px;
+    min-width: 44px;
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Prevent zoom on input focus */
+  [data-mobile-menu] input,
+  [data-mobile-menu] textarea {
+    font-size: 16px;
+  }
+  
+  /* Smooth mobile animations */
+  [data-mobile-menu] {
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  
+  /* Better mobile button spacing */
+  [data-mobile-menu] .space-y-6 > li {
+    padding: 8px 0;
+  }
+  
+  /* Mobile dropdown improvements */
+  [data-mobile-menu] .space-y-3 > a {
+    padding: 12px 0;
+    font-size: 16px;
+  }
+}
+
+/* Fixed navbar spacing */
+body {
+  padding-top: 0; /* Remove any default body padding */
+}
+
+/* Ensure main content doesn't overlap with fixed navbar */
+main {
+  padding-top: 0; /* Let individual pages handle their own top spacing */
+}
+
+/* Fixed navbar optimizations */
+.fixed-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Ensure proper spacing for pages with fixed navbar */
+.page-with-fixed-navbar {
+  padding-top: 80px; /* Adjust based on navbar height */
+}
+
+@media (max-width: 768px) {
+  .page-with-fixed-navbar {
+    padding-top: 70px; /* Slightly less padding on mobile */
   }
 }

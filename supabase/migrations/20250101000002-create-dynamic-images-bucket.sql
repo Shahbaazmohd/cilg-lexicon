@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS dynamic_images (
 INSERT INTO dynamic_images (name, display_name, description, position) VALUES
   ('hero_image', 'Hero Image', 'Main hero image displayed at the top of the homepage', 'hero'),
   ('about_image', 'About Section Image', 'Image displayed in the about section', 'about'),
+  ('about_story_image', 'About Story Image', 'Image displayed in the Our Story section of the About page', 'about-story'),
   ('research_area_1', 'Research Area 1', 'Image for International Criminal Law section', 'research-area-1'),
   ('research_area_2', 'Research Area 2', 'Image for Human Rights Law section', 'research-area-2'),
   ('research_area_3', 'Research Area 3', 'Image for Conflict Resolution section', 'research-area-3');
