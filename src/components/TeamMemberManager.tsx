@@ -76,24 +76,21 @@ export default function TeamMemberManager({ className = "" }: TeamMemberManagerP
     e.preventDefault();
     
     try {
-      // Here you would typically save to Supabase
-      // For now, we'll just update the local state
-      const newMember: TeamMember = {
-        id: editingMember?.id || `temp-${Date.now()}`,
-        ...formData,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      };
-
       if (editingMember) {
         // Update existing member
-        setTeamMembers(prev => prev.map(m => m.id === editingMember.id ? newMember : m));
+        const updatedMember = await TeamService.updateTeamMember(editingMember.id, formData);
+        if (updatedMember) {
+          setTeamMembers(prev => prev.map(m => m.id === editingMember.id ? updatedMember : m));
+          resetForm();
+        }
       } else {
         // Add new member
-        setTeamMembers(prev => [...prev, newMember]);
+        const newMember = await TeamService.createTeamMember(formData);
+        if (newMember) {
+          setTeamMembers(prev => [...prev, newMember]);
+          resetForm();
+        }
       }
-
-      resetForm();
     } catch (error) {
       console.error('Error saving team member:', error);
     }
@@ -201,6 +198,19 @@ export default function TeamMemberManager({ className = "" }: TeamMemberManagerP
       ...prev,
       awards: prev.awards.filter((_, i) => i !== index)
     }));
+  };
+
+  const handleDelete = async (memberId: string) => {
+    if (window.confirm('Are you sure you want to delete this team member?')) {
+      try {
+        const success = await TeamService.deleteTeamMember(memberId);
+        if (success) {
+          setTeamMembers(prev => prev.filter(m => m.id !== memberId));
+        }
+      } catch (error) {
+        console.error('Error deleting team member:', error);
+      }
+    }
   };
 
   if (loading) {
@@ -421,6 +431,14 @@ export default function TeamMemberManager({ className = "" }: TeamMemberManagerP
                     onClick={() => handleEdit(member)}
                   >
                     <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => handleDelete(member.id)}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               </div>

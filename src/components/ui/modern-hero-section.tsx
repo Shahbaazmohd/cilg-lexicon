@@ -41,7 +41,7 @@ export function ModernHeroSection({ heroImageUrl, stats }: ModernHeroSectionProp
                 <div className="h-[80rem] -translate-y-[350px] absolute left-0 top-0 w-56 -rotate-45 bg-[radial-gradient(50%_50%_at_50%_50%,hsla(0,0%,85%,.04)_0,hsla(0,0%,45%,.02)_80%,transparent_100%)]" />
             </div>
             <section>
-                <div className="relative pt-16 md:pt-24">
+                <div className="relative pt-8 md:pt-12">
                     <AnimatedGroup
                         variants={{
                             container: {

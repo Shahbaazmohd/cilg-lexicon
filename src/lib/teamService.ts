@@ -161,4 +161,78 @@ export class TeamService {
     };
     return displayNames[category] || category;
   }
+
+  // Create new team member
+  static async createTeamMember(member: Omit<TeamMember, 'id' | 'created_at' | 'updated_at'>): Promise<TeamMember | null> {
+    try {
+      const newMember = {
+        ...member,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
+      const { data, error } = await supabase
+        .from('team_members')
+        .insert([newMember])
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error creating team member:', error);
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Error in createTeamMember:', error);
+      return null;
+    }
+  }
+
+  // Update existing team member
+  static async updateTeamMember(id: string, updates: Partial<TeamMember>): Promise<TeamMember | null> {
+    try {
+      const updateData = {
+        ...updates,
+        updated_at: new Date().toISOString()
+      };
+
+      const { data, error } = await supabase
+        .from('team_members')
+        .update(updateData)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error updating team member:', error);
+        return null;
+      }
+
+      return data;
+    } catch (error) {
+      console.error('Error in updateTeamMember:', error);
+      return null;
+    }
+  }
+
+  // Delete team member (soft delete by setting is_active to false)
+  static async deleteTeamMember(id: string): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('team_members')
+        .update({ is_active: false, updated_at: new Date().toISOString() })
+        .eq('id', id);
+
+      if (error) {
+        console.error('Error deleting team member:', error);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error in deleteTeamMember:', error);
+      return false;
+    }
+  }
 } 

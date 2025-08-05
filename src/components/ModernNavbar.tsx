@@ -13,8 +13,7 @@ const navigation = [
     hasDropdown: true,
     subItems: [
       { name: 'Blog Posts', href: '/blog' },
-      { name: 'About the Blog', href: '/blog/about' },
-      { name: 'CILG Blog', href: '/blog/cilg' }
+      { name: 'About the Blog', href: '/blog/about' }
     ]
   },
   { 
@@ -79,30 +78,45 @@ const ModernNavbar = () => {
     setOpenDropdown(null);
   }, [location.pathname]);
 
-  // Close mobile menu when clicking outside
+  // Close dropdowns and mobile menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
       const mobileMenu = document.querySelector('[data-mobile-menu]');
       const hamburgerButton = document.querySelector('[data-hamburger-button]');
+      const dropdownRefs = document.querySelectorAll('[data-dropdown]');
       
-      if (mobileMenu && !mobileMenu.contains(target) && 
+      // Check if click is outside mobile menu
+      if (menuState && mobileMenu && !mobileMenu.contains(target) && 
           hamburgerButton && !hamburgerButton.contains(target)) {
         setMenuState(false);
         setOpenDropdown(null);
       }
+      
+      // Check if click is outside desktop dropdowns
+      if (openDropdown && dropdownRefs.length > 0) {
+        let clickedInsideDropdown = false;
+        dropdownRefs.forEach(dropdown => {
+          if (dropdown.contains(target)) {
+            clickedInsideDropdown = true;
+          }
+        });
+        
+        if (!clickedInsideDropdown) {
+          setOpenDropdown(null);
+        }
+      }
     };
 
-    if (menuState) {
-      document.addEventListener('mousedown', handleClickOutside);
-      document.addEventListener('touchstart', handleClickOutside);
-    }
+    // Always listen for clicks outside, not just when mobile menu is open
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('touchstart', handleClickOutside);
     };
-  }, [menuState]);
+  }, [menuState, openDropdown]);
 
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
@@ -216,7 +230,7 @@ const ModernNavbar = () => {
                           />
                         </button>
                         {openDropdown === item.name && (
-                          <div className="absolute top-full left-0 mt-2 w-48 bg-background border border-border rounded-lg shadow-lg py-2 z-50">
+                          <div data-dropdown className="absolute top-full left-0 mt-2 w-48 bg-background border border-border rounded-lg shadow-lg py-2 z-50">
                             {item.subItems.map((subItem, subIndex) => (
                               <Link
                                 key={subIndex}
