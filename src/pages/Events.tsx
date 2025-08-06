@@ -29,13 +29,13 @@ const Events = () => {
   const [events] = useState<Event[]>([
     {
       id: '1',
-      title: 'International Law Conference 2024: Digital Rights and Governance',
+      title: 'Inaugural Lecture',
       type: 'conference',
       date: '2024-03-15',
       time: '09:00 AM - 05:00 PM',
       location: 'University Auditorium',
       isVirtual: false,
-      description: 'A comprehensive conference exploring the intersection of digital technologies and international law, featuring leading experts from academia and practice.',
+      description: 'The Centre for International Law and Governance (CILG), previously International Economic Law and International Relations Cell (IEL&IRC), marked its inception with a landmark event on 4th November 2022, successfully conducting its inaugural lecture featuring Prof. (Retd.) Abhijit Das—renowned trade expert and former Head of the Centre for WTO Studies—as the Guest of Honour and Keynote Speaker. Held as part of the webinar themed “The Changing Paradigms of International Law in the New Global Order”, the lecture offered a thought-provoking examination of how shifts in global economic and political dynamics are reshaping the landscape of international trade and law. ',
       speakers: ['Prof. Sarah Johnson', 'Dr. Michael Chen', 'Hon. Justice Williams'],
       registrationUrl: '#',
       capacity: 200,
@@ -45,13 +45,13 @@ const Events = () => {
     },
     {
       id: '2',
-      title: 'Climate Justice Workshop: Legal Frameworks for Action',
+      title: 'GUEST LECTURE & WORKSHOP',
       type: 'workshop',
       date: '2024-02-28',
       time: '02:00 PM - 04:00 PM',
       location: 'Online',
       isVirtual: true,
-      description: 'An interactive workshop examining legal mechanisms for addressing climate change and environmental justice issues.',
+      description: 'The USLLS Centre for International Law Governance (previously) International Economic Law & International Relations Cell (IEL&IRC) was pleased to host a prestigious Guest Lecture cum Workshop on May 3, 2024, centred around the theme "WTO and Dispute Settlement". The session was led by Ms. Vishakha Srivastava, Senior Research Fellow (Legal) at the Centre for WTO Studies, Ministry of Commerce, Government of India. With her extensive experience in the field of international trade law, Ms. Srivastava provided an in-depth analysis of the institutional framework and functioning of the World Trade Organization (WTO), particularly focusing on its pivotal dispute settlement mechanism.',
       speakers: ['Dr. Emma Rodriguez', 'Prof. David Kim'],
       registrationUrl: '#',
       capacity: 50,
@@ -61,13 +61,13 @@ const Events = () => {
     },
     {
       id: '3',
-      title: 'Guest Lecture: International Criminal Justice in the 21st Century',
+      title: 'PANEL DISCUSSION',
       type: 'lecture',
       date: '2024-02-20',
       time: '03:30 PM - 05:00 PM',
       location: 'Law Faculty Building, Room 301',
       isVirtual: false,
-      description: 'Distinguished guest lecture by a former ICC prosecutor on the evolution and challenges of international criminal justice.',
+      description: 'Continuing its endeavour to engage students in contemporary global issues, the USLLS CILG organized an impactful Panel Discussion on the topic “Impact of the Russia-Ukraine War on International Trade & Policy” on Thursday, 21st September 2023. The event featured two eminent experts in the field of international trade and law—Mr. Gautam Shahi, Partner at Dua Associates, and Mr. Ajinkya Gunjan Mishra, Partner at S&R Associates—who brought to the table their vast knowledge and professional insights. Held at the Moot Court Hall, USLLS, the discussion aimed to unravel the multifaceted implications of the ongoing geopolitical conflict on international trade dynamics, economic sanctions, global supply chains, and policy-making processes.',
       speakers: ['Hon. Fatou Bensouda'],
       registrationUrl: '#',
       image: '/lovable-uploads/79b917eb-f9ca-4687-b317-cab1aa5e5968.png',
@@ -75,30 +75,30 @@ const Events = () => {
     },
     {
       id: '4',
-      title: 'Research Seminar: Trade Law and Economic Sanctions',
+      title: 'declamation comp',
       type: 'seminar',
       date: '2024-01-30',
       time: '11:00 AM - 12:30 PM',
       location: 'Conference Room A',
       isVirtual: false,
-      description: 'Faculty research seminar discussing recent developments in international trade law and the use of economic sanctions.',
+      description: 'In its continued mission to promote scholarly dialogue and student engagement in emerging areas of international economic law and diplomacy, the USLLS Centre for International Law and Governance was thrilled to launch the first on-campus event of the September season: a Declamation Competition on the compelling theme India and its Bargaining Power under the Free Trade Agreement: Understanding the Influence of Non-Tariff Barriers in International Trade ',
       speakers: ['Prof. Michael Chen', 'Dr. Sarah Johnson'],
       image: '/lovable-uploads/79b917eb-f9ca-4687-b317-cab1aa5e5968.png',
       status: 'past'
     },
-    {
-      id: '5',
-      title: 'PhD Defense: Human Rights in Digital Spaces',
-      type: 'seminar',
-      date: '2024-01-15',
-      time: '10:00 AM - 12:00 PM',
-      location: 'Graduate School Auditorium',
-      isVirtual: false,
-      description: 'PhD dissertation defense examining the protection of human rights in digital environments.',
-      speakers: ['Lisa Thompson (Candidate)', 'Prof. Emma Rodriguez (Supervisor)'],
-      image: '/lovable-uploads/79b917eb-f9ca-4687-b317-cab1aa5e5968.png',
-      status: 'past'
-    }
+    // {
+    //   id: '5',
+    //   title: 'PhD Defense: Human Rights in Digital Spaces',
+    //   type: 'seminar',
+    //   date: '2024-01-15',
+    //   time: '10:00 AM - 12:00 PM',
+    //   location: 'Graduate School Auditorium',
+    //   isVirtual: false,
+    //   description: 'PhD dissertation defense examining the protection of human rights in digital environments.',
+    //   speakers: ['Lisa Thompson (Candidate)', 'Prof. Emma Rodriguez (Supervisor)'],
+    //   image: '/lovable-uploads/79b917eb-f9ca-4687-b317-cab1aa5e5968.png',
+    //   status: 'past'
+    // }
   ]);
 
   const eventTypes = ['all', 'conference', 'workshop', 'lecture', 'seminar', 'webinar'];
