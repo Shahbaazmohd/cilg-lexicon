@@ -9,7 +9,9 @@ import {
   BarChart3,
   LogOut,
   Users,
-  Image
+  Image,
+  Calendar,
+  Bell
 } from 'lucide-react';
 
 interface AdminSidebarProps {
@@ -28,6 +30,8 @@ const AdminSidebar = ({ onLogout }: AdminSidebarProps) => {
     { name: 'Featured Blogs', href: '/admin/featured', icon: Star },
     { name: 'Team Management', href: '/admin/team', icon: Users },
     { name: 'Image Management', href: '/admin/images', icon: Image },
+    { name: 'Event Management', href: '/admin/events', icon: Calendar },
+    { name: 'Notice Management', href: '/admin/notices', icon: Bell },
     { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
   ];
 

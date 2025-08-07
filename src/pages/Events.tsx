@@ -1,32 +1,46 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Calendar, Clock, MapPin, Users, ExternalLink, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Event, EventService } from '@/lib/eventService';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useScrollToTop } from '@/hooks/useScrollToTop';
+import NoticesSection from '@/components/NoticesSection';
 
-interface Event {
-  id: string;
-  title: string;
-  type: 'conference' | 'workshop' | 'lecture' | 'seminar' | 'webinar';
-  date: string;
-  time: string;
-  location: string;
-  isVirtual: boolean;
-  description: string;
-  speakers: string[];
-  registrationUrl?: string;
-  capacity?: number;
-  registered?: number;
-  image: string;
-  status: 'upcoming' | 'ongoing' | 'past';
-}
+// Event interface is now imported from eventService.ts
 
 const Events = () => {
   const [filterType, setFilterType] = useState<string>('all');
-  const [filterStatus, setFilterStatus] = useState<string>('upcoming');
+  const [filterStatus, setFilterStatus] = useState<string>('all');
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Scroll to top when page loads
+  useScrollToTop();
 
-  const [events] = useState<Event[]>([
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        setLoading(true);
+        const eventsData = await EventService.getAllEvents();
+        setEvents(eventsData);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching events:', err);
+        setError('Failed to load events. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
+  // Fallback events for development/testing - will be removed when database is populated
+  const fallbackEvents: Event[] = [
     {
       id: '1',
       title: 'Inaugural Lecture',
@@ -35,7 +49,7 @@ const Events = () => {
       time: '09:00 AM - 05:00 PM',
       location: 'University Auditorium',
       isVirtual: false,
-      description: 'The Centre for International Law and Governance (CILG), previously International Economic Law and International Relations Cell (IEL&IRC), marked its inception with a landmark event on 4th November 2022, successfully conducting its inaugural lecture featuring Prof. (Retd.) Abhijit Das—renowned trade expert and former Head of the Centre for WTO Studies—as the Guest of Honour and Keynote Speaker. Held as part of the webinar themed “The Changing Paradigms of International Law in the New Global Order”, the lecture offered a thought-provoking examination of how shifts in global economic and political dynamics are reshaping the landscape of international trade and law. ',
+      description: 'The Centre for International Law and Governance (CILG), previously International Economic Law and International Relations Cell (IEL&IRC), marked its inception with a landmark event on 4th November 2022, successfully conducting its inaugural lecture featuring Prof. (Retd.) Abhijit Das—renowned trade expert and former Head of the Centre for WTO Studies—as the Guest of Honour and Keynote Speaker. Held as part of the webinar themed "The Changing Paradigms of International Law in the New Global Order", the lecture offered a thought-provoking examination of how shifts in global economic and political dynamics are reshaping the landscape of international trade and law. ',
       speakers: ['Prof. Sarah Johnson', 'Dr. Michael Chen', 'Hon. Justice Williams'],
       registrationUrl: '#',
       capacity: 200,
@@ -67,7 +81,7 @@ const Events = () => {
       time: '03:30 PM - 05:00 PM',
       location: 'Law Faculty Building, Room 301',
       isVirtual: false,
-      description: 'Continuing its endeavour to engage students in contemporary global issues, the USLLS CILG organized an impactful Panel Discussion on the topic “Impact of the Russia-Ukraine War on International Trade & Policy” on Thursday, 21st September 2023. The event featured two eminent experts in the field of international trade and law—Mr. Gautam Shahi, Partner at Dua Associates, and Mr. Ajinkya Gunjan Mishra, Partner at S&R Associates—who brought to the table their vast knowledge and professional insights. Held at the Moot Court Hall, USLLS, the discussion aimed to unravel the multifaceted implications of the ongoing geopolitical conflict on international trade dynamics, economic sanctions, global supply chains, and policy-making processes.',
+      description: 'Continuing its endeavour to engage students in contemporary global issues, the USLLS CILG organized an impactful Panel Discussion on the topic "Impact of the Russia-Ukraine War on International Trade & Policy" on Thursday, 21st September 2023. The event featured two eminent experts in the field of international trade and law—Mr. Gautam Shahi, Partner at Dua Associates, and Mr. Ajinkya Gunjan Mishra, Partner at S&R Associates—who brought to the table their vast knowledge and professional insights. Held at the Moot Court Hall, USLLS, the discussion aimed to unravel the multifaceted implications of the ongoing geopolitical conflict on international trade dynamics, economic sanctions, global supply chains, and policy-making processes.',
       speakers: ['Hon. Fatou Bensouda'],
       registrationUrl: '#',
       image: '/lovable-uploads/79b917eb-f9ca-4687-b317-cab1aa5e5968.png',
@@ -86,28 +100,25 @@ const Events = () => {
       image: '/lovable-uploads/79b917eb-f9ca-4687-b317-cab1aa5e5968.png',
       status: 'past'
     },
-    // {
-    //   id: '5',
-    //   title: 'PhD Defense: Human Rights in Digital Spaces',
-    //   type: 'seminar',
-    //   date: '2024-01-15',
-    //   time: '10:00 AM - 12:00 PM',
-    //   location: 'Graduate School Auditorium',
-    //   isVirtual: false,
-    //   description: 'PhD dissertation defense examining the protection of human rights in digital environments.',
-    //   speakers: ['Lisa Thompson (Candidate)', 'Prof. Emma Rodriguez (Supervisor)'],
-    //   image: '/lovable-uploads/79b917eb-f9ca-4687-b317-cab1aa5e5968.png',
-    //   status: 'past'
-    // }
-  ]);
+  ];
+  
+  // Use fallback events if no events are loaded from the database
+  const displayEvents = events.length > 0 ? events : fallbackEvents;
 
   const eventTypes = ['all', 'conference', 'workshop', 'lecture', 'seminar', 'webinar'];
-  const eventStatuses = ['upcoming', 'past'];
+  const eventStatuses = ['all', 'upcoming', 'past'];
 
-  const filteredEvents = events.filter(event => {
+  const filteredEvents = displayEvents.filter(event => {
     const matchesType = filterType === 'all' || event.type === filterType;
-    const matchesStatus = event.status === filterStatus;
+    const matchesStatus = filterStatus === 'all' || event.status === filterStatus;
     return matchesType && matchesStatus;
+  });
+
+  // Sort events to show featured events first
+  const sortedEvents = [...filteredEvents].sort((a, b) => {
+    if (a.featured && !b.featured) return -1;
+    if (!a.featured && b.featured) return 1;
+    return new Date(b.date).getTime() - new Date(a.date).getTime();
   });
 
   const getEventTypeColor = (type: string) => {
@@ -167,104 +178,155 @@ const Events = () => {
           </Select>
         </div>
 
+        {/* Loading State */}
+        {loading && (
+          <div className="space-y-6">
+            {[1, 2, 3].map((i) => (
+              <Card key={i} className="overflow-hidden">
+                <div className="md:flex">
+                  <div className="md:w-1/3">
+                    <Skeleton className="w-full h-48 md:h-full" />
+                  </div>
+                  <div className="md:w-2/3 p-6">
+                    <div className="space-y-4">
+                      <Skeleton className="h-6 w-24" />
+                      <Skeleton className="h-8 w-3/4" />
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-full" />
+                      </div>
+                      <Skeleton className="h-24 w-full" />
+                      <div className="flex gap-2">
+                        <Skeleton className="h-8 w-24" />
+                        <Skeleton className="h-8 w-24" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && !loading && (
+          <div className="text-center py-12">
+            <h3 className="academic-heading text-xl mb-4 text-red-600">{error}</h3>
+            <Button onClick={() => window.location.reload()}>Retry</Button>
+          </div>
+        )}
+
         {/* Events List */}
-        <div className="space-y-6">
-          {filteredEvents.map((event) => (
-            <Card key={event.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
-              <div className="md:flex">
-                <div className="md:w-1/3">
-                  <img
-                    src={event.image}
-                    alt={event.title}
-                    className="w-full h-48 md:h-full object-cover"
-                  />
-                </div>
-                <div className="md:w-2/3 p-6">
-                  <CardHeader className="p-0 mb-4">
-                    <div className="flex items-start justify-between mb-2">
-                      <Badge className={getEventTypeColor(event.type)}>
-                        {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
-                      </Badge>
-                      {event.isVirtual && (
-                        <Badge variant="outline">Virtual</Badge>
-                      )}
-                    </div>
-                    <CardTitle className="text-xl md:text-2xl leading-tight">
-                      {event.title}
-                    </CardTitle>
-                  </CardHeader>
-
-                  <CardContent className="p-0">
-                    {/* Event Details */}
-                    <div className="grid md:grid-cols-2 gap-4 mb-4">
-                      <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                        <Calendar className="h-4 w-4" />
-                        <span>{new Date(event.date).toLocaleDateString('en-US', {
-                          weekday: 'long',
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
-                        })}</span>
-                      </div>
-                      <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                        <Clock className="h-4 w-4" />
-                        <span>{event.time}</span>
-                      </div>
-                      <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                        <MapPin className="h-4 w-4" />
-                        <span>{event.location}</span>
-                      </div>
-                      {event.capacity && (
-                        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                          <Users className="h-4 w-4" />
-                          <span>{event.registered || 0} / {event.capacity} registered</span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Description */}
-                    <p className="academic-text mb-4">
-                      {event.description}
-                    </p>
-
-                    {/* Speakers */}
-                    <div className="mb-4">
-                      <h4 className="font-semibold text-sm mb-2">Speakers:</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {event.speakers.map((speaker, index) => (
-                          <Badge key={index} variant="secondary">
-                            {speaker}
+        {!loading && !error && (
+          <div className="space-y-6">
+            {sortedEvents.map((event) => (
+              <Card key={event.id} className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                <div className="md:flex">
+                  <div className="md:w-1/3">
+                    <img
+                      src={event.image || EventService.getFallbackEventImage()}
+                      alt={event.title}
+                      className="w-full h-48 md:h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = EventService.getFallbackEventImage();
+                      }}
+                    />
+                  </div>
+                  <div className="md:w-2/3 p-6">
+                    <CardHeader className="p-0 mb-4">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex items-center space-x-2">
+                          <Badge className={getEventTypeColor(event.type)}>
+                            {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
                           </Badge>
-                        ))}
+                          {event.featured && (
+                            <Badge variant="outline" className="text-yellow-600 border-yellow-600">
+                              Featured
+                            </Badge>
+                          )}
+                        </div>
+                        {event.isVirtual && (
+                          <Badge variant="outline">Virtual</Badge>
+                        )}
                       </div>
-                    </div>
+                      <CardTitle className="text-xl md:text-2xl leading-tight">
+                        {event.title}
+                      </CardTitle>
+                    </CardHeader>
 
-                    {/* Actions */}
-                    <div className="flex flex-wrap gap-3">
-                      {event.status === 'upcoming' && event.registrationUrl && (
-                        <Button asChild>
-                          <a href={event.registrationUrl} className="flex items-center space-x-2">
-                            <span>Register Now</span>
-                            <ExternalLink className="h-4 w-4" />
-                          </a>
+                    <CardContent className="p-0">
+                      {/* Event Details */}
+                      <div className="grid md:grid-cols-2 gap-4 mb-4">
+                        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                          <Calendar className="h-4 w-4" />
+                          <span>{new Date(event.date).toLocaleDateString('en-US', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}</span>
+                        </div>
+                        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                          <Clock className="h-4 w-4" />
+                          <span>{event.time}</span>
+                        </div>
+                        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                          <MapPin className="h-4 w-4" />
+                          <span>{event.location}</span>
+                        </div>
+                        {event.capacity && (
+                          <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                            <Users className="h-4 w-4" />
+                            <span>{event.registered || 0} / {event.capacity} registered</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Description */}
+                      <p className="academic-text mb-4">
+                        {event.description}
+                      </p>
+
+                      {/* Speakers */}
+                      <div className="mb-4">
+                        <h4 className="font-semibold text-sm mb-2">Speakers:</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {event.speakers.map((speaker, index) => (
+                            <Badge key={index} variant="secondary">
+                              {speaker}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="flex flex-wrap gap-3">
+                        {event.status === 'upcoming' && event.registrationUrl && (
+                          <Button asChild>
+                            <a href={event.registrationUrl} className="flex items-center space-x-2">
+                              <span>Register Now</span>
+                              <ExternalLink className="h-4 w-4" />
+                            </a>
+                          </Button>
+                        )}
+                        <Button variant="outline" size="sm">
+                          View Details
                         </Button>
-                      )}
-                      <Button variant="outline" size="sm">
-                        View Details
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        Share Event
-                      </Button>
-                    </div>
-                  </CardContent>
+                        <Button variant="ghost" size="sm">
+                          Share Event
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </div>
                 </div>
-              </div>
-            </Card>
-          ))}
-        </div>
+              </Card>
+            ))}
+          </div>
+        )}
 
         {/* No Events Message */}
-        {filteredEvents.length === 0 && (
+        {!loading && !error && sortedEvents.length === 0 && (
           <div className="text-center py-12">
             <h3 className="academic-heading text-xl mb-4">No events found</h3>
             <p className="academic-text mb-6">
@@ -276,21 +338,9 @@ const Events = () => {
           </div>
         )}
 
-        {/* Call to Action */}
-        <div className="mt-16 text-center bg-muted/30 rounded-lg p-12">
-          <h2 className="academic-heading text-3xl mb-4">Stay Updated</h2>
-          <p className="academic-text text-lg mb-8 max-w-2xl mx-auto">
-            Subscribe to our newsletter to receive notifications about upcoming events, 
-            conferences, and academic opportunities.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg">
-              Subscribe to Newsletter
-            </Button>
-            <Button variant="outline" size="lg">
-              View Past Events
-            </Button>
-          </div>
+        {/* Notices Section */}
+        <div className="mt-16">
+          <NoticesSection />
         </div>
       </div>
     </div>
