@@ -36,21 +36,21 @@ const EmailTest = () => {
   return (
     <div className="max-w-2xl mx-auto p-6">
       <Card>
-        <CardHeader>
+          <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Mail className="h-5 w-5" />
             Email Service Test
           </CardTitle>
-          <CardDescription>
+            <CardDescription>
             Test the email service functionality to ensure all email notifications are working correctly.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <Button 
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+              <Button
             onClick={handleTestEmailService} 
-            disabled={isTesting}
-            className="w-full"
-          >
+                disabled={isTesting}
+                className="w-full"
+              >
             {isTesting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -62,7 +62,7 @@ const EmailTest = () => {
                 Test Email Service
               </>
             )}
-          </Button>
+              </Button>
 
           {error && (
             <Alert variant="destructive">
@@ -94,7 +94,7 @@ const EmailTest = () => {
                   {getStatusIcon(results.rejection)}
                   <span>Rejection Notification</span>
                 </div>
-              </div>
+        </div>
 
               {results.error && (
                 <Alert variant="destructive">
@@ -107,8 +107,8 @@ const EmailTest = () => {
               <div className="text-sm text-gray-600">
                 <p><strong>Note:</strong> This test sends actual emails to test@example.com.</p>
                 <p>Check the browser console for detailed logs.</p>
-              </div>
-            </div>
+        </div>
+      </div>
           )}
         </CardContent>
       </Card>
