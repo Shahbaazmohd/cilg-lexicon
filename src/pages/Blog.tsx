@@ -32,15 +32,19 @@ const Blog = () => {
         return;
       }
 
-      // Transform Supabase data to match BlogCard props
+      // Transform Supabase data to match BlogCard props with consistent formatting
       const transformedPosts = data.map(post => ({
         id: post.id,
-        title: post.title,
-        excerpt: post.excerpt,
+        title: post.title || 'Untitled',
+        excerpt: post.excerpt || 'No description available',
         author: post.author_name || 'Anonymous',
-        date: new Date(post.created_at).toLocaleDateString(),
-        category: post.category,
-        featured: post.featured,
+        date: post.created_at ? new Date(post.created_at).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        }) : 'No date',
+        category: post.category || 'General',
+        featured: post.featured || false,
         image: BlogImageService.getImageUrlWithFallback(post.image_url, post.category)
       }));
 
@@ -161,7 +165,7 @@ const Blog = () => {
         )}
 
         {/* No Results */}
-        {filteredPosts.length === 0 && (
+        {filteredPosts.length === 0 && !loading && (
           <div className="text-center py-12">
             <div className="max-w-md mx-auto">
               <h3 className="academic-heading text-xl mb-4">No articles found</h3>

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import BlogCard from '@/components/BlogCard';
 import NewsTicker from '@/components/NewsTicker';
 import CosmopolitanBulletin from '@/components/CosmopolitanBulletin';
-import { FeaturedEvents } from '@/components/FeaturedEvents';
+
 import { SettingsService } from '@/lib/settingsService';
 import { DynamicImageService } from '@/lib/dynamicImageService';
 import { BlogSection } from '@/components/ui/blog-section';
@@ -274,9 +274,6 @@ const Home = () => {
       
       {/* Cosmopolitan Bulletin */}
       <CosmopolitanBulletin />
-      
-      {/* Featured Events */}
-      <FeaturedEvents />
     </div>
   );
 };

@@ -4,9 +4,7 @@ import {
   LayoutDashboard, 
   FileText, 
   Newspaper, 
-  Edit3, 
   Star, 
-  BarChart3,
   LogOut,
   Users,
   Image,
@@ -26,13 +24,11 @@ const AdminSidebar = ({ onLogout }: AdminSidebarProps) => {
     { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
     { name: 'Blog Submissions', href: '/admin/submissions', icon: FileText },
     { name: 'Cosmopolitan Bulletin', href: '/admin/bulletin', icon: Newspaper },
-    { name: 'Draft Blogs', href: '/admin/drafts', icon: Edit3 },
     { name: 'Featured Blogs', href: '/admin/featured', icon: Star },
     { name: 'Team Management', href: '/admin/team', icon: Users },
     { name: 'Image Management', href: '/admin/images', icon: Image },
     { name: 'Event Management', href: '/admin/events', icon: Calendar },
     { name: 'Notice Management', href: '/admin/notices', icon: Bell },
-    { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
   ];
 
   const isActive = (path: string) => location.pathname === path;
