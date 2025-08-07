@@ -1,73 +1,127 @@
-# Welcome to your Lovable project
+# CILG Lexicon - Academic Legal Research Platform
 
-## Project info
+A modern, full-stack web application for academic legal research and content management, built with React, TypeScript, and Supabase.
 
-**URL**: https://lovable.dev/projects/70b4fdac-21ce-4965-a364-b2eb78fd8c53
+## 🚀 Features
 
-## How can I edit this code?
+- **Academic Content Management**: Blog posts, research articles, and legal resources
+- **Dynamic Image Management**: Advanced image upload, optimization, and management system
+- **Admin Dashboard**: Comprehensive admin interface for content moderation and management
+- **Team Management**: Member profiles and team page management
+- **Email Integration**: Automated email notifications and communication
+- **Responsive Design**: Mobile-first approach with modern UI components
+- **Real-time Updates**: Live content updates with Supabase integration
+- **Authentication**: Role-based access control and user management
 
-There are several ways of editing your application.
+## 🛠️ Tech Stack
 
-**Use Lovable**
+### Frontend
+- **React 18** - Modern React with hooks and functional components
+- **TypeScript** - Type-safe JavaScript development
+- **Vite** - Fast build tool and development server
+- **Tailwind CSS** - Utility-first CSS framework
+- **Shadcn/ui** - Modern component library
+- **Radix UI** - Headless UI primitives
+- **Framer Motion** - Animation library
+- **React Router** - Client-side routing
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/70b4fdac-21ce-4965-a364-b2eb78fd8c53) and start prompting.
+### Backend & Database
+- **Supabase** - Backend-as-a-Service platform
+- **PostgreSQL** - Primary database
+- **Row Level Security** - Data security
+- **Edge Functions** - Serverless functions
 
-Changes made via Lovable will be committed automatically to this repo.
+### Additional Libraries
+- **TanStack React Query** - Server state management
+- **React Hook Form** - Form handling
+- **Zod** - Schema validation
+- **Lucide React** - Icon library
+- **Recharts** - Data visualization
 
-**Use your preferred IDE**
+## 📦 Installation & Setup
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Prerequisites
+- Node.js (v18 or higher)
+- npm or yarn
+- Git
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Local Development
 
-Follow these steps:
+```bash
+# Clone the repository
+git clone https://github.com/YOUR_USERNAME/cilg-lexicon.git
+cd cilg-lexicon
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Install dependencies
+npm install
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Set up environment variables
+# Create a .env.local file with your Supabase credentials
+cp .env.example .env.local
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start the development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Environment Variables
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Create a `.env.local` file in the root directory:
 
-**Use GitHub Codespaces**
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 🗄️ Database Setup
 
-## What technologies are used for this project?
+The project uses Supabase with the following main tables:
+- `blog_posts` - Blog articles and research content
+- `team_members` - Team member profiles
+- `settings` - Application settings and configuration
+- `hero_images` - Dynamic hero image management
+- `dynamic_images` - General image management
 
-This project is built with:
+## 📁 Project Structure
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+```
+src/
+├── components/          # Reusable UI components
+├── pages/              # Page components
+├── lib/                # Utility functions and services
+├── hooks/              # Custom React hooks
+├── integrations/       # External service integrations
+├── data/               # Static data and types
+└── assets/             # Static assets
+```
 
-## How can I deploy this project?
+## 🚀 Deployment
 
-Simply open [Lovable](https://lovable.dev/projects/70b4fdac-21ce-4965-a364-b2eb78fd8c53) and click on Share -> Publish.
+### Vercel (Recommended)
+1. Connect your GitHub repository to Vercel
+2. Set environment variables in Vercel dashboard
+3. Deploy automatically on push to main branch
 
-## Can I connect a custom domain to my Lovable project?
+### Netlify
+1. Connect your GitHub repository to Netlify
+2. Set build command: `npm run build`
+3. Set publish directory: `dist`
 
-Yes, you can!
+## 🤝 Contributing
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit your changes: `git commit -m 'Add amazing feature'`
+4. Push to the branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 📞 Support
+
+For support and questions, please open an issue in the GitHub repository.
+
+---
+
+Built with ❤️ using modern web technologies for academic excellence.
