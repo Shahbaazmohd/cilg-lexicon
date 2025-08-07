@@ -30,6 +30,8 @@ import AdminImages from "./pages/AdminImages";
 import AdminTeam from "./pages/AdminTeam";
 import AdminEvents from "./pages/AdminEvents";
 import AdminNotices from "./pages/AdminNotices";
+import AdminContactMessages from "./pages/AdminContactMessages";
+import AdminResources from "./pages/AdminResources";
 
 import { useScrollToTop } from "./hooks/useScrollToTop";
 
@@ -76,6 +78,8 @@ const App = () => (
               <Route path="/admin/events" element={<AdminEvents />} />
               <Route path="/admin/notices" element={<AdminNotices />} />
               <Route path="/admin/analytics" element={<AdminAnalytics />} />
+              <Route path="/admin/contact-messages" element={<AdminContactMessages />} />
+              <Route path="/admin/resources" element={<AdminResources />} />
 
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

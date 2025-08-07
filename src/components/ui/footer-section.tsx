@@ -129,36 +129,35 @@ function FooterSection() {
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button variant="outline" size="icon" className="rounded-full border-primary-foreground/20 hover:border-academic hover:bg-academic/10">
-                        <Facebook className="h-4 w-4" />
-                        <span className="sr-only">Facebook</span>
-                      </Button>
+                      <a 
+                        href="https://www.linkedin.com/company/uslls-cilg/?originalSubdomain=in" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="group"
+                      >
+                        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 hover:bg-academic/20 border border-primary-foreground/20 hover:border-academic transition-all duration-300 group-hover:scale-110">
+                          <Linkedin className="h-5 w-5 text-primary-foreground group-hover:text-academic" />
+                        </div>
+                      </a>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>Follow us on Facebook</p>
+                      <p>Connect with us on LinkedIn</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button variant="outline" size="icon" className="rounded-full border-primary-foreground/20 hover:border-academic hover:bg-academic/10">
-                        <Twitter className="h-4 w-4" />
-                        <span className="sr-only">Twitter</span>
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Follow us on Twitter</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="outline" size="icon" className="rounded-full border-primary-foreground/20 hover:border-academic hover:bg-academic/10">
-                        <Instagram className="h-4 w-4" />
-                        <span className="sr-only">Instagram</span>
-                      </Button>
+                      <a 
+                        href="https://www.instagram.com/uslls_cilg/" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="group"
+                      >
+                        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 hover:bg-academic/20 border border-primary-foreground/20 hover:border-academic transition-all duration-300 group-hover:scale-110">
+                          <Instagram className="h-5 w-5 text-primary-foreground group-hover:text-academic" />
+                        </div>
+                      </a>
                     </TooltipTrigger>
                     <TooltipContent>
                       <p>Follow us on Instagram</p>
@@ -168,13 +167,24 @@ function FooterSection() {
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button variant="outline" size="icon" className="rounded-full border-primary-foreground/20 hover:border-academic hover:bg-academic/10">
-                        <Linkedin className="h-4 w-4" />
-                        <span className="sr-only">LinkedIn</span>
-                      </Button>
+                      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 border border-primary-foreground/20 opacity-50 cursor-not-allowed">
+                        <Facebook className="h-5 w-5 text-primary-foreground/50" />
+                      </div>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>Connect with us on LinkedIn</p>
+                      <p>Coming Soon</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 border border-primary-foreground/20 opacity-50 cursor-not-allowed">
+                        <Twitter className="h-5 w-5 text-primary-foreground/50" />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Coming Soon</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>

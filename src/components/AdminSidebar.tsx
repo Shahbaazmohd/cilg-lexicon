@@ -9,7 +9,9 @@ import {
   Users,
   Image,
   Calendar,
-  Bell
+  Bell,
+  MessageSquare,
+  Download
 } from 'lucide-react';
 
 interface AdminSidebarProps {
@@ -29,6 +31,8 @@ const AdminSidebar = ({ onLogout }: AdminSidebarProps) => {
     { name: 'Image Management', href: '/admin/images', icon: Image },
     { name: 'Event Management', href: '/admin/events', icon: Calendar },
     { name: 'Notice Management', href: '/admin/notices', icon: Bell },
+    { name: 'Contact Messages', href: '/admin/contact-messages', icon: MessageSquare },
+    { name: 'Resources', href: '/admin/resources', icon: Download },
   ];
 
   const isActive = (path: string) => location.pathname === path;

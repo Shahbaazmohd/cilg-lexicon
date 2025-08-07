@@ -310,12 +310,6 @@ const Events = () => {
                             </a>
                           </Button>
                         )}
-                        <Button variant="outline" size="sm">
-                          View Details
-                        </Button>
-                        <Button variant="ghost" size="sm">
-                          Share Event
-                        </Button>
                       </div>
                     </CardContent>
                   </div>

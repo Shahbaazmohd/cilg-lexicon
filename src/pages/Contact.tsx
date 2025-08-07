@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Mail, Phone, MapPin, Clock, Send, MessageSquare } from 'lucide-react';
+import { Mail, MapPin, Send, MessageSquare, Linkedin, Instagram, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,13 +7,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import { ContactService, ContactFormData } from '@/lib/contactService';
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<ContactFormData>({
     name: '',
     email: '',
     subject: '',
-    inquiry: '',
+    inquiry_type: '',
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -30,7 +31,7 @@ const Contact = () => {
     'Other'
   ];
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: keyof ContactFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -38,27 +39,43 @@ const Contact = () => {
     event.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    try {
+      const success = await ContactService.submitContactMessage(formData);
+      
+      if (success) {
+        toast({
+          title: "Message Sent Successfully!",
+          description: "Thank you for contacting us. We will get back to you within 1-2 business days.",
+        });
 
-    toast({
-      title: "Message Sent Successfully!",
-      description: "Thank you for contacting us. We will get back to you within 1-2 business days.",
-    });
-
-    // Reset form
-    setFormData({
-      name: '',
-      email: '',
-      subject: '',
-      inquiry: '',
-      message: ''
-    });
-    setIsSubmitting(false);
+        // Reset form
+        setFormData({
+          name: '',
+          email: '',
+          subject: '',
+          inquiry_type: '',
+          message: ''
+        });
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to send message. Please try again.",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const isFormValid = formData.name && formData.email && formData.subject && 
-                     formData.inquiry && formData.message;
+                     formData.inquiry_type && formData.message;
 
   return (
     <div className="min-h-screen py-12">
@@ -88,14 +105,8 @@ const Contact = () => {
               <CardContent className="space-y-4">
                 <div>
                   <p className="font-medium mb-1">Email</p>
-                  <a href="mailto:info@cilg.edu" className="text-primary hover:underline">
-                    info@cilg.edu
-                  </a>
-                </div>
-                <div>
-                  <p className="font-medium mb-1">Phone</p>
-                  <a href="tel:+911234567890" className="text-primary hover:underline">
-                    +91 123 456 7890
+                  <a href="mailto:usllscilg@gmail.com" className="text-primary hover:underline">
+                    usllscilg@gmail.com
                   </a>
                 </div>
               </CardContent>
@@ -113,66 +124,60 @@ const Contact = () => {
                 <address className="not-italic academic-text">
                   Centre for International Law and Governance<br />
                   Faculty of Law<br />
-                  University Campus<br />
-                  City, State - 110001<br />
+                  USLLS, GGSIPU<br />
+                  Dwarka, Delhi - 110078<br />
                   India
                 </address>
               </CardContent>
             </Card>
 
-            {/* Office Hours */}
+            {/* Social Media */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Clock className="h-5 w-5" />
-                  <span>Office Hours</span>
-                </CardTitle>
+                <CardTitle>Connect With Us</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2">
-                <div className="flex justify-between">
-                  <span>Monday - Friday</span>
-                  <span>9:00 AM - 6:00 PM</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Saturday</span>
-                  <span>10:00 AM - 2:00 PM</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Sunday</span>
-                  <span>Closed</span>
+              <CardContent className="space-y-4">
+                <p className="text-sm text-muted-foreground">
+                  Follow us on social media for the latest updates and insights.
+                </p>
+                <div className="flex space-x-3">
+                  <a 
+                    href="https://www.linkedin.com/company/uslls-cilg/?originalSubdomain=in" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center space-x-2 text-primary hover:text-primary/80 transition-colors"
+                  >
+                    <Linkedin className="h-5 w-5" />
+                    <span className="text-sm">LinkedIn</span>
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
+                  <a 
+                    href="https://www.instagram.com/uslls_cilg/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center space-x-2 text-primary hover:text-primary/80 transition-colors"
+                  >
+                    <Instagram className="h-5 w-5" />
+                    <span className="text-sm">Instagram</span>
+                    <ExternalLink className="h-3 w-3" />
+                  </a>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Specific Contacts */}
+            {/* Quick Contact */}
             <Card>
               <CardHeader>
-                <CardTitle>Specific Inquiries</CardTitle>
+                <CardTitle>Get in Touch</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <div>
-                  <p className="font-medium text-sm">Research Collaboration</p>
-                  <a href="mailto:research@cilg.edu" className="text-sm text-primary hover:underline">
-                    research@cilg.edu
-                  </a>
-                </div>
-                <div>
-                  <p className="font-medium text-sm">Publication Submissions</p>
-                  <a href="mailto:submissions@cilg.edu" className="text-sm text-primary hover:underline">
-                    submissions@cilg.edu
-                  </a>
-                </div>
-                <div>
-                  <p className="font-medium text-sm">Media Inquiries</p>
-                  <a href="mailto:media@cilg.edu" className="text-sm text-primary hover:underline">
-                    media@cilg.edu
-                  </a>
-                </div>
-                <div>
-                  <p className="font-medium text-sm">Student Affairs</p>
-                  <a href="mailto:students@cilg.edu" className="text-sm text-primary hover:underline">
-                    students@cilg.edu
-                  </a>
+                <p className="text-sm text-muted-foreground">
+                  Have a question or want to collaborate? We'd love to hear from you. 
+                  Send us a message using the form and we'll respond as soon as possible.
+                </p>
+                <div className="flex items-center space-x-2 text-sm">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>We typically respond within 24-48 hours</span>
                 </div>
               </CardContent>
             </Card>
@@ -231,8 +236,8 @@ const Contact = () => {
 
                   {/* Inquiry Type */}
                   <div className="space-y-2">
-                    <Label htmlFor="inquiry">Type of Inquiry *</Label>
-                    <Select value={formData.inquiry} onValueChange={(value) => handleInputChange('inquiry', value)}>
+                    <Label htmlFor="inquiry_type">Type of Inquiry *</Label>
+                    <Select value={formData.inquiry_type} onValueChange={(value) => handleInputChange('inquiry_type', value)}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select the type of your inquiry" />
                       </SelectTrigger>
@@ -294,42 +299,6 @@ const Contact = () => {
               </CardContent>
             </Card>
           </div>
-        </div>
-
-        {/* Map Section */}
-        <div className="mt-16">
-          <Card>
-            <CardHeader>
-              <CardTitle>Find Us on Campus</CardTitle>
-              <CardDescription>
-                Our office is located in the Faculty of Law building on the main campus.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="aspect-video bg-muted/30 rounded-lg flex items-center justify-center">
-                <div className="text-center">
-                  <MapPin className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                  <p className="text-muted-foreground">
-                    Interactive campus map would be embedded here
-                  </p>
-                  <Button variant="outline" className="mt-4">
-                    View Campus Map
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* FAQ Link */}
-        <div className="mt-16 text-center bg-muted/30 rounded-lg p-8">
-          <h2 className="academic-heading text-2xl mb-4">Frequently Asked Questions</h2>
-          <p className="academic-text mb-6">
-            Before reaching out, you might find the answer to your question in our FAQ section.
-          </p>
-          <Button variant="outline">
-            View FAQ
-          </Button>
         </div>
       </div>
     </div>

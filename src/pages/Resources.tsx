@@ -1,125 +1,72 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Download, ExternalLink, BookOpen, FileText, Link as LinkIcon, Search, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-
-interface Resource {
-  id: string;
-  title: string;
-  type: 'database' | 'publication' | 'report' | 'guide' | 'dataset' | 'tool';
-  category: string;
-  description: string;
-  url?: string;
-  downloadUrl?: string;
-  author?: string;
-  date: string;
-  access: 'free' | 'subscription' | 'restricted';
-  tags: string[];
-}
+import { ResourceService, Resource } from '@/lib/resourceService';
+import { useToast } from '@/hooks/use-toast';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const Resources = () => {
+  const [resources, setResources] = useState<Resource[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [filterCategory, setFilterCategory] = useState('all');
+  const { toast } = useToast();
 
-  const resources: Resource[] = [
-    {
-      id: '1',
-      title: 'International Court of Justice Database',
-      type: 'database',
-      category: 'International Courts',
-      description: 'Comprehensive database of ICJ cases, judgments, and advisory opinions with full-text search capabilities.',
-      url: 'https://www.icj-cij.org/en/decisions',
-      access: 'free',
-      date: '2024-01-15',
-      tags: ['ICJ', 'Judgments', 'International Law', 'Court Decisions']
-    },
-    {
-      id: '2',
-      title: 'Climate Change and International Law: A Comprehensive Guide',
-      type: 'publication',
-      category: 'Environmental Law',
-      description: 'CILG\'s latest publication examining the legal frameworks governing climate action and environmental protection.',
-      downloadUrl: '#',
-      author: 'Dr. Michael Chen, Prof. Sarah Johnson',
-      access: 'free',
-      date: '2023-12-10',
-      tags: ['Climate Law', 'Environmental Protection', 'Paris Agreement', 'Research']
-    },
-    {
-      id: '3',
-      title: 'Global Human Rights Monitoring System',
-      type: 'tool',
-      category: 'Human Rights',
-      description: 'Interactive tool for tracking human rights developments and violations across different jurisdictions.',
-      url: 'https://example.com/human-rights-monitor',
-      access: 'subscription',
-      date: '2023-11-20',
-      tags: ['Human Rights', 'Monitoring', 'Data Visualization', 'Global']
-    },
-    {
-      id: '4',
-      title: 'International Trade Agreements Database',
-      type: 'database',
-      category: 'Trade Law',
-      description: 'Searchable collection of bilateral and multilateral trade agreements with analytical tools.',
-      url: 'https://example.com/trade-agreements',
-      access: 'free',
-      date: '2023-10-15',
-      tags: ['Trade Agreements', 'WTO', 'Investment', 'Economics']
-    },
-    {
-      id: '5',
-      title: 'Digital Rights Research Report 2023',
-      type: 'report',
-      category: 'Digital Rights',
-      description: 'Annual report on the state of digital rights globally, including privacy, surveillance, and internet governance.',
-      downloadUrl: '#',
-      author: 'Dr. Emma Rodriguez',
-      access: 'free',
-      date: '2023-09-30',
-      tags: ['Digital Rights', 'Privacy', 'Internet Governance', 'Technology']
-    },
-    {
-      id: '6',
-      title: 'International Criminal Law Case Law Analyzer',
-      type: 'tool',
-      category: 'International Criminal Law',
-      description: 'AI-powered tool for analyzing patterns and trends in international criminal law jurisprudence.',
-      url: 'https://example.com/icl-analyzer',
-      access: 'restricted',
-      date: '2023-08-15',
-      tags: ['Criminal Law', 'AI Analysis', 'Jurisprudence', 'Research Tool']
-    },
-    {
-      id: '7',
-      title: 'Refugee Protection Legal Framework Guide',
-      type: 'guide',
-      category: 'Refugee Law',
-      description: 'Practical guide for legal practitioners working with refugee protection and asylum cases.',
-      downloadUrl: '#',
-      author: 'Dr. Aisha Patel',
-      access: 'free',
-      date: '2023-07-20',
-      tags: ['Refugee Law', 'Legal Practice', 'Asylum', 'Protection']
-    },
-    {
-      id: '8',
-      title: 'International Governance Indicators Dataset',
-      type: 'dataset',
-      category: 'Global Governance',
-      description: 'Comprehensive dataset tracking governance indicators across international organizations and institutions.',
-      downloadUrl: '#',
-      access: 'subscription',
-      date: '2023-06-10',
-      tags: ['Governance', 'Data', 'International Organizations', 'Indicators']
+  const resourceTypes = ['all', 'document', 'link', 'database', 'publication', 'report', 'guide', 'dataset', 'tool'];
+
+  useEffect(() => {
+    fetchResources();
+  }, []);
+
+  const fetchResources = async () => {
+    try {
+      setLoading(true);
+      const data = await ResourceService.getAllActiveResources();
+      setResources(data);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to fetch resources. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
 
-  const resourceTypes = ['all', 'database', 'publication', 'report', 'guide', 'dataset', 'tool'];
+  const handleDownload = async (resource: Resource) => {
+    try {
+      if (resource.file_url) {
+        // Increment download count
+        await ResourceService.incrementDownloadCount(resource.id);
+        
+        // Trigger download
+        const link = document.createElement('a');
+        link.href = resource.file_url;
+        link.download = resource.file_name || 'download';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        toast({
+          title: "Download Started",
+          description: "Your download has begun.",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Download Error",
+        description: "Failed to download file. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
   const categories = ['all', ...Array.from(new Set(resources.map(r => r.category)))];
 
   const filteredResources = resources.filter(resource => {
@@ -133,7 +80,9 @@ const Resources = () => {
 
   const getTypeIcon = (type: string) => {
     const icons = {
-      database: LinkIcon,
+      document: FileText,
+      link: LinkIcon,
+      database: FileText,
       publication: BookOpen,
       report: FileText,
       guide: BookOpen,
@@ -151,6 +100,32 @@ const Resources = () => {
     };
     return styles[access as keyof typeof styles] || 'bg-gray-100 text-gray-800';
   };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen py-12">
+        <div className="academic-container">
+          <div className="text-center mb-12">
+            <Skeleton className="h-12 w-96 mx-auto mb-6" />
+            <Skeleton className="h-6 w-2xl mx-auto" />
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+              <Skeleton key={i} className="h-64 w-full" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen py-12">
@@ -239,8 +214,8 @@ const Resources = () => {
                         {resource.type.charAt(0).toUpperCase() + resource.type.slice(1)}
                       </Badge>
                     </div>
-                    <Badge className={getAccessBadge(resource.access)}>
-                      {resource.access.charAt(0).toUpperCase() + resource.access.slice(1)}
+                    <Badge className={getAccessBadge(resource.access_level)}>
+                      {resource.access_level.charAt(0).toUpperCase() + resource.access_level.slice(1)}
                     </Badge>
                   </div>
                   <CardTitle className="text-lg leading-tight">{resource.title}</CardTitle>
@@ -258,12 +233,19 @@ const Resources = () => {
                   )}
 
                   <div className="text-sm text-muted-foreground mb-4">
-                    Updated: {new Date(resource.date).toLocaleDateString('en-US', {
+                    Updated: {new Date(resource.updated_at).toLocaleDateString('en-US', {
                       year: 'numeric',
                       month: 'long',
                       day: 'numeric'
                     })}
                   </div>
+
+                  {resource.file_name && (
+                    <div className="flex items-center space-x-2 text-sm text-muted-foreground mb-3">
+                      <FileText className="h-4 w-4" />
+                      <span>{resource.file_name} ({formatFileSize(resource.file_size || 0)})</span>
+                    </div>
+                  )}
 
                   {/* Tags */}
                   <div className="flex flex-wrap gap-1 mb-4">
@@ -281,18 +263,20 @@ const Resources = () => {
 
                   {/* Actions */}
                   <div className="flex gap-2">
-                    {resource.downloadUrl && (
-                      <Button asChild size="sm" className="flex-1">
-                        <a href={resource.downloadUrl} className="flex items-center justify-center space-x-1">
-                          <Download className="h-3 w-3" />
-                          <span>Download</span>
-                        </a>
+                    {resource.file_url && (
+                      <Button 
+                        size="sm" 
+                        className="flex-1"
+                        onClick={() => handleDownload(resource)}
+                      >
+                        <Download className="h-3 w-3 mr-1" />
+                        Download
                       </Button>
                     )}
-                    {resource.url && (
+                    {resource.external_url && (
                       <Button asChild variant="outline" size="sm" className="flex-1">
                         <a 
-                          href={resource.url} 
+                          href={resource.external_url} 
                           target="_blank" 
                           rel="noopener noreferrer"
                           className="flex items-center justify-center space-x-1"

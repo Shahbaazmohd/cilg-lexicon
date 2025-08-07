@@ -102,6 +102,22 @@ const ModernNavbar = () => {
           }
         });
         
+        // Also check if the click is on a dropdown button itself
+        const dropdownButtons = document.querySelectorAll('[data-dropdown-button]');
+        dropdownButtons.forEach(button => {
+          if (button.contains(target)) {
+            clickedInsideDropdown = true;
+          }
+        });
+        
+        // Check if click is on mobile dropdown items
+        const mobileDropdownItems = document.querySelectorAll('[data-mobile-dropdown-item]');
+        mobileDropdownItems.forEach(item => {
+          if (item.contains(target)) {
+            clickedInsideDropdown = true;
+          }
+        });
+        
         if (!clickedInsideDropdown) {
           setOpenDropdown(null);
         }
@@ -154,6 +170,18 @@ const ModernNavbar = () => {
 
   const toggleDropdown = (dropdownName: string) => {
     setOpenDropdown(openDropdown === dropdownName ? null : dropdownName);
+  };
+
+  const handleDropdownItemClick = (href: string) => {
+    setOpenDropdown(null);
+    setMenuState(false);
+    navigate(href);
+  };
+
+  const handleMobileDropdownItemClick = (href: string) => {
+    setMenuState(false);
+    setOpenDropdown(null);
+    navigate(href);
   };
 
   const handleMobileNavigation = (href: string) => {
@@ -211,7 +239,11 @@ const ModernNavbar = () => {
                     {item.hasDropdown ? (
                       <div>
                         <button
-                          onClick={() => toggleDropdown(item.name)}
+                          data-dropdown-button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleDropdown(item.name);
+                          }}
                           className={cn(
                             "text-muted-foreground hover:text-accent-foreground block duration-150 flex items-center space-x-1",
                             isDropdownActive(item.subItems) || openDropdown === item.name
@@ -232,19 +264,21 @@ const ModernNavbar = () => {
                         {openDropdown === item.name && (
                           <div data-dropdown className="absolute top-full left-0 mt-2 w-48 bg-background border border-border rounded-lg shadow-lg py-2 z-50">
                             {item.subItems.map((subItem, subIndex) => (
-                              <Link
+                              <button
                                 key={subIndex}
-                                to={subItem.href}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDropdownItemClick(subItem.href);
+                                }}
                                 className={cn(
-                                  "block px-4 py-2 text-sm transition-colors duration-150",
+                                  "block w-full text-left px-4 py-2 text-sm transition-colors duration-150",
                                   isActive(subItem.href)
                                     ? "text-primary bg-primary/5"
                                     : "text-muted-foreground hover:text-primary hover:bg-primary/5"
                                 )}
-                                onClick={() => setOpenDropdown(null)}
                               >
                                 {subItem.name}
-                              </Link>
+                              </button>
                             ))}
                           </div>
                         )}
@@ -314,7 +348,11 @@ const ModernNavbar = () => {
                         {item.hasDropdown ? (
                           <div>
                             <button
-                              onClick={() => toggleDropdown(item.name)}
+                              data-dropdown-button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleDropdown(item.name);
+                              }}
                               className={cn(
                                 "text-muted-foreground hover:text-accent-foreground block duration-150 flex items-center justify-between w-full touch-manipulation py-4 px-2 rounded-lg transition-colors",
                                 isDropdownActive(item.subItems) || openDropdown === item.name
@@ -333,21 +371,24 @@ const ModernNavbar = () => {
                               />
                             </button>
                             {openDropdown === item.name && (
-                              <div className="mt-2 ml-4 space-y-2 bg-muted/30 rounded-lg p-3">
+                              <div className="mt-2 ml-4 space-y-2 bg-muted/30 rounded-lg p-3 relative z-50">
                                 {item.subItems.map((subItem, subIndex) => (
                                   <Link
                                     key={subIndex}
                                     to={subItem.href}
+                                    data-mobile-dropdown-item
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      console.log('Mobile dropdown item clicked:', subItem.href);
+                                      setMenuState(false);
+                                      setOpenDropdown(null);
+                                    }}
                                     className={cn(
-                                      "block text-base transition-colors duration-150 touch-manipulation py-3 px-3 rounded-md",
+                                      "block w-full text-left text-base transition-colors duration-150 touch-manipulation py-3 px-3 rounded-md hover:bg-primary/5 active:bg-primary/10",
                                       isActive(subItem.href)
                                         ? "text-primary bg-primary/10 font-medium"
-                                        : "text-muted-foreground hover:text-primary hover:bg-primary/5"
+                                        : "text-muted-foreground hover:text-primary"
                                     )}
-                                    onClick={() => {
-                                      setOpenDropdown(null);
-                                      setMenuState(false);
-                                    }}
                                   >
                                     {subItem.name}
                                   </Link>
