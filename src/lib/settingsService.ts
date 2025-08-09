@@ -60,6 +60,18 @@ export class SettingsService {
     return await this.setSetting('hero_image_url', url);
   }
 
+  // Get site logo URL (used in hero and other sections)
+  static async getLogoUrl(): Promise<string> {
+    const defaultLogo = '/lovable-uploads/a8a8f724-8489-4325-bccb-3c63dd8bd236.png';
+    const logoUrl = await this.getSetting('site_logo_url');
+    return logoUrl || defaultLogo;
+  }
+
+  // Set site logo URL
+  static async setLogoUrl(url: string): Promise<boolean> {
+    return await this.setSetting('site_logo_url', url);
+  }
+
   // Get all settings
   static async getAllSettings(): Promise<WebsiteSetting[]> {
     try {

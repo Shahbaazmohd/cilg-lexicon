@@ -222,13 +222,13 @@ const Home = () => {
                 image: researchAreaImages['research-area-1'],
               },
               {
-                title: 'Human Rights Law',
-                description: 'Contemporary issues in human rights protection and implementation',
+                title: 'International Relations',
+                description: 'Diplomacy, foreign policy, and global governance dynamics',
                 image: researchAreaImages['research-area-2'],
               },
               {
-                title: 'Conflict Resolution',
-                description: 'Legal approaches to international dispute resolution and peacebuilding',
+                title: 'International Investment and Trade Law',
+                description: 'Legal frameworks governing cross-border investment and international trade',
                 image: researchAreaImages['research-area-3'],
               },
             ].map((area, index) => (
