@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X, ChevronDown, Shield, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { sessionService } from '@/lib/sessionService';
+import { simpleAuthService, type SimpleAuthState } from '@/lib/simpleAuthService';
+import { useToast } from '@/hooks/use-toast';
 
 const navigation = [
   { name: 'About', href: '/about' },
@@ -36,30 +37,30 @@ const ModernNavbar = () => {
   const [menuState, setMenuState] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [authState, setAuthState] = useState<SimpleAuthState>({
+    isAuthenticated: false,
+    isAdmin: false,
+    user: null
+  });
   const location = useLocation();
   const navigate = useNavigate();
+  const { toast } = useToast();
 
-  // Check if user is logged in using session service
+  // Set up authentication state listener
   useEffect(() => {
-    const checkAuthStatus = () => {
-      const loggedIn = sessionService.isLoggedIn();
-      setIsLoggedIn(loggedIn);
+    const checkAuth = () => {
+      const state = simpleAuthService.getAuthState();
+      setAuthState(state);
     };
 
-    checkAuthStatus();
-    
-    // Listen for storage changes (login/logout)
-    const handleStorageChange = () => {
-      checkAuthStatus();
-    };
+    // Initial check
+    checkAuth();
 
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('sessionChange', handleStorageChange);
-    
+    // Set up interval to check auth status (every 30 seconds)
+    const authCheckInterval = setInterval(checkAuth, 30000);
+
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('sessionChange', handleStorageChange);
+      clearInterval(authCheckInterval);
     };
   }, []);
 
@@ -194,11 +195,33 @@ const ModernNavbar = () => {
     setMenuState(false);
     setOpenDropdown(null);
     
-    // Check if user is logged in using session service
-    if (sessionService.isLoggedIn()) {
+    // Check if user is authenticated using auth service
+    if (authState.isAuthenticated && authState.isAdmin) {
       navigate('/admin/dashboard');
     } else {
       navigate('/admin/login');
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      simpleAuthService.signOut();
+      
+      toast({
+        title: "Logged Out",
+        description: "You have been successfully logged out",
+        variant: "default"
+      });
+      
+      setMenuState(false);
+      setOpenDropdown(null);
+      navigate('/');
+    } catch (error) {
+      toast({
+        title: "Logout Error",
+        description: 'An unexpected error occurred',
+        variant: "destructive"
+      });
     }
   };
 
@@ -312,13 +335,35 @@ const ModernNavbar = () => {
               </button>
 
               {/* Desktop Action Buttons */}
-              <div className="hidden lg:flex items-center">
-                <Button
-                  onClick={handleAdminClick}
-                  size="sm"
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                  <span>Admin</span>
-                </Button>
+              <div className="hidden lg:flex items-center gap-2">
+                {authState.isAuthenticated && authState.isAdmin ? (
+                  <>
+                    <Button
+                      onClick={() => navigate('/admin/dashboard')}
+                      size="sm"
+                      variant="outline"
+                      className="bg-background hover:bg-muted text-foreground">
+                      <Shield className="h-4 w-4 mr-2" />
+                      <span>Dashboard</span>
+                    </Button>
+                    <Button
+                      onClick={handleLogout}
+                      size="sm"
+                      variant="ghost"
+                      className="text-muted-foreground hover:text-foreground hover:bg-muted">
+                      <LogOut className="h-4 w-4 mr-2" />
+                      <span>Logout</span>
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    onClick={handleAdminClick}
+                    size="sm"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                    <Shield className="h-4 w-4 mr-2" />
+                    <span>Admin</span>
+                  </Button>
+                )}
               </div>
             </div>
 
@@ -418,12 +463,37 @@ const ModernNavbar = () => {
                 {/* Mobile Action Buttons */}
                 <div className="mt-8 pt-6 border-t border-border">
                   <div className="flex flex-col space-y-3">
-                    <Button
-                      onClick={handleAdminClick}
-                      size="lg"
-                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground touch-manipulation py-4 text-base font-medium">
-                      <span>Admin</span>
-                    </Button>
+                    {authState.isAuthenticated && authState.isAdmin ? (
+                      <>
+                        <Button
+                          onClick={() => {
+                            navigate('/admin/dashboard');
+                            setMenuState(false);
+                          }}
+                          size="lg"
+                          variant="outline"
+                          className="w-full bg-background hover:bg-muted text-foreground touch-manipulation py-4 text-base font-medium">
+                          <Shield className="h-5 w-5 mr-2" />
+                          <span>Dashboard</span>
+                        </Button>
+                        <Button
+                          onClick={handleLogout}
+                          size="lg"
+                          variant="ghost"
+                          className="w-full text-muted-foreground hover:text-foreground hover:bg-muted touch-manipulation py-4 text-base font-medium">
+                          <LogOut className="h-5 w-5 mr-2" />
+                          <span>Logout</span>
+                        </Button>
+                      </>
+                    ) : (
+                      <Button
+                        onClick={handleAdminClick}
+                        size="lg"
+                        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground touch-manipulation py-4 text-base font-medium">
+                        <Shield className="h-5 w-5 mr-2" />
+                        <span>Admin</span>
+                      </Button>
+                    )}
                     <Button
                       asChild
                       variant="outline"

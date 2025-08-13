@@ -32,6 +32,7 @@ import AdminEvents from "./pages/AdminEvents";
 import AdminNotices from "./pages/AdminNotices";
 import AdminContactMessages from "./pages/AdminContactMessages";
 import AdminResources from "./pages/AdminResources";
+import SimpleSecureRoute from "./components/SimpleSecureRoute";
 
 import { useScrollToTop } from "./hooks/useScrollToTop";
 
@@ -68,18 +69,68 @@ const App = () => (
               <Route path="/sblog/blogposts" element={<CILGBlog />} />
               <Route path="/submissions/guidelines" element={<SubmissionGuidelines />} />
               <Route path="/admin/login" element={<AdminLogin />} />
-              <Route path="/admin/dashboard" element={<AdminDashboard />} />
-              <Route path="/admin/submissions" element={<AdminSubmissions />} />
-              <Route path="/admin/bulletin" element={<AdminBulletin />} />
-              <Route path="/admin/drafts" element={<AdminDrafts />} />
-              <Route path="/admin/featured" element={<AdminFeatured />} />
-              <Route path="/admin/team" element={<AdminTeam />} />
-              <Route path="/admin/images" element={<AdminImages />} />
-              <Route path="/admin/events" element={<AdminEvents />} />
-              <Route path="/admin/notices" element={<AdminNotices />} />
-              <Route path="/admin/analytics" element={<AdminAnalytics />} />
-              <Route path="/admin/contact-messages" element={<AdminContactMessages />} />
-              <Route path="/admin/resources" element={<AdminResources />} />
+              
+              {/* Protected Admin Routes */}
+              <Route path="/admin/dashboard" element={
+                <SimpleSecureRoute requireAdmin={true}>
+                  <AdminDashboard />
+                </SimpleSecureRoute>
+              } />
+              <Route path="/admin/submissions" element={
+                <SimpleSecureRoute requireAdmin={true}>
+                  <AdminSubmissions />
+                </SimpleSecureRoute>
+              } />
+              <Route path="/admin/bulletin" element={
+                <SimpleSecureRoute requireAdmin={true}>
+                  <AdminBulletin />
+                </SimpleSecureRoute>
+              } />
+              <Route path="/admin/drafts" element={
+                <SimpleSecureRoute requireAdmin={true}>
+                  <AdminDrafts />
+                </SimpleSecureRoute>
+              } />
+              <Route path="/admin/featured" element={
+                <SimpleSecureRoute requireAdmin={true}>
+                  <AdminFeatured />
+                </SimpleSecureRoute>
+              } />
+              <Route path="/admin/team" element={
+                <SimpleSecureRoute requireAdmin={true}>
+                  <AdminTeam />
+                </SimpleSecureRoute>
+              } />
+              <Route path="/admin/images" element={
+                <SimpleSecureRoute requireAdmin={true}>
+                  <AdminImages />
+                </SimpleSecureRoute>
+              } />
+              <Route path="/admin/events" element={
+                <SimpleSecureRoute requireAdmin={true}>
+                  <AdminEvents />
+                </SimpleSecureRoute>
+              } />
+              <Route path="/admin/notices" element={
+                <SimpleSecureRoute requireAdmin={true}>
+                  <AdminNotices />
+                </SimpleSecureRoute>
+              } />
+              <Route path="/admin/analytics" element={
+                <SimpleSecureRoute requireAdmin={true}>
+                  <AdminAnalytics />
+                </SimpleSecureRoute>
+              } />
+              <Route path="/admin/contact-messages" element={
+                <SimpleSecureRoute requireAdmin={true}>
+                  <AdminContactMessages />
+                </SimpleSecureRoute>
+              } />
+              <Route path="/admin/resources" element={
+                <SimpleSecureRoute requireAdmin={true}>
+                  <AdminResources />
+                </SimpleSecureRoute>
+              } />
 
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

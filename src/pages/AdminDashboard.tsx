@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminSidebar from '@/components/AdminSidebar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileText, Newspaper, Edit3, Star, Users, Eye, Calendar, Bell, Download } from 'lucide-react';
-import { sessionService } from '@/lib/sessionService';
+import { FileText, Newspaper, Edit3, Star, Users, Eye, Calendar, Bell, Download, Shield } from 'lucide-react';
+import { simpleAuthService } from '@/lib/simpleAuthService';
 import { supabase } from '@/integrations/supabase/client';
 import { EventService } from '@/lib/eventService';
 import { TeamService } from '@/lib/teamService';
@@ -13,6 +13,7 @@ import { ContactService } from '@/lib/contactService';
 import { ResourceService } from '@/lib/resourceService';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
 
 interface DashboardStats {
   totalPosts: number;
@@ -40,6 +41,7 @@ interface RecentSubmission {
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [stats, setStats] = useState<DashboardStats>({
     totalPosts: 0,
     pendingSubmissions: 0,
@@ -58,15 +60,35 @@ const AdminDashboard = () => {
   const [recentSubmissions, setRecentSubmissions] = useState<RecentSubmission[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [adminInfo, setAdminInfo] = useState<{ name: string; role: string } | null>(null);
 
   useEffect(() => {
-    // Check if user is logged in using session service
-    if (!sessionService.isLoggedIn()) {
-      navigate('/admin/login');
-      return;
-    }
+    // Check if user is authenticated using simple auth service
+    const checkAuth = () => {
+      if (!simpleAuthService.isAuthenticated()) {
+        navigate('/admin/login');
+        return;
+      }
 
-    fetchDashboardData();
+      const isAdmin = simpleAuthService.isAdmin();
+      if (!isAdmin) {
+        navigate('/admin/login');
+        return;
+      }
+
+      // Get admin user details
+      const authState = simpleAuthService.getAuthState();
+      if (authState.user) {
+        setAdminInfo({
+          name: authState.user.email.split('@')[0],
+          role: authState.user.role
+        });
+      }
+
+      fetchDashboardData();
+    };
+
+    checkAuth();
   }, [navigate]);
 
   const fetchDashboardData = async () => {
@@ -182,9 +204,30 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleLogout = () => {
-    sessionService.clearSession();
-    navigate('/admin/login');
+  const handleLogout = async () => {
+    try {
+      const result = await authService.signOut();
+      if (result.success) {
+        toast({
+          title: "Logged Out",
+          description: "You have been successfully logged out",
+          variant: "default"
+        });
+        navigate('/admin/login');
+      } else {
+        toast({
+          title: "Logout Error",
+          description: result.error || 'Failed to log out',
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Logout Error",
+        description: 'An unexpected error occurred',
+        variant: "destructive"
+      });
+    }
   };
 
   const formatTimeAgo = (dateString: string) => {
