@@ -1,5 +1,9 @@
 
 
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
+
 const BlogAbout = () => {
   return (
     <div className="academic-container py-12">
@@ -14,15 +18,22 @@ const BlogAbout = () => {
           <h2 className="text-2xl font-serif font-semibold mt-8 mb-4">Editorial Standards</h2>
           <p>All articles undergo rigorous peer review to ensure academic excellence and scholarly integrity.</p>
 
-          <div className="mt-10">
-            <a
-              href="https://docs.google.com/document/d/1a--QR3MfuMvNskbF6SDPk11MWhY50TYxjq-I95nWvkc/edit?usp=sharing"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center text-primary hover:underline font-medium"
-            >
-              submission guidelines - https://docs.google.com/document/d/1a--QR3MfuMvNskbF6SDPk11MWhY50TYxjq-I95nWvkc/edit?usp=sharing
-            </a>
+          <div className="mt-10 text-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Button asChild size="lg" className="bg-academic hover:bg-academic/90 text-academic-foreground">
+                <Link to="/blog" className="flex items-center space-x-2">
+                  <span>Blog Posts</span>
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+              
+              <Button asChild size="lg" variant="outline" className="border-academic text-academic hover:bg-academic hover:text-academic-foreground">
+                <Link to="/submit-blog" className="flex items-center space-x-2">
+                  <span>Submit Blog</span>
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
       </div>

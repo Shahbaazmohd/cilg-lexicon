@@ -194,17 +194,7 @@ const Bulletin = () => {
           </div>
         )}
 
-        {/* Subscription Section */}
-        <div className="text-center bg-muted/30 rounded-lg p-12">
-          <h2 className="academic-heading text-3xl mb-4">Subscribe to Our Bulletin</h2>
-          <p className="academic-text text-lg mb-8 max-w-2xl mx-auto">
-            Get notified when new issues are published. Join our community of scholars 
-            and practitioners interested in international law and governance.
-          </p>
-          <Button size="lg">
-            Subscribe for Updates
-          </Button>
-        </div>
+
       </div>
     </div>
   );

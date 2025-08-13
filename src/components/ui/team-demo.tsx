@@ -12,6 +12,7 @@ interface TeamDemoProps {
 export default function TeamDemo({ className = "" }: TeamDemoProps) {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedExpertise, setExpandedExpertise] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     const fetchTeamMembers = async () => {
@@ -30,29 +31,44 @@ export default function TeamDemo({ className = "" }: TeamDemoProps) {
 
   const categories = [
     { 
+      title: 'Patrons', 
+      key: 'patrons',
+      members: teamMembers.filter(m => m.category === 'patrons') 
+    },
+    { 
+      title: 'Faculty', 
+      key: 'faculty',
+      members: teamMembers.filter(m => m.category === 'faculty') 
+    },
+    { 
+      title: 'Convenor', 
+      key: 'convenor',
+      members: teamMembers.filter(m => m.category === 'convenor') 
+    },
+    { 
       title: 'Core Team', 
       key: 'core-team',
       members: teamMembers.filter(m => m.category === 'core-team') 
     },
     { 
-      title: 'Social Media Team', 
-      key: 'social-media-team',
-      members: teamMembers.filter(m => m.category === 'social-media-team') 
+      title: 'Team Heads', 
+      key: 'team-heads',
+      members: teamMembers.filter(m => m.category === 'team-heads') 
     },
     { 
-      title: 'Research & Editorial Team', 
-      key: 'research-editorial-team',
-      members: teamMembers.filter(m => m.category === 'research-editorial-team') 
+      title: 'Members', 
+      key: 'members',
+      members: teamMembers.filter(m => m.category === 'members') 
     },
     { 
-      title: 'Events Team', 
-      key: 'events-team',
-      members: teamMembers.filter(m => m.category === 'events-team') 
+      title: 'Past Contributors', 
+      key: 'past-contributors',
+      members: teamMembers.filter(m => m.category === 'past-contributors') 
     },
     { 
-      title: 'Mentors', 
-      key: 'mentors',
-      members: teamMembers.filter(m => m.category === 'mentors') 
+      title: 'Developers', 
+      key: 'developers',
+      members: teamMembers.filter(m => m.category === 'developers') 
     },
   ];
 
@@ -148,9 +164,37 @@ export default function TeamDemo({ className = "" }: TeamDemoProps) {
                               {skill}
                             </Badge>
                           ))}
-                          {member.expertise.length > 2 && (
-                            <Badge variant="outline" className="text-xs">
+                          {expandedExpertise.has(member.id) && member.expertise.slice(2).map((skill, idx) => (
+                            <Badge key={idx + 2} variant="secondary" className="text-xs">
+                              {skill}
+                            </Badge>
+                          ))}
+                          {member.expertise.length > 2 && !expandedExpertise.has(member.id) && (
+                            <Badge 
+                              variant="outline" 
+                              className="text-xs cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+                              onClick={() => {
+                                setExpandedExpertise(prev => new Set([...prev, member.id]));
+                              }}
+                              title={`Click to see all expertise: ${member.expertise.join(', ')}`}
+                            >
                               +{member.expertise.length - 2}
+                            </Badge>
+                          )}
+                          {expandedExpertise.has(member.id) && member.expertise.length > 2 && (
+                            <Badge 
+                              variant="outline" 
+                              className="text-xs cursor-pointer hover:bg-muted transition-colors"
+                              onClick={() => {
+                                setExpandedExpertise(prev => {
+                                  const newSet = new Set(prev);
+                                  newSet.delete(member.id);
+                                  return newSet;
+                                });
+                              }}
+                              title="Click to hide additional expertise"
+                            >
+                              -{member.expertise.length - 2}
                             </Badge>
                           )}
                         </div>

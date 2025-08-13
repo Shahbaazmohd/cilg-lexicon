@@ -30,14 +30,9 @@ const SubmitBlog = () => {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const categories = [
-    'International Law',
-    'Human Rights',
-    'Trade Law',
-    'Environmental Law',
-    'Constitutional Law',
-    'Corporate Law',
-    'Criminal Law',
-    'Civil Rights'
+    'International Criminal Law',
+    'International Relations',
+    'International Investment and Trade Law'
   ];
 
   const handleInputChange = (field: string, value: string) => {
@@ -264,19 +259,29 @@ const SubmitBlog = () => {
                 <div>
                   <h4 className="font-semibold mb-2">Article Requirements</h4>
                   <ul className="text-sm academic-text space-y-1">
-                    <li>• Original research or analysis</li>
-                    <li>• Minimum 1,500 words</li>
-                    <li>• Proper citations and references</li>
-                    <li>• Clear abstract or excerpt</li>
+                    <li>• Original and unpublished work</li>
+                    <li>• Minimum 800 words (1000-2000 recommended)</li>
+                    <li>• Proper citations using BlueBook 21st Edition</li>
+                    <li>• Abstract of not more than 100 words</li>
+                    <li>• No AI tools like ChatGPT allowed</li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-2">Formatting</h4>
+                  <ul className="text-sm academic-text space-y-1">
+                    <li>• Font: Times New Roman, Size 12</li>
+                    <li>• Line Spacing: 1.5</li>
+                    <li>• Text Alignment: Justified</li>
+                    <li>• Citations: Endnotes, Size 10</li>
                   </ul>
                 </div>
                 <div>
                   <h4 className="font-semibold mb-2">Review Process</h4>
                   <ul className="text-sm academic-text space-y-1">
-                    <li>• Initial review within 48 hours</li>
-                    <li>• Peer review for accepted articles</li>
-                    <li>• Editorial feedback provided</li>
-                    <li>• Publication upon approval</li>
+                    <li>• Double-blind review process</li>
+                    <li>• Review within 14 days</li>
+                    <li>• 10 days for revisions</li>
+                    <li>• Co-authorship up to 2 authors</li>
                   </ul>
                 </div>
                 <Alert>
@@ -464,6 +469,9 @@ const SubmitBlog = () => {
                       <p className="text-xs text-muted-foreground">
                         Upload a featured image for your article. This will be displayed alongside your article.
                       </p>
+                      <p className="text-xs text-red-600 font-medium">
+                        Please use only personally created or public domain/free-use images to ensure no copyright violations.
+                      </p>
                       
                       {/* Image Optimization Tips */}
                       <Alert className="bg-blue-50 border-blue-200">
@@ -498,7 +506,7 @@ const SubmitBlog = () => {
                       required
                     />
                     <p className="text-sm text-muted-foreground">
-                      Minimum 1,500 words recommended
+                      Minimum 800 words required (1000-2000 words recommended)
                     </p>
                   </div>
 

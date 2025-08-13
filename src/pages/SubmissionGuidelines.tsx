@@ -68,13 +68,32 @@ const SubmissionGuidelines = () => {
             </p>
           </section>
 
-          <div className="mt-12 text-center">
+          <div className="mt-12 text-center space-y-4">
             <Button asChild size="lg" className="bg-academic hover:bg-academic/90 text-academic-foreground">
               <Link to="/submit-blog" className="flex items-center space-x-2">
                 <span>Submit Your Blog</span>
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
+            
+            <div>
+              <Button 
+                asChild 
+                size="lg" 
+                variant="outline" 
+                className="border-academic text-academic hover:bg-academic hover:text-academic-foreground"
+              >
+                <a 
+                  href="https://docs.google.com/document/d/1a--QR3MfuMvNskbF6SDPk11MWhY50TYxjq-I95nWvkc/edit?usp=sharing" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center space-x-2"
+                >
+                  <span>Guidelines</span>
+                  <ArrowRight className="h-4 w-4" />
+                </a>
+              </Button>
+            </div>
           </div>
         </div>
       </div>

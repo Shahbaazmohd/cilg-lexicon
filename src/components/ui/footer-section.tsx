@@ -10,7 +10,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { Facebook, Instagram, Linkedin, Send, Twitter, Mail, MapPin, ExternalLink } from "lucide-react"
+import { Instagram, Linkedin, Send, Mail, MapPin, ExternalLink } from "lucide-react"
 
 function FooterSection() {
   const [email, setEmail] = React.useState("")
@@ -164,30 +164,7 @@ function FooterSection() {
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 border border-primary-foreground/20 opacity-50 cursor-not-allowed">
-                        <Facebook className="h-5 w-5 text-primary-foreground/50" />
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Coming Soon</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className="flex items-center justify-center w-10 h-10 rounded-full bg-white/10 border border-primary-foreground/20 opacity-50 cursor-not-allowed">
-                        <Twitter className="h-5 w-5 text-primary-foreground/50" />
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Coming Soon</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+
               </div>
             </div>
           </div>

@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { adminSupabase } from '@/integrations/supabase/adminClient';
 
 export interface TeamMember {
   id: string;
@@ -19,7 +20,7 @@ export interface TeamMember {
     orcid?: string;
     googleScholar?: string;
   };
-  category: 'core-team' | 'social-media-team' | 'research-editorial-team' | 'events-team' | 'mentors';
+  category: 'patrons' | 'faculty' | 'convenor' | 'core-team' | 'team-heads' | 'members' | 'past-contributors' | 'developers';
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -101,7 +102,7 @@ export class TeamService {
   // Update team member image URL
   static async updateTeamMemberImageUrl(memberId: string, imageUrl: string): Promise<boolean> {
     try {
-      const { error } = await supabase
+      const { error } = await adminSupabase
         .from('team_members')
         .update({ image_url: imageUrl })
         .eq('id', memberId);
@@ -153,11 +154,14 @@ export class TeamService {
   // Get category display name
   static getCategoryDisplayName(category: string): string {
     const displayNames: Record<string, string> = {
+      'patrons': 'Patrons',
+      'faculty': 'Faculty',
+      'convenor': 'Convenor',
       'core-team': 'Core Team',
-      'social-media-team': 'Social Media Team',
-      'research-editorial-team': 'Research & Editorial Team',
-      'events-team': 'Events Team',
-      'mentors': 'Mentors'
+      'team-heads': 'Team Heads',
+      'members': 'Members',
+      'past-contributors': 'Past Contributors',
+      'developers': 'Developers'
     };
     return displayNames[category] || category;
   }
@@ -171,7 +175,8 @@ export class TeamService {
         updated_at: new Date().toISOString()
       };
 
-      const { data, error } = await supabase
+      // Use admin client for admin operations (bypasses RLS)
+      const { data, error } = await adminSupabase
         .from('team_members')
         .insert([newMember])
         .select()
@@ -192,26 +197,55 @@ export class TeamService {
   // Update existing team member
   static async updateTeamMember(id: string, updates: Partial<TeamMember>): Promise<TeamMember | null> {
     try {
+      console.log('🔧 TeamService.updateTeamMember called with:');
+      console.log('  ID:', id);
+      console.log('  ID:', id);
+      console.log('  Updates:', updates);
+      
       const updateData = {
         ...updates,
         updated_at: new Date().toISOString()
       };
+      
+      console.log('  Final update data:', updateData);
 
-      const { data, error } = await supabase
+      // First, try to update without returning data
+      const { error: updateError } = await adminSupabase
         .from('team_members')
         .update(updateData)
-        .eq('id', id)
-        .select()
-        .single();
+        .eq('id', id);
 
-      if (error) {
-        console.error('Error updating team member:', error);
+      if (updateError) {
+        console.error('❌ Supabase error updating team member:', updateError);
+        console.error('  Error code:', updateError.code);
+        console.error('  Error message:', updateError.message);
+        console.error('  Error details:', updateError.details);
         return null;
       }
 
-      return data;
+      console.log('✅ Update operation completed successfully');
+
+      // Now fetch the updated member separately
+      const { data: updatedMember, error: fetchError } = await adminSupabase
+        .from('team_members')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (fetchError) {
+        console.error('❌ Error fetching updated team member:', fetchError);
+        console.error('  Error code:', fetchError.code);
+        console.error('  Error message:', fetchError.message);
+        return null;
+      }
+
+      console.log('✅ Team member fetched after update:', updatedMember);
+      return updatedMember;
     } catch (error) {
-      console.error('Error in updateTeamMember:', error);
+      console.error('❌ Unexpected error in updateTeamMember:', error);
+      console.error('  Error name:', error.name);
+      console.error('  Error message:', error.message);
+      console.error('  Error stack:', error.stack);
       return null;
     }
   }
@@ -219,7 +253,7 @@ export class TeamService {
   // Delete team member (soft delete by setting is_active to false)
   static async deleteTeamMember(id: string): Promise<boolean> {
     try {
-      const { error } = await supabase
+      const { error } = await adminSupabase
         .from('team_members')
         .update({ is_active: false, updated_at: new Date().toISOString() })
         .eq('id', id);

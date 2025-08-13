@@ -15,6 +15,7 @@ const Resources = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [filterCategory, setFilterCategory] = useState('all');
+  const [expandedTags, setExpandedTags] = useState<Set<string>>(new Set());
   const { toast } = useToast();
 
   const resourceTypes = ['all', 'document', 'link', 'database', 'publication', 'report', 'guide', 'dataset', 'tool'];
@@ -41,24 +42,57 @@ const Resources = () => {
 
   const handleDownload = async (resource: Resource) => {
     try {
-      if (resource.file_url) {
-        // Increment download count
-        await ResourceService.incrementDownloadCount(resource.id);
-        
-        // Trigger download
-        const link = document.createElement('a');
-        link.href = resource.file_url;
-        link.download = resource.file_name || 'download';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
+      if (!resource.file_url) {
         toast({
-          title: "Download Started",
-          description: "Your download has begun.",
+          title: "Download Error",
+          description: "No file available for download.",
+          variant: "destructive"
         });
+        return;
       }
+
+      console.log('🔧 Starting download for resource:', resource.id, resource.title);
+      
+      // Generate download URL first
+      const downloadUrl = await ResourceService.generateDownloadUrl(
+        resource.file_url, 
+        resource.file_name || 'download'
+      );
+      
+      console.log('🔧 Download URL generated:', downloadUrl);
+      
+      // Create a temporary link element for download
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = resource.file_name || 'download';
+      link.style.display = 'none';
+      
+      // Set additional attributes for better download behavior
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'noopener noreferrer');
+      
+      // Append to DOM, click, and remove
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Increment download count after successful download initiation
+      try {
+        await ResourceService.incrementDownloadCount(resource.id);
+        console.log('✅ Download count incremented successfully');
+      } catch (incrementError) {
+        console.warn('⚠️ Could not increment download count:', incrementError);
+        // Don't fail the download if increment fails
+      }
+
+      toast({
+        title: "Download Started",
+        description: "Your download has begun.",
+      });
+      
+      console.log('✅ Download initiated successfully');
     } catch (error) {
+      console.error('❌ Download error:', error);
       toast({
         title: "Download Error",
         description: "Failed to download file. Please try again.",
@@ -67,7 +101,8 @@ const Resources = () => {
     }
   };
 
-  const categories = ['all', ...Array.from(new Set(resources.map(r => r.category)))];
+  // Only include the research areas mentioned on the home page
+  const categories = ['all', 'International Criminal Law', 'International Relations', 'International Investment and Trade Law'];
 
   const filteredResources = resources.filter(resource => {
     const matchesSearch = resource.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -92,14 +127,7 @@ const Resources = () => {
     return icons[type as keyof typeof icons] || FileText;
   };
 
-  const getAccessBadge = (access: string) => {
-    const styles = {
-      free: 'bg-green-100 text-green-800',
-      subscription: 'bg-yellow-100 text-yellow-800',
-      restricted: 'bg-red-100 text-red-800'
-    };
-    return styles[access as keyof typeof styles] || 'bg-gray-100 text-gray-800';
-  };
+
 
   const formatFileSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';
@@ -214,9 +242,6 @@ const Resources = () => {
                         {resource.type.charAt(0).toUpperCase() + resource.type.slice(1)}
                       </Badge>
                     </div>
-                    <Badge className={getAccessBadge(resource.access_level)}>
-                      {resource.access_level.charAt(0).toUpperCase() + resource.access_level.slice(1)}
-                    </Badge>
                   </div>
                   <CardTitle className="text-lg leading-tight">{resource.title}</CardTitle>
                   <CardDescription>{resource.category}</CardDescription>
@@ -254,9 +279,37 @@ const Resources = () => {
                         {tag}
                       </Badge>
                     ))}
-                    {resource.tags.length > 3 && (
-                      <Badge variant="outline" className="text-xs">
+                    {expandedTags.has(resource.id) && resource.tags.slice(3).map((tag, index) => (
+                      <Badge key={index + 3} variant="secondary" className="text-xs">
+                        {tag}
+                      </Badge>
+                    ))}
+                    {resource.tags.length > 3 && !expandedTags.has(resource.id) && (
+                      <Badge 
+                        variant="outline" 
+                        className="text-xs cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+                        onClick={() => {
+                          setExpandedTags(prev => new Set([...prev, resource.id]));
+                        }}
+                        title={`Click to see all tags: ${resource.tags.join(', ')}`}
+                      >
                         +{resource.tags.length - 3}
+                      </Badge>
+                    )}
+                    {expandedTags.has(resource.id) && resource.tags.length > 3 && (
+                      <Badge 
+                        variant="outline" 
+                        className="text-xs cursor-pointer hover:bg-muted transition-colors"
+                        onClick={() => {
+                          setExpandedTags(prev => {
+                            const newSet = new Set(prev);
+                            newSet.delete(resource.id);
+                            return newSet;
+                          });
+                        }}
+                        title="Click to hide additional tags"
+                      >
+                        -{resource.tags.length - 3}
                       </Badge>
                     )}
                   </div>
@@ -338,17 +391,7 @@ const Resources = () => {
           </div>
         </div>
 
-        {/* Contribute Section */}
-        <div className="mt-16 text-center bg-primary text-primary-foreground rounded-lg p-12">
-          <h2 className="font-serif font-bold text-3xl mb-4">Contribute Resources</h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Help us expand our resource collection by suggesting new databases, 
-            publications, or tools that would benefit our academic community.
-          </p>
-          <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary">
-            Suggest a Resource
-          </Button>
-        </div>
+
       </div>
     </div>
   );

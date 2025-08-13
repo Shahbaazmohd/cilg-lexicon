@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { adminSupabase } from '@/integrations/supabase/adminClient';
 
 export interface Resource {
   id: string;
@@ -61,13 +62,15 @@ export class ResourceService {
 
   // Get all resources (for admin view)
   static async getAllResources(): Promise<Resource[]> {
-    const { data, error } = await supabase
+    const { data, error } = await adminSupabase
       .from('resources')
       .select('*')
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('Error fetching all resources:', error);
+      console.error('❌ Error fetching all resources:', error);
+      console.error('  Error code:', error.code);
+      console.error('  Error message:', error.message);
       throw error;
     }
 
@@ -90,27 +93,34 @@ export class ResourceService {
     return data;
   }
 
-  // Create new resource
+  // Create new resource (admin only)
   static async createResource(resourceData: CreateResourceData): Promise<Resource> {
-    const { data, error } = await supabase
+    console.log('🔧 Creating resource:', resourceData);
+    
+    const { data, error } = await adminSupabase
       .from('resources')
       .insert([resourceData])
       .select()
       .single();
 
     if (error) {
-      console.error('Error creating resource:', error);
+      console.error('❌ Error creating resource:', error);
+      console.error('  Error code:', error.code);
+      console.error('  Error message:', error.message);
       throw error;
     }
 
+    console.log('✅ Resource created successfully:', data);
     return data;
   }
 
-  // Update resource
+  // Update resource (admin only)
   static async updateResource(resourceData: UpdateResourceData): Promise<Resource> {
     const { id, ...updateData } = resourceData;
     
-    const { data, error } = await supabase
+    console.log('🔧 Updating resource:', { id, ...updateData });
+    
+    const { data, error } = await adminSupabase
       .from('resources')
       .update(updateData)
       .eq('id', id)
@@ -118,35 +128,50 @@ export class ResourceService {
       .single();
 
     if (error) {
-      console.error('Error updating resource:', error);
+      console.error('❌ Error updating resource:', error);
+      console.error('  Error code:', error.code);
+      console.error('  Error message:', error.message);
       throw error;
     }
 
+    console.log('✅ Resource updated successfully:', data);
     return data;
   }
 
-  // Delete resource
+  // Delete resource (admin only)
   static async deleteResource(id: string): Promise<boolean> {
-    const { error } = await supabase
+    console.log('🔧 Deleting resource:', id);
+    
+    const { error } = await adminSupabase
       .from('resources')
       .delete()
       .eq('id', id);
 
     if (error) {
-      console.error('Error deleting resource:', error);
+      console.error('❌ Error deleting resource:', error);
+      console.error('  Error code:', error.code);
+      console.error('  Error message:', error.message);
       throw error;
     }
 
+    console.log('✅ Resource deleted successfully');
     return true;
   }
 
-  // Upload file to storage
+  // Upload file to storage (admin only)
   static async uploadResourceFile(file: File): Promise<{ url: string; path: string }> {
     const fileExt = file.name.split('.').pop();
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
     const filePath = `resources/${fileName}`;
 
-    const { data, error } = await supabase.storage
+    console.log('🔧 Uploading file:', {
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      path: filePath
+    });
+
+    const { data, error } = await adminSupabase.storage
       .from('resources')
       .upload(filePath, file, {
         cacheControl: '3600',
@@ -154,13 +179,20 @@ export class ResourceService {
       });
 
     if (error) {
-      console.error('Error uploading file:', error);
+      console.error('❌ Error uploading file:', error);
+      console.error('  Error code:', error.code);
+      console.error('  Error message:', error.message);
+      console.error('  Error details:', error.details);
       throw error;
     }
 
-    const { data: urlData } = supabase.storage
+    console.log('✅ File uploaded successfully:', data);
+
+    const { data: urlData } = adminSupabase.storage
       .from('resources')
       .getPublicUrl(filePath);
+
+    console.log('🔗 Public URL generated:', urlData.publicUrl);
 
     return {
       url: urlData.publicUrl,
@@ -168,29 +200,105 @@ export class ResourceService {
     };
   }
 
-  // Delete file from storage
+  // Delete file from storage (admin only)
   static async deleteResourceFile(filePath: string): Promise<boolean> {
-    const { error } = await supabase.storage
+    console.log('🔧 Deleting file from storage:', filePath);
+    
+    const { error } = await adminSupabase.storage
       .from('resources')
       .remove([filePath]);
 
     if (error) {
-      console.error('Error deleting file:', error);
+      console.error('❌ Error deleting file:', error);
+      console.error('  Error code:', error.code);
+      console.error('  Error message:', error.message);
       throw error;
     }
 
+    console.log('✅ File deleted from storage successfully');
     return true;
+  }
+
+  // Generate download URL (ensures proper download behavior)
+  static async generateDownloadUrl(fileUrl: string, fileName: string): Promise<string> {
+    try {
+      console.log('🔧 Generating download URL for:', fileUrl);
+      
+      // If it's a Supabase storage URL, try to generate a signed URL for proper download behavior
+      if (fileUrl.includes('supabase.co') && fileUrl.includes('/storage/v1/object/public/')) {
+        try {
+          // Extract bucket and file path from the public URL
+          const urlParts = fileUrl.split('/storage/v1/object/public/');
+          if (urlParts.length === 2) {
+            const bucketAndPath = urlParts[1];
+            const [bucket, ...pathParts] = bucketAndPath.split('/');
+            const filePath = pathParts.join('/');
+            
+            console.log('🔧 Extracted bucket:', bucket, 'filePath:', filePath);
+            
+            // Generate signed URL with download disposition
+            const { data, error } = await supabase.storage
+              .from(bucket)
+              .createSignedUrl(filePath, 3600, {
+                download: fileName
+              });
+            
+            if (error) {
+              console.warn('⚠️ Could not generate signed URL, using public URL:', error);
+              return fileUrl;
+            }
+            
+            console.log('✅ Generated signed URL successfully');
+            return data.signedUrl;
+          }
+        } catch (signedUrlError) {
+          console.warn('⚠️ Error generating signed URL, using public URL:', signedUrlError);
+        }
+      }
+      
+      // For non-Supabase URLs or if signed URL generation fails, return the original URL
+      console.log('🔧 Using original URL for download');
+      return fileUrl;
+    } catch (error) {
+      console.error('❌ Error in generateDownloadUrl:', error);
+      // Return original URL as fallback
+      return fileUrl;
+    }
   }
 
   // Increment download count
   static async incrementDownloadCount(id: string): Promise<void> {
-    const { error } = await supabase
-      .from('resources')
-      .update({ download_count: supabase.rpc('increment') })
-      .eq('id', id);
+    try {
+      // First get the current download count
+      const { data: currentResource, error: fetchError } = await adminSupabase
+        .from('resources')
+        .select('download_count')
+        .eq('id', id)
+        .single();
 
-    if (error) {
-      console.error('Error incrementing download count:', error);
+      if (fetchError) {
+        console.error('❌ Error fetching current download count:', fetchError);
+        throw fetchError;
+      }
+
+      // Increment the count
+      const newCount = (currentResource?.download_count || 0) + 1;
+      
+      const { error: updateError } = await adminSupabase
+        .from('resources')
+        .update({ download_count: newCount })
+        .eq('id', id);
+
+      if (updateError) {
+        console.error('❌ Error updating download count:', updateError);
+        console.error('  Error code:', updateError.code);
+        console.error('  Error message:', updateError.message);
+        throw updateError;
+      }
+      
+      console.log('✅ Download count incremented successfully for resource:', id);
+    } catch (error) {
+      console.error('❌ Error in incrementDownloadCount:', error);
       throw error;
     }
   }
@@ -253,12 +361,14 @@ export class ResourceService {
     featuredResources: number;
     totalDownloads: number;
   }> {
-    const { data: allResources, error: allError } = await supabase
+    const { data: allResources, error: allError } = await adminSupabase
       .from('resources')
       .select('download_count, is_active, is_featured');
 
     if (allError) {
-      console.error('Error fetching resource stats:', allError);
+      console.error('❌ Error fetching resource stats:', allError);
+      console.error('  Error code:', allError.code);
+      console.error('  Error message:', allError.message);
       throw allError;
     }
 

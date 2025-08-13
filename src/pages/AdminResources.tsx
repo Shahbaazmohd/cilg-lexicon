@@ -11,11 +11,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Switch } from '@/components/ui/switch';
-import { FileText, Plus, Edit, Trash2, Download, ExternalLink, Upload, Star, Eye, EyeOff } from 'lucide-react';
-import { sessionService } from '@/lib/sessionService';
+import { FileText, Plus, Edit, Trash2, Download, ExternalLink, Star, Eye, EyeOff } from 'lucide-react';
+import { simpleAuthService } from '@/lib/simpleAuthService';
 import { ResourceService, Resource, CreateResourceData } from '@/lib/resourceService';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
+import ResourceFileUpload from '@/components/ResourceFileUpload';
 
 const AdminResources = () => {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ const AdminResources = () => {
   const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [uploadingFile, setUploadingFile] = useState(false);
+  const [expandedTags, setExpandedTags] = useState<Set<string>>(new Set());
 
   const [formData, setFormData] = useState<CreateResourceData>({
     title: '',
@@ -50,17 +51,11 @@ const AdminResources = () => {
     { value: 'tool', label: 'Tool' }
   ];
 
+  // Only include the research areas mentioned on the home page
   const categories = [
-    'International Courts',
-    'Environmental Law',
-    'Human Rights',
-    'Trade Law',
-    'Digital Rights',
     'International Criminal Law',
-    'Refugee Law',
-    'Global Governance',
-    'International Law',
-    'Research Tools'
+    'International Relations',
+    'International Investment and Trade Law'
   ];
 
   const accessLevels = [
@@ -70,7 +65,7 @@ const AdminResources = () => {
   ];
 
   useEffect(() => {
-    if (!sessionService.isLoggedIn()) {
+    if (!simpleAuthService.isAuthenticated() || !simpleAuthService.isAdmin()) {
       navigate('/admin/login');
       return;
     }
@@ -98,31 +93,84 @@ const AdminResources = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleFileUpload = async (file: File) => {
+  const handleFileSelected = (fileUrl: string, fileName: string, fileSize: number, fileType: string) => {
+    setFormData(prev => ({
+      ...prev,
+      file_url: fileUrl,
+      file_name: fileName,
+      file_size: fileSize,
+      file_type: fileType
+    }));
+  };
+
+  const handleFileRemoved = () => {
+    setFormData(prev => ({
+      ...prev,
+      file_url: '',
+      file_name: '',
+      file_size: 0,
+      file_type: ''
+    }));
+  };
+
+  const handleDownload = async (resource: Resource) => {
     try {
-      setUploadingFile(true);
-      const { url, path } = await ResourceService.uploadResourceFile(file);
+      if (!resource.file_url) {
+        toast({
+          title: "Download Error",
+          description: "No file available for download.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      console.log('🔧 Starting admin download for resource:', resource.id, resource.title);
       
-      setFormData(prev => ({
-        ...prev,
-        file_url: url,
-        file_name: file.name,
-        file_size: file.size,
-        file_type: file.type
-      }));
+      // Generate download URL first
+      const downloadUrl = await ResourceService.generateDownloadUrl(
+        resource.file_url, 
+        resource.file_name || 'download'
+      );
+      
+      console.log('🔧 Admin download URL generated:', downloadUrl);
+      
+      // Create a temporary link element for download
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = resource.file_name || 'download';
+      link.style.display = 'none';
+      
+      // Set additional attributes for better download behavior
+      link.setAttribute('target', '_blank');
+      link.setAttribute('rel', 'noopener noreferrer');
+      
+      // Append to DOM, click, and remove
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Increment download count after successful download initiation
+      try {
+        await ResourceService.incrementDownloadCount(resource.id);
+        console.log('✅ Admin download count incremented successfully');
+      } catch (incrementError) {
+        console.warn('⚠️ Could not increment admin download count:', incrementError);
+        // Don't fail the download if increment fails
+      }
 
       toast({
-        title: "File Uploaded",
-        description: "File has been uploaded successfully.",
+        title: "Download Started",
+        description: "Your download has begun.",
       });
+      
+      console.log('✅ Admin download initiated successfully');
     } catch (error) {
+      console.error('❌ Admin download error:', error);
       toast({
-        title: "Upload Error",
-        description: "Failed to upload file. Please try again.",
+        title: "Download Error",
+        description: "Failed to download file. Please try again.",
         variant: "destructive"
       });
-    } finally {
-      setUploadingFile(false);
     }
   };
 
@@ -256,7 +304,10 @@ const AdminResources = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex">
-        <AdminSidebar onLogout={() => navigate('/admin/login')} />
+        <AdminSidebar onLogout={() => {
+          simpleAuthService.signOut();
+          navigate('/admin/login');
+        }} />
         <div className="flex-1 p-8">
           <div className="space-y-4">
             <Skeleton className="h-8 w-48" />
@@ -274,7 +325,10 @@ const AdminResources = () => {
 
   return (
     <div className="min-h-screen bg-background flex">
-      <AdminSidebar onLogout={() => navigate('/admin/login')} />
+      <AdminSidebar onLogout={() => {
+        simpleAuthService.signOut();
+        navigate('/admin/login');
+      }} />
       <div className="flex-1 p-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -382,30 +436,13 @@ const AdminResources = () => {
                 {/* File Upload */}
                 <div className="space-y-2">
                   <Label>File Upload</Label>
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                    <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                    <p className="text-sm text-gray-600 mb-2">
-                      {uploadingFile ? 'Uploading...' : 'Drop a file here or click to browse'}
-                    </p>
-                    <input
-                      type="file"
-                      onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0])}
-                      className="hidden"
-                      id="file-upload"
-                      disabled={uploadingFile}
-                    />
-                    <label htmlFor="file-upload" className="cursor-pointer">
-                      <Button variant="outline" disabled={uploadingFile}>
-                        Choose File
-                      </Button>
-                    </label>
-                  </div>
-                  {formData.file_name && (
-                    <div className="flex items-center space-x-2 text-sm text-green-600">
-                      <FileText className="h-4 w-4" />
-                      <span>{formData.file_name} ({formatFileSize(formData.file_size || 0)})</span>
-                    </div>
-                  )}
+                  <ResourceFileUpload
+                    onFileSelected={handleFileSelected}
+                    currentFile={formData.file_url}
+                    currentFileName={formData.file_name}
+                    currentFileSize={formData.file_size}
+                    onFileRemoved={handleFileRemoved}
+                  />
                 </div>
 
                 {/* External URL */}
@@ -522,9 +559,37 @@ const AdminResources = () => {
                               {tag}
                             </Badge>
                           ))}
-                          {resource.tags.length > 3 && (
-                            <Badge variant="outline" className="text-xs">
+                          {expandedTags.has(resource.id) && resource.tags.slice(3).map((tag, index) => (
+                            <Badge key={index + 3} variant="secondary" className="text-xs">
+                              {tag}
+                            </Badge>
+                          ))}
+                          {resource.tags.length > 3 && !expandedTags.has(resource.id) && (
+                            <Badge 
+                              variant="outline" 
+                              className="text-xs cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+                              onClick={() => {
+                                setExpandedTags(prev => new Set([...prev, resource.id]));
+                              }}
+                              title={`Click to see all tags: ${resource.tags.join(', ')}`}
+                            >
                               +{resource.tags.length - 3}
+                            </Badge>
+                          )}
+                          {expandedTags.has(resource.id) && resource.tags.length > 3 && (
+                            <Badge 
+                              variant="outline" 
+                              className="text-xs cursor-pointer hover:bg-muted transition-colors"
+                              onClick={() => {
+                                setExpandedTags(prev => {
+                                  const newSet = new Set(prev);
+                                  newSet.delete(resource.id);
+                                  return newSet;
+                                });
+                              }}
+                              title="Click to hide additional tags"
+                            >
+                              -{resource.tags.length - 3}
                             </Badge>
                           )}
                         </div>
@@ -533,10 +598,12 @@ const AdminResources = () => {
 
                     <div className="flex items-center space-x-2 ml-4">
                       {resource.file_url && (
-                        <Button asChild size="sm" variant="outline">
-                          <a href={resource.file_url} target="_blank" rel="noopener noreferrer">
-                            <Download className="h-4 w-4" />
-                          </a>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          onClick={() => handleDownload(resource)}
+                        >
+                          <Download className="h-4 w-4" />
                         </Button>
                       )}
                       {resource.external_url && (
@@ -690,30 +757,13 @@ const AdminResources = () => {
               {/* File Upload for Edit */}
               <div className="space-y-2">
                 <Label>File Upload</Label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                  <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                  <p className="text-sm text-gray-600 mb-2">
-                    {uploadingFile ? 'Uploading...' : 'Drop a file here or click to browse'}
-                  </p>
-                  <input
-                    type="file"
-                    onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0])}
-                    className="hidden"
-                    id="edit-file-upload"
-                    disabled={uploadingFile}
-                  />
-                  <label htmlFor="edit-file-upload" className="cursor-pointer">
-                    <Button variant="outline" disabled={uploadingFile}>
-                      Choose File
-                    </Button>
-                  </label>
-                </div>
-                {formData.file_name && (
-                  <div className="flex items-center space-x-2 text-sm text-green-600">
-                    <FileText className="h-4 w-4" />
-                    <span>{formData.file_name} ({formatFileSize(formData.file_size || 0)})</span>
-                  </div>
-                )}
+                <ResourceFileUpload
+                  onFileSelected={handleFileSelected}
+                  currentFile={formData.file_url}
+                  currentFileName={formData.file_name}
+                  currentFileSize={formData.file_size}
+                  onFileRemoved={handleFileRemoved}
+                />
               </div>
 
               <div className="space-y-2">
