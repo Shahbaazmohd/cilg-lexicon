@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface NewsItem {
   id: string;
@@ -7,57 +8,81 @@ interface NewsItem {
 }
 
 const NewsTicker = () => {
-  const [news] = useState<NewsItem[]>([
-    {
-      id: '1',
-      title: 'New International Law Conference 2024 - Registration Open',
-    },
-    {
-      id: '2',
-      title: 'CILG Research Paper on Climate Change Governance Published',
-    },
-    {
-      id: '3',
-      title: 'Guest Lecture Series on Human Rights Law - March 2024',
-    },
-    {
-      id: '4',
-      title: 'Cosmopolitan Bulletin Vol. 15 Now Available',
-    },
-    {
-      id: '5',
-      title: 'PhD Fellowship Applications Open - Deadline April 30, 2024',
-    },
-  ]);
+  const [news, setNews] = useState<NewsItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch Cosmopolitan Bulletin posts
+  useEffect(() => {
+    fetchBulletinPosts();
+  }, []);
+
+  const fetchBulletinPosts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('cosmopolitan_bulletins')
+        .select('id, title')
+        .eq('status', 'approved')
+        .order('created_at', { ascending: false })
+        .limit(8); // Limit to 8 posts for the news ticker
+
+      if (error) {
+        console.error('Error fetching bulletin posts:', error);
+        return;
+      }
+
+      // Transform the data to match NewsItem interface
+      const bulletinNews = (data || []).map(post => ({
+        id: post.id,
+        title: post.title,
+        url: `/bulletin` // Link to bulletin page
+      }));
+
+      setNews(bulletinNews);
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="bg-academic text-academic-foreground py-3 overflow-hidden">
       <div className="academic-container">
-        <div className="flex items-center">
-          <div className="flex-shrink-0 mr-6">
-            <span className="font-serif font-semibold text-sm">LATEST NEWS:</span>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0">
+          <div className="flex-shrink-0 sm:mr-6">
+            <span className="font-serif font-semibold text-xs sm:text-sm">LATEST BULLETIN:</span>
           </div>
-          <div className="news-ticker flex-1">
+          <div className="news-ticker flex-1 min-w-0">
             <div className="news-ticker-content">
-              {news.map((item, index) => (
-                <span key={item.id} className="mr-12 text-sm font-medium">
-                  {item.url ? (
-                    <a 
-                      href={item.url} 
-                      className="hover:underline"
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                    >
-                      {item.title}
-                    </a>
-                  ) : (
-                    item.title
-                  )}
-                  {index < news.length - 1 && (
-                    <span className="mx-4 text-academic-foreground/60">•</span>
-                  )}
+              {loading ? (
+                <span className="text-xs sm:text-sm font-medium text-academic-foreground/80">
+                  Loading latest bulletin posts...
                 </span>
-              ))}
+              ) : news.length === 0 ? (
+                <span className="text-xs sm:text-sm font-medium text-academic-foreground/80">
+                  No bulletin posts available at the moment
+                </span>
+              ) : (
+                news.map((item, index) => (
+                  <span key={item.id} className="mr-6 sm:mr-12 text-xs sm:text-sm font-medium">
+                    {item.url ? (
+                      <a 
+                        href={item.url} 
+                        className="hover:underline"
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                      >
+                        {item.title}
+                      </a>
+                    ) : (
+                      item.title
+                    )}
+                    {index < news.length - 1 && (
+                      <span className="mx-2 sm:mx-4 text-academic-foreground/60">•</span>
+                    )}
+                  </span>
+                ))
+              )}
             </div>
           </div>
         </div>

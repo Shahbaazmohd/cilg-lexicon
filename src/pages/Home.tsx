@@ -10,6 +10,7 @@ import { SettingsService } from '@/lib/settingsService';
 import { DynamicImageService } from '@/lib/dynamicImageService';
 import { BlogSection } from '@/components/ui/blog-section';
 import { ModernHeroSection } from '@/components/ui/modern-hero-section';
+import { BentoDemo } from '@/components/ui/bento-demo';
 
 import heroImage from '@/assets/hero-image.jpg';
 import academicBuilding from '@/assets/academic-building.jpg';
@@ -127,14 +128,14 @@ const Home = () => {
       />
 
       {/* About Preview */}
-      <section className="py-16">
+      <section className="py-8 md:py-16">
         <div className="academic-container">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="academic-heading text-3xl md:text-4xl mb-6">
+          <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
+            <div className="order-2 lg:order-1">
+              <h2 className="academic-heading text-2xl sm:text-3xl md:text-4xl mb-4 md:mb-6 text-center lg:text-left">
                 Pioneering Research in International Law
               </h2>
-              <div className="space-y-6 academic-text text-lg">
+              <div className="space-y-4 md:space-y-6 academic-text text-base md:text-lg text-center lg:text-left">
                 <p>
                   The Centre for International Law and Governance (CILG) stands at the forefront 
                   of legal scholarship, fostering innovative research and discourse in international 
@@ -145,15 +146,17 @@ const Home = () => {
                   students to explore complex global challenges through the lens of legal analysis 
                   and policy development.
                 </p>
-                <Button asChild variant="outline" className="mt-6">
-                  <Link to="/about" className="flex items-center space-x-2">
-                    <span>Read Our Story</span>
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </Button>
+                <div className="flex justify-center lg:justify-start">
+                  <Button asChild variant="outline" className="mt-4 md:mt-6">
+                    <Link to="/about" className="flex items-center space-x-2">
+                      <span>Read Our Story</span>
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                </div>
               </div>
             </div>
-            <div className="relative">
+            <div className="relative order-1 lg:order-2 mb-6 lg:mb-0">
               <img
                 src={aboutImageUrl}
                 alt="Academic Building"
@@ -205,16 +208,16 @@ const Home = () => {
       </section>
 
       {/* Research Areas */}
-      <section className="py-16">
+      <section className="py-8 md:py-16">
         <div className="academic-container">
-          <div className="text-center mb-12">
-            <h2 className="academic-heading text-3xl md:text-4xl mb-4">Research Areas</h2>
-            <p className="academic-text text-lg max-w-2xl mx-auto">
+          <div className="text-center mb-8 md:mb-12">
+            <h2 className="academic-heading text-2xl sm:text-3xl md:text-4xl mb-3 md:mb-4">Research Areas</h2>
+            <p className="academic-text text-base md:text-lg max-w-2xl mx-auto px-4">
               Our research spans across multiple disciplines within international law and governance
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 px-4 sm:px-0">
             {[
               {
                 title: 'International Criminal Law',
@@ -232,33 +235,40 @@ const Home = () => {
                 image: researchAreaImages['research-area-3'],
               },
             ].map((area, index) => (
-              <div key={index} className="academic-card p-6 group hover:shadow-lg transition-shadow duration-300">
-                <div className="aspect-video relative overflow-hidden rounded-lg mb-4">
+              <div key={index} className="academic-card p-4 md:p-6 group hover:shadow-lg transition-shadow duration-300">
+                <div className="aspect-video relative overflow-hidden rounded-lg mb-3 md:mb-4">
                   <img
                     src={area.image}
                     alt={area.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                 </div>
-                <h3 className="academic-heading text-xl mb-3">{area.title}</h3>
-                <p className="academic-text">{area.description}</p>
+                <h3 className="academic-heading text-lg md:text-xl mb-2 md:mb-3">{area.title}</h3>
+                <p className="academic-text text-sm md:text-base">{area.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
+      {/* Academic Services Grid */}
+      <section className="py-8 md:py-16 bg-muted/30">
+        <div className="academic-container px-4 sm:px-0">
+          <BentoDemo />
+        </div>
+      </section>
+
       {/* Call to Action */}
-      <section className="py-16 bg-primary text-primary-foreground">
-        <div className="academic-container text-center">
-          <h2 className="font-serif font-bold text-3xl md:text-4xl mb-6">
+      <section className="py-8 md:py-16 bg-primary text-primary-foreground">
+        <div className="academic-container text-center px-4 sm:px-0">
+          <h2 className="font-serif font-bold text-2xl sm:text-3xl md:text-4xl mb-4 md:mb-6">
             Join Our Academic Community
           </h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">
+          <p className="text-base md:text-xl mb-6 md:mb-8 max-w-2xl mx-auto">
             Contribute to the discourse on international law and governance. 
             Submit your research or join our upcoming events.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center">
             <Button asChild size="lg" variant="outline" className="border-primary-foreground text-black hover:bg-primary-foreground hover:text-primary">
               <Link to="/submit-blog">Submit Research</Link>
             </Button>

@@ -1,0 +1,5 @@
+[33mc30020a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Fix download functionality and complete resource upload system - Fix download button to trigger direct file downloads instead of opening in browser tabs - Implement signed URL generation for proper download headers - Fix incrementDownloadCount method to use proper database update - Add comprehensive error handling and user feedback - Update storage policies and create setup documentation - Complete team member management fixes and UI improvements - Remove social media buttons and subscription sections as requested - Update resource categories to match research areas - Implement inline tag visibility on click for resources and team pages
+[33md8a55af[m Add frontend-only authentication system to bypass Supabase Auth issues
+[33m026652f[m[33m ([m[1;31morigin/worked[m[33m)[m Hero section updates
+[33mf4647a4[m Resources page and Contact Page
+[33m161c9a2[m event page update

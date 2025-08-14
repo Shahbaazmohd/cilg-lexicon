@@ -103,23 +103,23 @@ export function ModernHeroSection({ heroImageUrl, stats }: ModernHeroSectionProp
                                 </div>
 
                                 <h1
-                                    className="mt-2 max-w-4xl mx-auto text-balance text-6xl md:text-7xl xl:text-[5.25rem] academic-heading">
+                                    className="mt-2 max-w-4xl mx-auto text-balance text-3xl sm:text-4xl md:text-6xl lg:text-7xl xl:text-[5.25rem] academic-heading px-4">
                                     Centre for International<br />
                                     <span className="text-primary">Law & Governance</span>
                                 </h1>
                                 
                                 <p
-                                    className="mx-auto mt-6 max-w-2xl text-balance text-xl md:text-2xl font-medium academic-text">
+                                    className="mx-auto mt-6 max-w-2xl text-balance text-base sm:text-lg md:text-xl lg:text-2xl font-medium academic-text px-4">
                                     University School of Law and Legal Studies
                                     <br />
                                     Guru Gobind Singh Indraprastha University
                                 </p>
-                                <div className="mt-4 flex justify-center">
+                                <div className="mt-4 flex justify-center px-4">
                                     <a
                                         href="http://www.ipu.ac.in/"
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="hover:bg-background dark:hover:border-t-border bg-muted group flex w-fit items-center gap-3 rounded-full border p-0.5 pl-3 shadow-md shadow-black/5 transition-all duration-300 dark:border-t-white/5 dark:shadow-zinc-950">
+                                        className="hover:bg-background dark:hover:border-t-border bg-muted group flex w-fit items-center gap-2 sm:gap-3 rounded-full border p-0.5 pl-3 shadow-md shadow-black/5 transition-all duration-300 dark:border-t-white/5 dark:shadow-zinc-950">
                                         <span className="text-foreground text-xs sm:text-sm">About the University</span>
                                         <span className="dark:border-background block h-4 w-0.5 border-l bg-white dark:bg-zinc-700"></span>
 
@@ -149,14 +149,14 @@ export function ModernHeroSection({ heroImageUrl, stats }: ModernHeroSectionProp
                                     },
                                     ...transitionVariants,
                                 }}
-                                className="mt-12 flex flex-col items-center justify-center gap-2 md:flex-row">
+                                className="mt-8 sm:mt-12 flex flex-col items-center justify-center gap-3 sm:gap-2 md:flex-row px-4">
                                 <div
                                     key={1}
-                                    className="bg-foreground/10 rounded-[14px] border p-0.5">
+                                    className="bg-foreground/10 rounded-[14px] border p-0.5 w-full sm:w-auto">
                                     <Button
                                         asChild
                                         size="lg"
-                                        className="rounded-xl px-5 text-base bg-academic hover:bg-academic/90 text-academic-foreground">
+                                        className="rounded-xl px-4 sm:px-5 text-sm sm:text-base bg-academic hover:bg-academic/90 text-academic-foreground w-full sm:w-auto">
                                         <Link to="/blog">
                                             <span className="text-nowrap">CILG Blog</span>
                                         </Link>
@@ -164,11 +164,11 @@ export function ModernHeroSection({ heroImageUrl, stats }: ModernHeroSectionProp
                                 </div>
                                 <div
                                     key={2}
-                                    className="bg-foreground/10 rounded-[14px] border p-0.5">
+                                    className="bg-foreground/10 rounded-[14px] border p-0.5 w-full sm:w-auto">
                                     <Button
                                         asChild
                                         size="lg"
-                                        className="rounded-xl px-5 text-base bg-primary hover:bg-primary/90 text-primary-foreground">
+                                        className="rounded-xl px-4 sm:px-5 text-sm sm:text-base bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto">
                                         <Link to="/submit-blog">
                                             <span className="text-nowrap">Submit Manuscript</span>
                                         </Link>
@@ -219,14 +219,14 @@ export function ModernHeroSection({ heroImageUrl, stats }: ModernHeroSectionProp
                             <ChevronRight className="ml-1 inline-block size-3" />
                         </Link>
                     </div>
-                    <div className="group-hover:blur-xs mx-auto mt-12 grid max-w-2xl grid-cols-4 gap-x-12 gap-y-8 transition-all duration-500 group-hover:opacity-50 sm:gap-x-16 sm:gap-y-14">
+                    <div className="group-hover:blur-xs mx-auto mt-8 sm:mt-12 grid max-w-2xl grid-cols-2 sm:grid-cols-4 gap-x-6 sm:gap-x-12 gap-y-6 sm:gap-y-8 transition-all duration-500 group-hover:opacity-50 px-4 sm:px-0">
                         {stats.map((stat, index) => (
                             <div key={index} className="flex flex-col items-center text-center">
-                                <div className="mx-auto w-12 h-12 bg-primary rounded-lg flex items-center justify-center mb-4">
-                                    <stat.icon className="h-6 w-6 text-primary-foreground" />
+                                <div className="mx-auto w-10 h-10 sm:w-12 sm:h-12 bg-primary rounded-lg flex items-center justify-center mb-3 sm:mb-4">
+                                    <stat.icon className="h-5 w-5 sm:h-6 sm:w-6 text-primary-foreground" />
                                 </div>
-                                <div className="academic-heading text-2xl mb-1">{stat.value}</div>
-                                <div className="text-muted-foreground text-sm">{stat.label}</div>
+                                <div className="academic-heading text-lg sm:text-2xl mb-1">{stat.value}</div>
+                                <div className="text-muted-foreground text-xs sm:text-sm">{stat.label}</div>
                             </div>
                         ))}
                     </div>
