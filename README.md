@@ -63,15 +63,6 @@ cp .env.example .env.local
 npm run dev
 ```
 
-### Environment Variables
-
-Create a `.env.local` file in the root directory:
-
-```env
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
-
 ## 🗄️ Database Setup
 
 The project uses Supabase with the following main tables:
@@ -94,34 +85,4 @@ src/
 └── assets/             # Static assets
 ```
 
-## 🚀 Deployment
 
-### Vercel (Recommended)
-1. Connect your GitHub repository to Vercel
-2. Set environment variables in Vercel dashboard
-3. Deploy automatically on push to main branch
-
-### Netlify
-1. Connect your GitHub repository to Netlify
-2. Set build command: `npm run build`
-3. Set publish directory: `dist`
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Commit your changes: `git commit -m 'Add amazing feature'`
-4. Push to the branch: `git push origin feature/amazing-feature`
-5. Open a Pull Request
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 📞 Support
-
-For support and questions, please open an issue in the GitHub repository.
-
----
-
-Built with ❤️ using modern web technologies for academic excellence.
