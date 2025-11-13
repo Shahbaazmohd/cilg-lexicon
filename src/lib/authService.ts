@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { adminSupabase } from '@/integrations/supabase/adminClient';
 import type { User, Session } from '@supabase/supabase-js';
 
 export interface AuthState {
