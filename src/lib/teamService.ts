@@ -20,7 +20,7 @@ export interface TeamMember {
     orcid?: string;
     googleScholar?: string;
   };
-  category: 'patrons' | 'faculty' | 'convenor' | 'core-team' | 'team-heads' | 'members' | 'past-contributors' | 'developers';
+  category: 'patrons' | 'faculty' | 'convenor' | 'core-team' | 'team-heads' | 'members' | 'past-contributors' | 'developers' | 'social-media-team' | 'research-editorial-team' | 'events-team' | 'mentors';
   is_active: boolean;
   created_at: string;
   updated_at: string;

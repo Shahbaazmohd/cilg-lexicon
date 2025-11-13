@@ -40,8 +40,8 @@ export default function TeamMemberManager({ className = "" }: TeamMemberManagerP
       twitter: '',
       orcid: '',
       googleScholar: ''
-    },
-    category: 'patrons' as 'patrons' | 'faculty' | 'convenor' | 'core-team' | 'team-heads' | 'members' | 'past-contributors' | 'developers',
+    } as { linkedin?: string; twitter?: string; orcid?: string; googleScholar?: string; },
+    category: 'patrons' as 'patrons' | 'faculty' | 'convenor' | 'core-team' | 'team-heads' | 'members' | 'past-contributors' | 'developers' | 'social-media-team' | 'research-editorial-team' | 'events-team' | 'mentors',
     is_active: true
   });
 
