@@ -30,7 +30,7 @@ export class TeamService {
   // Get all team members
   static async getAllTeamMembers(): Promise<TeamMember[]> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('team_members')
         .select('*')
         .eq('is_active', true)
@@ -42,7 +42,7 @@ export class TeamService {
         return [];
       }
 
-      return data || [];
+      return (data || []) as TeamMember[];
     } catch (error) {
       console.error('Error in getAllTeamMembers:', error);
       return [];
@@ -52,7 +52,7 @@ export class TeamService {
   // Get team members by category
   static async getTeamMembersByCategory(category: string): Promise<TeamMember[]> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('team_members')
         .select('*')
         .eq('category', category)
@@ -64,7 +64,7 @@ export class TeamService {
         return [];
       }
 
-      return data || [];
+      return (data || []) as TeamMember[];
     } catch (error) {
       console.error('Error in getTeamMembersByCategory:', error);
       return [];
@@ -102,7 +102,7 @@ export class TeamService {
   // Update team member image URL
   static async updateTeamMemberImageUrl(memberId: string, imageUrl: string): Promise<boolean> {
     try {
-      const { error } = await adminSupabase
+      const { error } = await (adminSupabase as any)
         .from('team_members')
         .update({ image_url: imageUrl })
         .eq('id', memberId);
@@ -132,7 +132,7 @@ export class TeamService {
   // Get team member by ID
   static async getTeamMemberById(id: string): Promise<TeamMember | null> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('team_members')
         .select('*')
         .eq('id', id)
@@ -144,7 +144,7 @@ export class TeamService {
         return null;
       }
 
-      return data;
+      return data as TeamMember;
     } catch (error) {
       console.error('Error in getTeamMemberById:', error);
       return null;
@@ -176,7 +176,7 @@ export class TeamService {
       };
 
       // Use admin client for admin operations (bypasses RLS)
-      const { data, error } = await adminSupabase
+      const { data, error } = await (adminSupabase as any)
         .from('team_members')
         .insert([newMember])
         .select()
@@ -187,7 +187,7 @@ export class TeamService {
         return null;
       }
 
-      return data;
+      return data as TeamMember;
     } catch (error) {
       console.error('Error in createTeamMember:', error);
       return null;
@@ -210,7 +210,7 @@ export class TeamService {
       console.log('  Final update data:', updateData);
 
       // First, try to update without returning data
-      const { error: updateError } = await adminSupabase
+      const { error: updateError } = await (adminSupabase as any)
         .from('team_members')
         .update(updateData)
         .eq('id', id);
@@ -226,7 +226,7 @@ export class TeamService {
       console.log('✅ Update operation completed successfully');
 
       // Now fetch the updated member separately
-      const { data: updatedMember, error: fetchError } = await adminSupabase
+      const { data: updatedMember, error: fetchError } = await (adminSupabase as any)
         .from('team_members')
         .select('*')
         .eq('id', id)
@@ -240,7 +240,7 @@ export class TeamService {
       }
 
       console.log('✅ Team member fetched after update:', updatedMember);
-      return updatedMember;
+      return updatedMember as TeamMember;
     } catch (error) {
       console.error('❌ Unexpected error in updateTeamMember:', error);
       console.error('  Error name:', error.name);

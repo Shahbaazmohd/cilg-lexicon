@@ -164,7 +164,7 @@ class AuthService {
       console.log('Verifying admin role for user:', user.email);
       
       // First, try to get the admin user record
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('admin_users')
         .select('role, is_active')
         .eq('user_id', user.id)
@@ -182,7 +182,7 @@ class AuthService {
           console.log('RLS policy issue detected, trying alternative verification...');
           
           // Try using maybeSingle() instead of single() for more lenient querying
-          const { data: adminData, error: adminError } = await supabase
+          const { data: adminData, error: adminError } = await (supabase as any)
             .from('admin_users')
             .select('role, is_active')
             .eq('user_id', user.id)
@@ -252,7 +252,7 @@ class AuthService {
     if (!this.currentUser) return null;
     
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('admin_users')
         .select('*')
         .eq('user_id', this.currentUser.id)
@@ -262,7 +262,7 @@ class AuthService {
         return null;
       }
 
-      return data;
+      return data as AdminUser;
     } catch (error) {
       console.error('Error getting admin user details:', error);
       return null;
@@ -274,7 +274,7 @@ class AuthService {
     if (!this.currentUser) return;
     
     try {
-      await supabase
+      await (supabase as any)
         .from('admin_users')
         .update({ last_sign_in: new Date().toISOString() })
         .eq('user_id', this.currentUser.id);
@@ -345,6 +345,3 @@ class AuthService {
 
 // Create singleton instance
 export const authService = new AuthService();
-
-// Export types for use in other components
-export type { AuthState, AdminUser };

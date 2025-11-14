@@ -47,7 +47,7 @@ const AdminFeatured = () => {
         .select('*')
         .eq('featured', true)
         .eq('status', 'approved')
-        .order('featured_order', { ascending: true, nullsLast: true })
+        .order('featured_order', { ascending: true })
         .order('created_at', { ascending: false });
 
       if (error && error.message.includes('featured_order')) {

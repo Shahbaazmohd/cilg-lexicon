@@ -16,7 +16,7 @@ export class DynamicImageService {
   // Get all dynamic images
   static async getAllImages(): Promise<DynamicImage[]> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('dynamic_images')
         .select('*')
         .order('position');
@@ -26,7 +26,7 @@ export class DynamicImageService {
         return [];
       }
 
-      return data || [];
+      return (data || []) as DynamicImage[];
     } catch (error) {
       console.error('Error in getAllImages:', error);
       return [];
@@ -36,7 +36,7 @@ export class DynamicImageService {
   // Get image by position
   static async getImageByPosition(position: string): Promise<DynamicImage | null> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('dynamic_images')
         .select('*')
         .eq('position', position)
@@ -58,7 +58,7 @@ export class DynamicImageService {
   // Get image by name
   static async getImageByName(name: string): Promise<DynamicImage | null> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('dynamic_images')
         .select('*')
         .eq('name', name)
@@ -108,7 +108,7 @@ export class DynamicImageService {
   // Update image URL for a position
   static async updateImageUrl(position: string, imageUrl: string): Promise<boolean> {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('dynamic_images')
         .update({ image_url: imageUrl })
         .eq('position', position);
@@ -128,7 +128,7 @@ export class DynamicImageService {
   // Update image configuration
   static async updateImage(id: string, updates: Partial<DynamicImage>): Promise<boolean> {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('dynamic_images')
         .update(updates)
         .eq('id', id);
@@ -168,7 +168,7 @@ export class DynamicImageService {
       }
 
       // Update database to remove image_url
-      const { error: dbError } = await supabase
+      const { error: dbError } = await (supabase as any)
         .from('dynamic_images')
         .update({ image_url: null })
         .eq('position', position);

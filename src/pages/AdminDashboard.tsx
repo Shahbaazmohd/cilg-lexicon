@@ -206,25 +206,17 @@ const AdminDashboard = () => {
 
   const handleLogout = async () => {
     try {
-      const result = await authService.signOut();
-      if (result.success) {
-        toast({
-          title: "Logged Out",
-          description: "You have been successfully logged out",
-          variant: "default"
-        });
-        navigate('/admin/login');
-      } else {
-        toast({
-          title: "Logout Error",
-          description: result.error || 'Failed to log out',
-          variant: "destructive"
-        });
-      }
+      await simpleAuthService.signOut();
+      toast({
+        title: "Logged Out",
+        description: "You have been successfully logged out",
+        variant: "default"
+      });
+      navigate('/admin/login');
     } catch (error) {
       toast({
         title: "Logout Error",
-        description: 'An unexpected error occurred',
+        description: 'Failed to log out',
         variant: "destructive"
       });
     }
