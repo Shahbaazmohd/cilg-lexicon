@@ -137,8 +137,8 @@ const Home = () => {
               </h2>
               <div className="space-y-4 md:space-y-6 academic-text text-base md:text-lg text-center lg:text-left">
                 <p>
-                  The Centre for International Law and Governance (CILG) stands at the forefront 
-                  of legal scholarship, fostering innovative research and discourse in international 
+                  The Cell for International Law and Governance (CILG) stands at the forefront 
+                  of legal scholarship, fostering innovative research and discourse in international
                   law, policy, and governance.
                 </p>
                 <p>

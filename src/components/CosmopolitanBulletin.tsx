@@ -122,7 +122,7 @@ export function CosmopolitanBulletin({
                     Cosmopolitan Bulletin
                   </h3>
                   <p className="text-xs md:text-sm text-muted-foreground font-sans">
-                    Centre for International Law and Governance
+                    Cell for International Law and Governance
                   </p>
                 </div>
                 <div className="flex items-center gap-2">

@@ -187,7 +187,7 @@ const BlogPost = () => {
               <div className="flex-1">
                 <h3 className="academic-heading text-xl mb-2">{post.author_name}</h3>
                 <p className="academic-text">
-                  {post.author_designation || 'Researcher at the Centre for International Law and Governance'}
+                  {post.author_designation || 'Researcher at the Cell for International Law and Governance'}
                 </p>
               </div>
             </div>

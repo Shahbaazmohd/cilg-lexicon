@@ -173,7 +173,7 @@ function FooterSection() {
         {/* Bottom Bar */}
         <div className="mt-6 sm:mt-8 flex flex-col items-center justify-between gap-3 border-t border-primary-foreground/20 pt-4 sm:pt-6 text-center md:flex-row">
           <p className="text-xs sm:text-sm text-primary-foreground/60">
-            © {new Date().getFullYear()} Centre for International Law and Governance. All rights reserved.
+            © {new Date().getFullYear()} Cell for International Law and Governance. All rights reserved.
           </p>
           <nav className="flex gap-4 text-xs sm:text-sm">
             <Link to="/privacy" className="py-1.5 px-1 transition-colors hover:text-academic text-primary-foreground/60">
