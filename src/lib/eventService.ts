@@ -23,7 +23,7 @@ export class EventService {
   // Get all events
   static async getAllEvents(): Promise<Event[]> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('events')
         .select('*')
         .order('date', { ascending: false });
@@ -33,7 +33,10 @@ export class EventService {
         return [];
       }
 
-      return data || [];
+      return (data || []).map((event: any) => ({
+        ...event,
+        isVirtual: event.is_virtual
+      })) as Event[];
     } catch (error) {
       console.error('Error in getAllEvents:', error);
       return [];
@@ -43,7 +46,7 @@ export class EventService {
   // Get event by ID
   static async getEventById(id: string): Promise<Event | null> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('events')
         .select('*')
         .eq('id', id)
@@ -54,7 +57,7 @@ export class EventService {
         return null;
       }
 
-      return data;
+      return data ? { ...data, isVirtual: data.is_virtual } as Event : null;
     } catch (error) {
       console.error('Error in getEventById:', error);
       return null;
@@ -92,7 +95,7 @@ export class EventService {
   // Update event image URL
   static async updateEventImageUrl(eventId: string, imageUrl: string): Promise<boolean> {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('events')
         .update({ image: imageUrl })
         .eq('id', eventId);

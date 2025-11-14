@@ -162,7 +162,7 @@ const AdminEvents = () => {
       } else {
         // Insert new event
         console.log('Creating new event');
-        const { data, error } = await supabase
+        const { data, error } = await (supabase as any)
           .from('events')
           .insert([eventData]);
 
@@ -391,7 +391,7 @@ const AdminEvents = () => {
                       <Input
                         id="speakers"
                         value={Array.isArray(formData.speakers) ? formData.speakers.join(', ') : formData.speakers || ''}
-                        onChange={(e) => setFormData({...formData, speakers: e.target.value})}
+                        onChange={(e) => setFormData({...formData, speakers: e.target.value.split(',').map(s => s.trim())})}
                         placeholder="e.g. Dr. Jane Smith, Prof. John Doe"
                       />
                     </div>

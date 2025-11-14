@@ -25,7 +25,7 @@ export class ContactService {
   // Submit a new contact message
   static async submitContactMessage(data: ContactFormData): Promise<boolean> {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('contact_messages')
         .insert({
           name: data.name,
@@ -50,7 +50,7 @@ export class ContactService {
   // Get all contact messages (admin)
   static async getAllContactMessages(): Promise<ContactMessage[]> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('contact_messages')
         .select('*')
         .order('created_at', { ascending: false });
@@ -60,7 +60,7 @@ export class ContactService {
         return [];
       }
 
-      return data || [];
+      return (data || []) as ContactMessage[];
     } catch (error) {
       console.error('Error in getAllContactMessages:', error);
       return [];
@@ -70,7 +70,7 @@ export class ContactService {
   // Get unread contact messages count
   static async getUnreadCount(): Promise<number> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('contact_messages')
         .select('id')
         .eq('status', 'unread');
@@ -90,7 +90,7 @@ export class ContactService {
   // Update message status
   static async updateMessageStatus(id: string, status: ContactMessage['status']): Promise<boolean> {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('contact_messages')
         .update({ status })
         .eq('id', id);
@@ -110,7 +110,7 @@ export class ContactService {
   // Add admin notes to a message
   static async addAdminNotes(id: string, notes: string): Promise<boolean> {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('contact_messages')
         .update({ admin_notes: notes })
         .eq('id', id);
@@ -130,7 +130,7 @@ export class ContactService {
   // Delete a contact message
   static async deleteMessage(id: string): Promise<boolean> {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('contact_messages')
         .delete()
         .eq('id', id);
@@ -150,7 +150,7 @@ export class ContactService {
   // Get recent contact messages (last 5)
   static async getRecentMessages(limit: number = 5): Promise<ContactMessage[]> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('contact_messages')
         .select('*')
         .order('created_at', { ascending: false })
@@ -161,7 +161,7 @@ export class ContactService {
         return [];
       }
 
-      return data || [];
+      return (data || []) as ContactMessage[];
     } catch (error) {
       console.error('Error in getRecentMessages:', error);
       return [];

@@ -149,7 +149,7 @@ export class NoticeService {
   // Delete notice
   static async deleteNotice(id: string): Promise<boolean> {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('notices')
         .delete()
         .eq('id', id);
@@ -169,7 +169,7 @@ export class NoticeService {
   // Toggle notice active status
   static async toggleNoticeStatus(id: string, isActive: boolean): Promise<boolean> {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('notices')
         .update({ is_active: isActive })
         .eq('id', id);
@@ -189,7 +189,7 @@ export class NoticeService {
   // Toggle notice featured status
   static async toggleNoticeFeatured(id: string, featured: boolean): Promise<boolean> {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('notices')
         .update({ featured: featured })
         .eq('id', id);

@@ -55,7 +55,8 @@ const Events = () => {
       capacity: 200,
       registered: 145,
       image: '/lovable-uploads/79b917eb-f9ca-4687-b317-cab1aa5e5968.png',
-      status: 'upcoming'
+      status: 'upcoming',
+      featured: false
     },
     {
       id: '2',
@@ -71,7 +72,8 @@ const Events = () => {
       capacity: 50,
       registered: 32,
       image: '/lovable-uploads/79b917eb-f9ca-4687-b317-cab1aa5e5968.png',
-      status: 'upcoming'
+      status: 'upcoming',
+      featured: false
     },
     {
       id: '3',
@@ -85,7 +87,8 @@ const Events = () => {
       speakers: ['Hon. Fatou Bensouda'],
       registrationUrl: '#',
       image: '/lovable-uploads/79b917eb-f9ca-4687-b317-cab1aa5e5968.png',
-      status: 'upcoming'
+      status: 'upcoming',
+      featured: false
     },
     {
       id: '4',
@@ -98,7 +101,8 @@ const Events = () => {
       description: 'In its continued mission to promote scholarly dialogue and student engagement in emerging areas of international economic law and diplomacy, the USLLS Centre for International Law and Governance was thrilled to launch the first on-campus event of the September season: a Declamation Competition on the compelling theme India and its Bargaining Power under the Free Trade Agreement: Understanding the Influence of Non-Tariff Barriers in International Trade ',
       speakers: ['Prof. Michael Chen', 'Dr. Sarah Johnson'],
       image: '/lovable-uploads/79b917eb-f9ca-4687-b317-cab1aa5e5968.png',
-      status: 'past'
+      status: 'past',
+      featured: false
     },
   ];
   

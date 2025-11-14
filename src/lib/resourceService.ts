@@ -46,7 +46,7 @@ export interface UpdateResourceData extends Partial<CreateResourceData> {
 export class ResourceService {
   // Get all active resources (for public view)
   static async getAllActiveResources(): Promise<Resource[]> {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from('resources')
       .select('*')
       .eq('is_active', true)
@@ -57,12 +57,12 @@ export class ResourceService {
       throw error;
     }
 
-    return data || [];
+    return (data || []) as Resource[];
   }
 
   // Get all resources (for admin view)
   static async getAllResources(): Promise<Resource[]> {
-    const { data, error } = await adminSupabase
+    const { data, error } = await (adminSupabase as any)
       .from('resources')
       .select('*')
       .order('created_at', { ascending: false });
@@ -74,12 +74,12 @@ export class ResourceService {
       throw error;
     }
 
-    return data || [];
+    return (data || []) as Resource[];
   }
 
   // Get resource by ID
   static async getResourceById(id: string): Promise<Resource | null> {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from('resources')
       .select('*')
       .eq('id', id)
@@ -90,14 +90,14 @@ export class ResourceService {
       throw error;
     }
 
-    return data;
+    return data as Resource;
   }
 
   // Create new resource (admin only)
   static async createResource(resourceData: CreateResourceData): Promise<Resource> {
     console.log('🔧 Creating resource:', resourceData);
     
-    const { data, error } = await adminSupabase
+    const { data, error } = await (adminSupabase as any)
       .from('resources')
       .insert([resourceData])
       .select()
@@ -111,7 +111,7 @@ export class ResourceService {
     }
 
     console.log('✅ Resource created successfully:', data);
-    return data;
+    return data as Resource;
   }
 
   // Update resource (admin only)
@@ -120,7 +120,7 @@ export class ResourceService {
     
     console.log('🔧 Updating resource:', { id, ...updateData });
     
-    const { data, error } = await adminSupabase
+    const { data, error } = await (adminSupabase as any)
       .from('resources')
       .update(updateData)
       .eq('id', id)
@@ -135,14 +135,13 @@ export class ResourceService {
     }
 
     console.log('✅ Resource updated successfully:', data);
-    return data;
+    return data as Resource;
   }
 
-  // Delete resource (admin only)
   static async deleteResource(id: string): Promise<boolean> {
     console.log('🔧 Deleting resource:', id);
     
-    const { error } = await adminSupabase
+    const { error } = await (adminSupabase as any)
       .from('resources')
       .delete()
       .eq('id', id);
@@ -180,9 +179,7 @@ export class ResourceService {
 
     if (error) {
       console.error('❌ Error uploading file:', error);
-      console.error('  Error code:', error.code);
       console.error('  Error message:', error.message);
-      console.error('  Error details:', error.details);
       throw error;
     }
 
@@ -210,7 +207,6 @@ export class ResourceService {
 
     if (error) {
       console.error('❌ Error deleting file:', error);
-      console.error('  Error code:', error.code);
       console.error('  Error message:', error.message);
       throw error;
     }
@@ -270,7 +266,7 @@ export class ResourceService {
   static async incrementDownloadCount(id: string): Promise<void> {
     try {
       // First get the current download count
-      const { data: currentResource, error: fetchError } = await adminSupabase
+      const { data: currentResource, error: fetchError } = await (adminSupabase as any)
         .from('resources')
         .select('download_count')
         .eq('id', id)
@@ -284,7 +280,7 @@ export class ResourceService {
       // Increment the count
       const newCount = (currentResource?.download_count || 0) + 1;
       
-      const { error: updateError } = await adminSupabase
+      const { error: updateError } = await (adminSupabase as any)
         .from('resources')
         .update({ download_count: newCount })
         .eq('id', id);
@@ -305,7 +301,7 @@ export class ResourceService {
 
   // Get resources by category
   static async getResourcesByCategory(category: string): Promise<Resource[]> {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from('resources')
       .select('*')
       .eq('category', category)
@@ -317,12 +313,12 @@ export class ResourceService {
       throw error;
     }
 
-    return data || [];
+    return (data || []) as Resource[];
   }
 
   // Get featured resources
   static async getFeaturedResources(): Promise<Resource[]> {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from('resources')
       .select('*')
       .eq('is_featured', true)
@@ -334,12 +330,12 @@ export class ResourceService {
       throw error;
     }
 
-    return data || [];
+    return (data || []) as Resource[];
   }
 
   // Search resources
   static async searchResources(query: string): Promise<Resource[]> {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from('resources')
       .select('*')
       .eq('is_active', true)
@@ -351,7 +347,7 @@ export class ResourceService {
       throw error;
     }
 
-    return data || [];
+    return (data || []) as Resource[];
   }
 
   // Get resource statistics
@@ -361,7 +357,7 @@ export class ResourceService {
     featuredResources: number;
     totalDownloads: number;
   }> {
-    const { data: allResources, error: allError } = await adminSupabase
+    const { data: allResources, error: allError } = await (adminSupabase as any)
       .from('resources')
       .select('download_count, is_active, is_featured');
 
