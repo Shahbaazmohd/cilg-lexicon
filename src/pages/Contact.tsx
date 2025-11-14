@@ -122,7 +122,7 @@ const Contact = () => {
               </CardHeader>
               <CardContent>
                 <address className="not-italic academic-text">
-                  Centre for International Law and Governance<br />
+                  Cell for International Law and Governance<br />
                   Faculty of Law<br />
                   USLLS, GGSIPU<br />
                   Dwarka, Delhi - 110078<br />

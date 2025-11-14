@@ -48,8 +48,8 @@ const About = () => {
             About CILG
           </h1>
           <p className="academic-text text-xl max-w-3xl mx-auto">
-            The Centre for International Law and Governance stands as a beacon of excellence 
-            in legal scholarship and policy research, fostering innovative discourse on 
+            The Cell for International Law and Governance stands as a beacon of excellence 
+            in legal scholarship and policy research, fostering innovative discourse on
             global governance challenges.
           </p>
         </div>
@@ -88,8 +88,8 @@ const About = () => {
             <h2 className="academic-heading text-3xl mb-6">Our Story</h2>
             <div className="space-y-6 academic-text text-lg">
               <p>
-                Established in 2010, the Centre for International Law and Governance emerged 
-                from a recognition that traditional approaches to international law needed 
+                Established in 2010, the Cell for International Law and Governance emerged 
+                from a recognition that traditional approaches to international law needed
                 fresh perspectives and interdisciplinary insights.
               </p>
               <p>

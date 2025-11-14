@@ -53,14 +53,14 @@ class EmailService {
               <!-- Header -->
               <div style="background: #1e40af; color: white; padding: 30px 20px; text-align: center;">
                 <h1 style="margin: 0; font-size: 28px;">CILG</h1>
-                <p style="margin: 5px 0 0 0; font-size: 16px;">Centre for International Law and Governance</p>
+                <p style="margin: 5px 0 0 0; font-size: 16px;">Cell for International Law and Governance</p>
               </div>
         `;
 
         const baseFooter = `
               <!-- Footer -->
               <div style="background: #f8f9fa; padding: 20px; text-align: center; font-size: 12px; color: #666;">
-                <p style="margin: 0 0 10px 0;">Centre for International Law and Governance</p>
+                <p style="margin: 0 0 10px 0;">Cell for International Law and Governance</p>
                 <p style="margin: 0 0 5px 0;">Contact: usllscilg@gmail.com</p>
                 <p style="margin: 0;">© 2025 CILG. All rights reserved.</p>
               </div>
@@ -78,7 +78,7 @@ class EmailService {
               <div style="padding: 40px 20px; background: white;">
                 <h2 style="color: #1e40af; margin-bottom: 20px;">Article Submission Confirmed</h2>
                 <p>Dear ${data.to_name},</p>
-                <p>Thank you for submitting your article to the Centre for International Law and Governance (CILG). We have successfully received your submission and it is now under review.</p>
+                <p>Thank you for submitting your article to the Cell for International Law and Governance (CILG). We have successfully received your submission and it is now under review.</p>
                 
                 <div style="background: #f8f9fa; padding: 20px; margin: 25px 0; border-left: 4px solid #1e40af; border-radius: 4px;">
                   <h3 style="margin: 0 0 15px 0; color: #1e40af;">Article Details</h3>
@@ -137,7 +137,7 @@ class EmailService {
                 
                 <p>Your article will be published on our website shortly. You can view it at the link provided above.</p>
                 
-                <p>Thank you for contributing to the Centre for International Law and Governance.</p>
+                <p>Thank you for contributing to the Cell for International Law and Governance.</p>
                 
                 <p>Best regards,<br><strong>The CILG Editorial Team</strong></p>
               </div>
@@ -150,7 +150,7 @@ class EmailService {
               <div style="padding: 40px 20px; background: white;">
                 <h2 style="color: #dc3545; margin-bottom: 20px;">Article Review Update</h2>
                 <p>Dear ${data.to_name},</p>
-                <p>Thank you for submitting your article to the Centre for International Law and Governance. After careful review by our editorial team, we regret to inform you that we are unable to accept your article for publication at this time.</p>
+                <p>Thank you for submitting your article to the Cell for International Law and Governance. After careful review by our editorial team, we regret to inform you that we are unable to accept your article for publication at this time.</p>
                 
                 <div style="background: #f8d7da; padding: 20px; margin: 25px 0; border-left: 4px solid #dc3545; border-radius: 4px;">
                   <h3 style="margin: 0 0 15px 0; color: #721c24;">Article Details</h3>
