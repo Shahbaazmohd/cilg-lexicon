@@ -12,7 +12,7 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Notice, NoticeService } from '@/lib/noticeService';
-import { sessionService } from '@/lib/sessionService';
+import { simpleAuthService } from '@/lib/simpleAuthService';
 
 const AdminNotices = () => {
   const navigate = useNavigate();
@@ -35,8 +35,8 @@ const AdminNotices = () => {
   });
 
   useEffect(() => {
-    // Check if user is logged in using session service
-    if (!sessionService.isLoggedIn()) {
+    // Check if user is authenticated and is an admin
+    if (!simpleAuthService.isAuthenticated() || !simpleAuthService.isAdmin()) {
       navigate('/admin/login');
     } else {
       loadNotices();
@@ -61,9 +61,7 @@ const AdminNotices = () => {
   };
 
   const handleLogout = () => {
-    sessionService.clearSession();
-    // Dispatch custom event to notify navbar
-    window.dispatchEvent(new CustomEvent('sessionChange'));
+    simpleAuthService.signOut();
     navigate('/admin/login');
   };
 

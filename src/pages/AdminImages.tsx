@@ -2,22 +2,20 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminSidebar from '@/components/AdminSidebar';
 import ImageManagementDashboard from '@/components/ImageManagementDashboard';
-import { sessionService } from '@/lib/sessionService';
+import { simpleAuthService } from '@/lib/simpleAuthService';
 
 const AdminImages = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if user is logged in using session service
-    if (!sessionService.isLoggedIn()) {
+    // Check if user is authenticated and is an admin
+    if (!simpleAuthService.isAuthenticated() || !simpleAuthService.isAdmin()) {
       navigate('/admin/login');
     }
   }, [navigate]);
 
   const handleLogout = () => {
-    sessionService.clearSession();
-    // Dispatch custom event to notify navbar
-    window.dispatchEvent(new CustomEvent('sessionChange'));
+    simpleAuthService.signOut();
     navigate('/admin/login');
   };
 
