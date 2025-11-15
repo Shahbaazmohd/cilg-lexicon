@@ -163,11 +163,6 @@ const AdminLogin = () => {
             >
               {isLoading ? 'Signing in...' : 'Sign In'}
             </Button>
-
-            <div className="text-center text-xs text-muted-foreground">
-              <p>Frontend authentication (bypasses Supabase issues)</p>
-              <p>Use: usllscilg@gmail.com / NewPassword123!</p>
-            </div>
           </form>
         </CardContent>
       </Card>
