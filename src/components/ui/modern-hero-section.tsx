@@ -104,7 +104,7 @@ export function ModernHeroSection({ heroImageUrl, stats }: ModernHeroSectionProp
 
                                 <h1
                                     className="mt-2 max-w-4xl mx-auto text-balance text-3xl sm:text-4xl md:text-6xl lg:text-7xl xl:text-[5.25rem] academic-heading px-4">
-                                    Centre for International<br />
+                                    Cell for International<br />
                                     <span className="text-primary">Law & Governance</span>
                                 </h1>
                                 
