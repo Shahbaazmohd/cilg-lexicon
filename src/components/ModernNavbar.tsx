@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { X, ChevronDown, Shield, LogOut } from 'lucide-react';
+import { Menu, X, ChevronDown, Shield, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { simpleAuthService, type SimpleAuthState } from '@/lib/simpleAuthService';
@@ -252,7 +252,7 @@ const ModernNavbar = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50">
+    <header className="fixed top-0 left-0 right-0 z-[100]">
       <nav
         data-state={menuState && 'active'}
         className="w-full px-2 group">
@@ -277,6 +277,46 @@ const ModernNavbar = () => {
                     Centre for International<br />Law & Governance
                   </p>
                 </div>
+              </Link>
+            </div>
+
+            {/* Mobile Quick Links - Centrally Aligned */}
+            <div className="flex-1 flex items-center justify-center gap-3 lg:hidden">
+              <Link
+                to="/about"
+                className={cn(
+                  "text-xs sm:text-sm font-medium transition-colors duration-150 touch-manipulation px-2 py-1 rounded-md",
+                  isActive('/about')
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+                onClick={() => setMenuState(false)}
+              >
+                About
+              </Link>
+              <Link
+                to="/blog"
+                className={cn(
+                  "text-xs sm:text-sm font-medium transition-colors duration-150 touch-manipulation px-2 py-1 rounded-md",
+                  isActive('/blog')
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+                onClick={() => setMenuState(false)}
+              >
+                Blog
+              </Link>
+              <Link
+                to="/bulletin"
+                className={cn(
+                  "text-xs sm:text-sm font-medium transition-colors duration-150 touch-manipulation px-2 py-1 rounded-md",
+                  isActive('/bulletin')
+                    ? "text-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+                onClick={() => setMenuState(false)}
+              >
+                Bulletin
               </Link>
             </div>
 
@@ -355,18 +395,8 @@ const ModernNavbar = () => {
                 data-hamburger-button
                 onClick={() => setMenuState(!menuState)}
                 aria-label={menuState == true ? 'Close Menu' : 'Open Menu'}
-                className="relative z-20 -m-2.5 -mr-4 block cursor-pointer p-2.5 touch-manipulation lg:hidden min-h-[44px] min-w-[44px] flex items-center justify-center">
-                <svg 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  fill="none" 
-                  viewBox="0 0 24 24" 
-                  strokeWidth="1.5" 
-                  stroke="currentColor" 
-                  className="group-data-[state=active]:scale-0 group-data-[state=active]:opacity-0 m-auto h-6 w-6 duration-200"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5" />
-                </svg>
-                <X className="group-data-[state=active]:rotate-0 group-data-[state=active]:scale-100 group-data-[state=active]:opacity-100 absolute inset-0 m-auto size-6 -rotate-180 scale-0 opacity-0 duration-200" />
+                className="relative z-[110] -m-2.5 -mr-4 block cursor-pointer p-2.5 touch-manipulation lg:hidden min-h-[44px] min-w-[44px] flex items-center justify-center bg-background/80 backdrop-blur-sm rounded-lg border border-border/50 hover:bg-background transition-colors">
+                <Menu className="m-auto size-6" />
               </button>
 
               {/* Desktop Action Buttons */}
@@ -402,98 +432,98 @@ const ModernNavbar = () => {
               </div>
             </div>
 
-            {/* Mobile Menu */}
-            <div 
-              data-mobile-menu
-              className={cn(
-                "fixed inset-0 top-0 left-0 right-0 bg-background/95 backdrop-blur-lg z-40 lg:hidden transition-all duration-300",
-                menuState 
-                  ? "opacity-100 visible" 
-                  : "opacity-0 invisible pointer-events-none"
-              )}>
-              {/* Mobile Menu Close Button */}
-              <button
-                onClick={() => setMenuState(false)}
-                aria-label="Close Menu"
-                className="absolute top-4 right-4 z-50 p-2 rounded-full bg-background/80 backdrop-blur-sm border border-border hover:bg-background transition-colors duration-200 touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center">
-                <X className="h-6 w-6" />
-              </button>
-              
-              <div className="flex flex-col h-full pt-20 pb-6 px-6 overflow-y-auto">
-                {/* Mobile Navigation Links */}
-                <div className="flex-1">
-                  <ul className="space-y-4 text-lg">
-                    {navigation.map((item, index) => (
-                      <li key={index}>
-                        {item.hasDropdown ? (
-                          <div>
-                            <button
-                              data-dropdown-button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                toggleDropdown(item.name);
-                              }}
-                              className={cn(
-                                "text-muted-foreground hover:text-accent-foreground block duration-150 flex items-center justify-between w-full touch-manipulation py-4 px-2 rounded-lg transition-colors",
-                                isDropdownActive(item.subItems) || openDropdown === item.name
-                                  ? "text-primary bg-primary/5"
-                                  : "hover:bg-muted/50"
-                              )}
-                              aria-expanded={openDropdown === item.name}
-                              aria-haspopup="true"
-                            >
-                              <span className="font-medium">{item.name}</span>
-                              <ChevronDown
-                                className={cn(
-                                  "h-5 w-5 transition-transform duration-200",
-                                  openDropdown === item.name ? "rotate-180" : ""
-                                )}
-                              />
-                            </button>
-                            {openDropdown === item.name && (
-                              <div className="mt-2 ml-4 space-y-2 bg-muted/30 rounded-lg p-3 relative z-50">
-                                {item.subItems.map((subItem, subIndex) => (
-                                  <Link
-                                    key={subIndex}
-                                    to={subItem.href}
-                                    data-mobile-dropdown-item
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      console.log('Mobile dropdown item clicked:', subItem.href);
-                                      setMenuState(false);
-                                      setOpenDropdown(null);
-                                    }}
-                                    className={cn(
-                                      "block w-full text-left text-base transition-colors duration-150 touch-manipulation py-3 px-3 rounded-md hover:bg-primary/5 active:bg-primary/10",
-                                      isActive(subItem.href)
-                                        ? "text-primary bg-primary/10 font-medium"
-                                        : "text-muted-foreground hover:text-primary"
-                                    )}
-                                  >
-                                    {subItem.name}
-                                  </Link>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        ) : (
-                          <Link
-                            to={item.href}
+          </div>
+        </div>
+      </nav>
+      
+      {/* Mobile Menu - Outside nav structure for proper positioning */}
+      {menuState && (
+        <div 
+          data-mobile-menu
+          className="fixed inset-0 top-0 left-0 right-0 bottom-0 bg-background/95 backdrop-blur-lg z-[105] lg:hidden">
+          {/* Mobile Menu Close Button */}
+          <button
+            onClick={() => setMenuState(false)}
+            aria-label="Close Menu"
+            className="absolute top-4 right-4 z-[110] p-2 rounded-full bg-background/80 backdrop-blur-sm border border-border hover:bg-background transition-colors duration-200 touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center">
+            <X className="h-6 w-6" />
+          </button>
+          
+          <div className="flex flex-col h-full w-full pt-20 pb-6 px-6 overflow-y-auto">
+            {/* Mobile Navigation Links */}
+            <div className="flex-1">
+              <ul className="space-y-4 text-lg">
+                {navigation.map((item, index) => (
+                  <li key={index}>
+                    {item.hasDropdown ? (
+                      <div>
+                        <button
+                          data-dropdown-button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleDropdown(item.name);
+                          }}
+                          className={cn(
+                            "text-foreground hover:text-primary block duration-150 flex items-center justify-between w-full touch-manipulation py-4 px-2 rounded-lg transition-colors font-medium",
+                            isDropdownActive(item.subItems) || openDropdown === item.name
+                              ? "text-primary bg-primary/10"
+                              : "hover:bg-muted/50"
+                          )}
+                          aria-expanded={openDropdown === item.name}
+                          aria-haspopup="true"
+                        >
+                          <span>{item.name}</span>
+                          <ChevronDown
                             className={cn(
-                              "text-muted-foreground hover:text-accent-foreground block duration-150 touch-manipulation py-4 px-2 rounded-lg transition-colors",
-                              isActive(item.href) 
-                                ? "text-primary bg-primary/5 font-medium" 
-                                : "hover:bg-muted/50"
+                              "h-5 w-5 transition-transform duration-200",
+                              openDropdown === item.name ? "rotate-180" : ""
                             )}
-                            onClick={() => setMenuState(false)}
-                          >
-                            <span className="font-medium">{item.name}</span>
-                          </Link>
+                          />
+                        </button>
+                        {openDropdown === item.name && (
+                          <div className="mt-2 ml-4 space-y-2 bg-muted/30 rounded-lg p-3 relative z-50">
+                            {item.subItems.map((subItem, subIndex) => (
+                              <Link
+                                key={subIndex}
+                                to={subItem.href}
+                                data-mobile-dropdown-item
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  console.log('Mobile dropdown item clicked:', subItem.href);
+                                  setMenuState(false);
+                                  setOpenDropdown(null);
+                                }}
+                                className={cn(
+                                  "block w-full text-left text-base transition-colors duration-150 touch-manipulation py-3 px-3 rounded-md hover:bg-primary/5 active:bg-primary/10",
+                                  isActive(subItem.href)
+                                    ? "text-primary bg-primary/10 font-medium"
+                                    : "text-foreground hover:text-primary"
+                                )}
+                              >
+                                {subItem.name}
+                              </Link>
+                            ))}
+                          </div>
                         )}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                      </div>
+                    ) : (
+                      <Link
+                        to={item.href}
+                        className={cn(
+                          "text-foreground hover:text-primary block duration-150 touch-manipulation py-4 px-2 rounded-lg transition-colors font-medium",
+                          isActive(item.href) 
+                            ? "text-primary bg-primary/10" 
+                            : "hover:bg-muted/50"
+                        )}
+                        onClick={() => setMenuState(false)}
+                      >
+                        {item.name}
+                      </Link>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
 
                 {/* Mobile Action Buttons */}
                 <div className="mt-8 pt-6 border-t border-border">
@@ -542,10 +572,7 @@ const ModernNavbar = () => {
                 </div>
               </div>
             </div>
-
-          </div>
-        </div>
-      </nav>
+          )}
     </header>
   );
 };
