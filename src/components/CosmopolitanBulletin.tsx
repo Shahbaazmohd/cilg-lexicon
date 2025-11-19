@@ -105,13 +105,28 @@ export function CosmopolitanBulletin({
     return null
   }
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Don't open modal if clicking on close button or navigation dots
+    const target = e.target as HTMLElement;
+    if (target.closest('button[aria-label="Close"]') || 
+        target.closest('button[class*="rounded-full"]') ||
+        target.closest('button[class*="w-1.5"]') ||
+        target.closest('button[class*="w-2"]')) {
+      return;
+    }
+    if (currentPost) {
+      handleReadClick(currentPost);
+    }
+  };
+
   return (
     <>
       <div className={`fixed bottom-4 right-4 z-50 w-80 md:w-96 ${className}`}>
         <Card 
-          className="bg-card/95 backdrop-blur-sm border-border shadow-2xl"
+          className="bg-card/95 backdrop-blur-sm border-border shadow-2xl cursor-pointer hover:shadow-3xl transition-shadow duration-300"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
+          onClick={handleCardClick}
         >
           <CardContent className="p-0">
             {/* Header */}
@@ -138,7 +153,11 @@ export function CosmopolitanBulletin({
                     variant="ghost"
                     size="sm"
                     className="h-6 w-6 p-0 hover:bg-muted"
-                    onClick={() => setIsDismissed(true)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsDismissed(true);
+                    }}
+                    aria-label="Close"
                   >
                     <X className="h-3 w-3" />
                   </Button>
@@ -195,7 +214,10 @@ export function CosmopolitanBulletin({
                       size="sm" 
                       variant="ghost" 
                       className="h-7 md:h-8 px-2 hover:bg-navy hover:text-white text-xs"
-                      onClick={() => handleReadClick(currentPost)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleReadClick(currentPost);
+                      }}
                     >
                       <ExternalLink className="w-3 h-3 mr-1" />
                       Read
@@ -211,7 +233,10 @@ export function CosmopolitanBulletin({
                 {posts.map((_, index) => (
                   <button
                     key={index}
-                    onClick={() => handlePostClick(index)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handlePostClick(index);
+                    }}
                     className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full transition-colors ${
                       index === currentPostIndex
                         ? "bg-navy"
@@ -240,44 +265,44 @@ export function CosmopolitanBulletin({
           )}
         </AnimatePresence>
       </div>
-      {/* Modal for full bulletin */}
+      {/* Modal for full bulletin - Optimized for mobile and desktop */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader className="relative">
-            <DialogTitle className="text-xl font-serif font-bold pr-8">
+        <DialogContent className="w-[95vw] sm:w-[90vw] md:w-[85vw] lg:w-[80vw] xl:w-[75vw] max-w-4xl max-h-[calc(100vh-100px)] sm:max-h-[85vh] overflow-y-auto overflow-x-hidden p-4 sm:p-6 left-[50%] translate-x-[-50%] top-[80px] sm:top-[50%] sm:translate-y-[-50%] translate-y-0 mx-auto my-4 sm:my-0">
+          <DialogHeader className="relative pr-8 sm:pr-10">
+            <DialogTitle className="text-base sm:text-lg md:text-xl lg:text-2xl font-serif font-bold break-words">
               {selectedPost?.title}
             </DialogTitle>
             <DialogDescription>
-              <div className="flex items-center gap-4 text-sm text-muted-foreground mt-2">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground mt-2">
                 <div className="flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
-                  <span>{selectedPost && formatDate(selectedPost.created_at)}</span>
+                  <Calendar className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                  <span className="break-words">{selectedPost && formatDate(selectedPost.created_at)}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <User className="w-4 h-4" />
-                  <span>{selectedPost?.author_name}</span>
+                  <User className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                  <span className="break-words truncate">{selectedPost?.author_name}</span>
                 </div>
               </div>
             </DialogDescription>
           </DialogHeader>
-          <div className="mt-6 space-y-4">
+          <div className="mt-4 sm:mt-6 space-y-4 overflow-x-hidden">
             {selectedPost?.image_url && (
-              <div className="w-full">
+              <div className="w-full overflow-hidden">
                 <img 
                   src={selectedPost.image_url} 
                   alt="Bulletin" 
-                  className="w-full h-auto max-h-96 object-cover rounded-lg shadow-md" 
+                  className="w-full h-auto max-h-[40vh] sm:max-h-[50vh] md:max-h-96 object-cover rounded-lg shadow-md" 
                 />
               </div>
             )}
-            <div className="prose prose-sm max-w-none">
-              <div className="whitespace-pre-wrap text-foreground font-sans text-base leading-relaxed">
+            <div className="w-full overflow-x-hidden">
+              <div className="whitespace-pre-wrap text-foreground font-sans text-sm sm:text-base md:text-lg leading-relaxed break-words overflow-wrap-anywhere">
                 {selectedPost?.content}
               </div>
             </div>
           </div>
           <DialogClose asChild>
-            <Button className="mt-6 w-full" variant="secondary">Close</Button>
+            <Button className="mt-4 sm:mt-6 w-full" variant="secondary">Close</Button>
           </DialogClose>
         </DialogContent>
       </Dialog>
