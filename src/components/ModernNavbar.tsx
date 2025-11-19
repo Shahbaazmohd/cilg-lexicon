@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, ChevronDown, Shield, LogOut } from 'lucide-react';
+import { Menu, ChevronDown, Shield, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { simpleAuthService, type SimpleAuthState } from '@/lib/simpleAuthService';
@@ -441,14 +441,6 @@ const ModernNavbar = () => {
         <div 
           data-mobile-menu
           className="fixed inset-0 top-0 left-0 right-0 bottom-0 bg-background/95 backdrop-blur-lg z-[105] lg:hidden">
-          {/* Mobile Menu Close Button */}
-          <button
-            onClick={() => setMenuState(false)}
-            aria-label="Close Menu"
-            className="absolute top-4 right-4 z-[110] p-2 rounded-full bg-background/80 backdrop-blur-sm border border-border hover:bg-background transition-colors duration-200 touch-manipulation min-h-[44px] min-w-[44px] flex items-center justify-center">
-            <X className="h-6 w-6" />
-          </button>
-          
           <div className="flex flex-col h-full w-full pt-20 pb-6 px-6 overflow-y-auto">
             {/* Mobile Navigation Links */}
             <div className="flex-1">

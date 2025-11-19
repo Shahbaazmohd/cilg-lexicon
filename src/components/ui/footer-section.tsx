@@ -60,49 +60,52 @@ function FooterSection() {
             <div className="absolute -right-4 top-0 h-24 w-24 rounded-full bg-academic/20 blur-2xl" />
           </div>
 
-          {/* Quick Links */}
-          <div className="text-center sm:text-left">
-            <h3 className="mb-3 text-base sm:text-lg font-serif font-semibold">Quick Links</h3>
-            <nav className="space-y-1 text-sm">
-              <Link to="/" className="block py-1.5 transition-colors hover:text-academic text-primary-foreground/80">
-                Home
-              </Link>
-              <Link to="/about" className="block py-1.5 transition-colors hover:text-academic text-primary-foreground/80">
-                About Us
-              </Link>
-              <Link to="/blog" className="block py-1.5 transition-colors hover:text-academic text-primary-foreground/80">
-                Blog
-              </Link>
-              <Link to="/submit-blog" className="block py-1.5 transition-colors hover:text-academic text-primary-foreground/80">
-                Submit Blog
-              </Link>
-              <Link to="/events" className="block py-1.5 transition-colors hover:text-academic text-primary-foreground/80">
-                Events
-              </Link>
-              <Link to="/resources" className="block py-1.5 transition-colors hover:text-academic text-primary-foreground/80">
-                Resources
-              </Link>
-            </nav>
-          </div>
+          {/* Quick Links and Publications - Side by side on mobile */}
+          <div className="flex flex-row gap-6 md:contents">
+            {/* Quick Links */}
+            <div className="text-center sm:text-left flex-1 md:flex-none">
+              <h3 className="mb-3 text-base sm:text-lg font-serif font-semibold">Quick Links</h3>
+              <nav className="space-y-1 text-sm">
+                <Link to="/" className="block py-1.5 transition-colors hover:text-academic text-primary-foreground/80">
+                  Home
+                </Link>
+                <Link to="/about" className="block py-1.5 transition-colors hover:text-academic text-primary-foreground/80">
+                  About Us
+                </Link>
+                <Link to="/blog" className="block py-1.5 transition-colors hover:text-academic text-primary-foreground/80">
+                  Blog
+                </Link>
+                <Link to="/submit-blog" className="block py-1.5 transition-colors hover:text-academic text-primary-foreground/80">
+                  Submit Blog
+                </Link>
+                <Link to="/events" className="block py-1.5 transition-colors hover:text-academic text-primary-foreground/80">
+                  Events
+                </Link>
+                <Link to="/resources" className="block py-1.5 transition-colors hover:text-academic text-primary-foreground/80">
+                  Resources
+                </Link>
+              </nav>
+            </div>
 
-          {/* Publications */}
-          <div className="text-center sm:text-left">
-            <h3 className="mb-3 text-base sm:text-lg font-serif font-semibold">Publications</h3>
-            <nav className="space-y-1 text-sm">
-              <Link to="/bulletin" className="block py-1.5 transition-colors hover:text-academic text-primary-foreground/80">
-                Cosmopolitan Bulletin
-              </Link>
-              <a href="#" className="block py-1.5 transition-colors hover:text-academic text-primary-foreground/80 flex items-center justify-center sm:justify-start space-x-1">
-                <span>Research Papers</span>
-                <ExternalLink className="h-3 w-3" />
-              </a>
-              <Link to="/team" className="block py-1.5 transition-colors hover:text-academic text-primary-foreground/80">
-                Meet the Team
-              </Link>
-              <Link to="/admin/login" className="block py-1.5 transition-colors hover:text-academic text-primary-foreground/80">
-                Admin Login
-              </Link>
-            </nav>
+            {/* Publications */}
+            <div className="text-center sm:text-left flex-1 md:flex-none">
+              <h3 className="mb-3 text-base sm:text-lg font-serif font-semibold">Publications</h3>
+              <nav className="space-y-1 text-sm">
+                <Link to="/bulletin" className="block py-1.5 transition-colors hover:text-academic text-primary-foreground/80">
+                  Cosmopolitan Bulletin
+                </Link>
+                <a href="#" className="block py-1.5 transition-colors hover:text-academic text-primary-foreground/80 flex items-center justify-center sm:justify-start space-x-1">
+                  <span>Research Papers</span>
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+                <Link to="/team" className="block py-1.5 transition-colors hover:text-academic text-primary-foreground/80">
+                  Meet the Team
+                </Link>
+                <Link to="/admin/login" className="block py-1.5 transition-colors hover:text-academic text-primary-foreground/80">
+                  Admin Login
+                </Link>
+              </nav>
+            </div>
           </div>
 
           {/* Contact Information */}
