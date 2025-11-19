@@ -92,7 +92,11 @@ const Bulletin = () => {
             <h2 className="academic-heading text-2xl mb-8">Latest Posts</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {bulletinPosts.map((post) => (
-                <Card key={post.id} className="overflow-hidden group hover:shadow-lg transition-shadow duration-300">
+                <Card 
+                  key={post.id} 
+                  className="overflow-hidden group hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-[1.02]"
+                  onClick={() => setSelectedPost(post)}
+                >
                   {post.image_url && (
                     <div className="aspect-video relative overflow-hidden">
                       <img
@@ -127,7 +131,10 @@ const Bulletin = () => {
                       <Button 
                         size="sm" 
                         variant="ghost"
-                        onClick={() => setSelectedPost(post)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedPost(post);
+                        }}
                         className="flex items-center space-x-1"
                       >
                         <Eye className="h-3 w-3" />

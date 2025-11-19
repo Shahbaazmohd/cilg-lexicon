@@ -4,7 +4,8 @@ import { simpleAuthService, type SimpleAuthState } from '@/lib/simpleAuthService
 import { Skeleton } from '@/components/ui/skeleton';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Shield, Lock, UserCheck } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Shield, Lock, UserCheck, Clock } from 'lucide-react';
 
 interface SimpleSecureRouteProps {
   children: React.ReactNode;
@@ -24,12 +25,24 @@ const SimpleSecureRoute: React.FC<SimpleSecureRouteProps> = ({
   });
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isExpired, setIsExpired] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     // Check authentication status
     const checkAuth = () => {
       try {
+        // Check if session is expired first
+        const expired = simpleAuthService.isAuthExpired();
+        if (expired) {
+          setIsExpired(true);
+          setLoading(false);
+          setIsAuthorized(false);
+          // Clear auth state
+          simpleAuthService.clearAuth();
+          return;
+        }
+
         const isAuthenticated = simpleAuthService.isAuthenticated();
         const isAdmin = simpleAuthService.isAdmin();
         const user = simpleAuthService.getAuthState().user;
@@ -41,6 +54,7 @@ const SimpleSecureRoute: React.FC<SimpleSecureRouteProps> = ({
         };
 
         setAuthState(newAuthState);
+        setIsExpired(false);
 
         // Check authorization
         if (!isAuthenticated) {
@@ -95,6 +109,39 @@ const SimpleSecureRoute: React.FC<SimpleSecureRouteProps> = ({
               <Skeleton className="h-4 w-3/4" />
               <Skeleton className="h-4 w-1/2" />
             </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Session expired state
+  if (isExpired) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <div className="mx-auto w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mb-4">
+              <Clock className="h-6 w-6 text-white" />
+            </div>
+            <CardTitle>Session Expired</CardTitle>
+            <CardDescription>
+              Your session has expired for security reasons
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Alert variant="default">
+              <AlertDescription>
+                Your admin session has expired after 8 hours of inactivity. 
+                Please log in again to continue.
+              </AlertDescription>
+            </Alert>
+            <Button 
+              onClick={() => navigate('/admin/login')} 
+              className="w-full"
+            >
+              Go to Login
+            </Button>
           </CardContent>
         </Card>
       </div>

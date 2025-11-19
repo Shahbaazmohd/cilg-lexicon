@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, BookOpen, Users, Calendar, FileText } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import BlogCard from '@/components/BlogCard';
 import NewsTicker from '@/components/NewsTicker';
@@ -112,23 +112,15 @@ const Home = () => {
     }
   };
 
-  const stats = [
-    { label: 'Research Papers', value: '150+', icon: FileText },
-    { label: 'Faculty Members', value: '25+', icon: Users },
-    { label: 'Events Annually', value: '40+', icon: Calendar },
-    { label: 'Publications', value: '200+', icon: BookOpen },
-  ];
-
   return (
     <div className="min-h-screen">
       {/* Modern Hero Section */}
       <ModernHeroSection 
         heroImageUrl={heroImageUrl}
-        stats={stats}
       />
 
       {/* About Preview */}
-      <section className="py-8 md:py-16">
+      <section className="py-12 md:py-20 lg:py-24">
         <div className="academic-container">
           <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
             <div className="order-2 lg:order-1">

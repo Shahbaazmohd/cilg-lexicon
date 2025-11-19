@@ -101,34 +101,43 @@ const SubmitBlog = () => {
     setIsSubmitting(true);
 
     try {
+      // Validate that an image is uploaded (mandatory)
+      if (!uploadedImage) {
+        toast({
+          title: "Image Required",
+          description: "Please upload a featured image for your article. Image upload is mandatory.",
+          variant: "destructive"
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
       let imageUrl = '';
 
-      // Upload image if provided
-      if (uploadedImage) {
-        const uploadResult = await BlogImageService.uploadImage(uploadedImage);
-        if (uploadResult.success && uploadResult.imageUrl) {
-          imageUrl = uploadResult.imageUrl;
-        } else {
-          toast({
-            title: "Image Upload Failed",
-            description: uploadResult.error || "Failed to upload image. Please compress your image and try again.",
-            variant: "destructive"
-          });
-          
-          // Show compression tips if available
-          if (uploadResult.recommendations && uploadResult.recommendations.length > 0) {
-            setTimeout(() => {
-              toast({
-                title: "Compression Help",
-                description: uploadResult.recommendations![0],
-                variant: "default"
-              });
-            }, 1000);
-          }
-          
-          setIsSubmitting(false);
-          return;
+      // Upload image (mandatory)
+      const uploadResult = await BlogImageService.uploadImage(uploadedImage);
+      if (uploadResult.success && uploadResult.imageUrl) {
+        imageUrl = uploadResult.imageUrl;
+      } else {
+        toast({
+          title: "Image Upload Failed",
+          description: uploadResult.error || "Failed to upload image. Please compress your image and try again.",
+          variant: "destructive"
+        });
+        
+        // Show compression tips if available
+        if (uploadResult.recommendations && uploadResult.recommendations.length > 0) {
+          setTimeout(() => {
+            toast({
+              title: "Compression Help",
+              description: uploadResult.recommendations![0],
+              variant: "default"
+            });
+          }, 1000);
         }
+        
+        setIsSubmitting(false);
+        return;
       }
 
       // Generate excerpt if not provided
@@ -226,7 +235,8 @@ const SubmitBlog = () => {
   };
 
   const isFormValid = formData.title && formData.content && formData.authorName && 
-                     formData.authorEmail && formData.authorDesignation && formData.category;
+                     formData.authorEmail && formData.authorDesignation && formData.category &&
+                     uploadedImage !== null; // Image is now mandatory
 
   return (
     <div className="min-h-screen py-12">
@@ -405,7 +415,7 @@ const SubmitBlog = () => {
                   <div className="space-y-2">
                     <Label htmlFor="featuredImage" className="flex items-center gap-2">
                       <ImageIcon className="h-4 w-4" />
-                      Featured Image (Optional)
+                      Featured Image *
                     </Label>
                     <div className="space-y-4">
                       {imagePreview ? (
@@ -467,7 +477,7 @@ const SubmitBlog = () => {
                         </div>
                       )}
                       <p className="text-xs text-muted-foreground">
-                        Upload a featured image for your article. This will be displayed alongside your article.
+                        <span className="text-red-600 font-medium">* Required:</span> Upload a featured image for your article. This will be displayed alongside your article.
                       </p>
                       <p className="text-xs text-red-600 font-medium">
                         Please use only personally created or public domain/free-use images to ensure no copyright violations.

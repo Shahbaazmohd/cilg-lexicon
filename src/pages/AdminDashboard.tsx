@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminSidebar from '@/components/AdminSidebar';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileText, Newspaper, Edit3, Star, Users, Eye, Calendar, Bell, Download, Shield } from 'lucide-react';
+import { FileText, Newspaper, Edit3, Star, Users, Eye, Calendar, Bell, Download, Shield, Clock, RefreshCw } from 'lucide-react';
 import { simpleAuthService } from '@/lib/simpleAuthService';
 import { supabase } from '@/integrations/supabase/client';
 import { EventService } from '@/lib/eventService';
@@ -14,6 +14,7 @@ import { ResourceService } from '@/lib/resourceService';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface DashboardStats {
   totalPosts: number;
@@ -61,10 +62,24 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [adminInfo, setAdminInfo] = useState<{ name: string; role: string } | null>(null);
+  const [sessionTimeRemaining, setSessionTimeRemaining] = useState<string>('');
+  const [isExtendingSession, setIsExtendingSession] = useState(false);
 
   useEffect(() => {
     // Check if user is authenticated using simple auth service
     const checkAuth = () => {
+      // Check if session is expired
+      if (simpleAuthService.isAuthExpired()) {
+        toast({
+          title: "Session Expired",
+          description: "Your session has expired. Please log in again.",
+          variant: "default"
+        });
+        simpleAuthService.clearAuth();
+        navigate('/admin/login');
+        return;
+      }
+
       if (!simpleAuthService.isAuthenticated()) {
         navigate('/admin/login');
         return;
@@ -89,7 +104,27 @@ const AdminDashboard = () => {
     };
 
     checkAuth();
-  }, [navigate]);
+
+    // Update session time remaining every minute
+    const updateSessionTime = () => {
+      const timeRemaining = simpleAuthService.getFormattedTimeRemaining();
+      setSessionTimeRemaining(timeRemaining);
+    };
+
+    // Initial update
+    updateSessionTime();
+
+    // Update every minute
+    const sessionTimeInterval = setInterval(updateSessionTime, 60000);
+
+    // Check auth status periodically (every 30 seconds)
+    const authCheckInterval = setInterval(checkAuth, 30000);
+
+    return () => {
+      clearInterval(sessionTimeInterval);
+      clearInterval(authCheckInterval);
+    };
+  }, [navigate, toast]);
 
   const fetchDashboardData = async () => {
     try {
@@ -222,6 +257,28 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleExtendSession = () => {
+    setIsExtendingSession(true);
+    const success = simpleAuthService.extendSession();
+    
+    if (success) {
+      toast({
+        title: "Session Extended",
+        description: "Your session has been extended for another 8 hours.",
+        variant: "default"
+      });
+      // Update session time display
+      setSessionTimeRemaining(simpleAuthService.getFormattedTimeRemaining());
+    } else {
+      toast({
+        title: "Extension Failed",
+        description: "Could not extend session. Please log in again.",
+        variant: "destructive"
+      });
+    }
+    setIsExtendingSession(false);
+  };
+
   const formatTimeAgo = (dateString: string) => {
     const now = new Date();
     const date = new Date(dateString);
@@ -291,8 +348,34 @@ const AdminDashboard = () => {
       <div className="flex-1 p-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground">Welcome to your admin dashboard</p>
+          <div className="flex justify-between items-start mb-4">
+            <div>
+              <h1 className="text-3xl font-bold">Dashboard</h1>
+              <p className="text-muted-foreground">
+                {adminInfo ? `Welcome back, ${adminInfo.name} (${adminInfo.role})` : 'Welcome to your admin dashboard'}
+              </p>
+            </div>
+            {sessionTimeRemaining && (
+              <div className="flex items-center gap-3">
+                <Alert className="border-orange-200 bg-orange-50 py-2">
+                  <Clock className="h-4 w-4 text-orange-600" />
+                  <AlertDescription className="text-orange-800 ml-2">
+                    <span className="font-medium">Session: {sessionTimeRemaining}</span>
+                  </AlertDescription>
+                </Alert>
+                <Button
+                  onClick={handleExtendSession}
+                  disabled={isExtendingSession}
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
+                  <RefreshCw className={`h-4 w-4 ${isExtendingSession ? 'animate-spin' : ''}`} />
+                  Extend
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Stats Grid */}

@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { Link } from "react-router-dom";
 
 import { cn } from "@/lib/utils";
 
@@ -38,8 +39,8 @@ const BentoCard = ({
   href: string;
   cta: string;
 }) => (
-  <a
-    href={href}
+  <Link
+    to={href}
     className={cn(
       "group relative col-span-1 sm:col-span-2 lg:col-span-3 flex flex-col justify-between overflow-hidden rounded-xl",
       // Clean white background with subtle shadows like the image
@@ -61,7 +62,7 @@ const BentoCard = ({
       </h3>
       <p className="text-xs sm:text-sm max-w-lg text-gray-600 dark:text-gray-300 group-hover:text-gray-700 dark:group-hover:text-gray-200">{description}</p>
     </div>
-  </a>
+  </Link>
 );
 
 export { BentoCard, BentoGrid };
