@@ -395,8 +395,8 @@ const ModernNavbar = () => {
                 data-hamburger-button
                 onClick={() => setMenuState(!menuState)}
                 aria-label={menuState == true ? 'Close Menu' : 'Open Menu'}
-                className="relative z-[110] -m-2.5 -mr-4 block cursor-pointer p-2.5 touch-manipulation lg:hidden min-h-[44px] min-w-[44px] flex items-center justify-center bg-background/80 backdrop-blur-sm rounded-lg border border-border/50 hover:bg-background transition-colors">
-                <Menu className="m-auto size-6" />
+                className="relative z-[110] block cursor-pointer p-2 touch-manipulation lg:hidden min-h-[44px] min-w-[44px] flex items-center justify-center">
+                <Menu className="size-6" />
               </button>
 
               {/* Desktop Action Buttons */}
