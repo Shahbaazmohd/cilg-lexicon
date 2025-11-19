@@ -28,10 +28,9 @@ const transitionVariants: { item: Variants } = {
 
 interface ModernHeroSectionProps {
     heroImageUrl: string;
-    stats: Array<{ label: string; value: string; icon: any }>;
 }
 
-export function ModernHeroSection({ heroImageUrl, stats }: ModernHeroSectionProps) {
+export function ModernHeroSection({ heroImageUrl }: ModernHeroSectionProps) {
     const [logoUrl, setLogoUrl] = useState<string>(
         '/lovable-uploads/a8a8f724-8489-4325-bccb-3c63dd8bd236.png'
     )
@@ -225,30 +224,8 @@ export function ModernHeroSection({ heroImageUrl, stats }: ModernHeroSectionProp
                     </AnimatedGroup>
                 </div>
             </section>
-            <section className="bg-background pb-16 pt-16 md:pb-32">
-                <div className="group relative m-auto max-w-5xl px-6">
-                    <div className="absolute inset-0 z-10 flex scale-95 items-center justify-center opacity-0 duration-500 group-hover:scale-100 group-hover:opacity-100">
-                        <Link
-                            to="/team"
-                            className="block text-sm duration-150 hover:opacity-75">
-                            <span>Our Research Impact</span>
-
-                            <ChevronRight className="ml-1 inline-block size-3" />
-                        </Link>
-                    </div>
-                    <div className="group-hover:blur-xs mx-auto mt-8 sm:mt-12 grid max-w-2xl grid-cols-2 sm:grid-cols-4 gap-x-6 sm:gap-x-12 gap-y-6 sm:gap-y-8 transition-all duration-500 group-hover:opacity-50 px-4 sm:px-0">
-                        {stats.map((stat, index) => (
-                            <div key={index} className="flex flex-col items-center text-center">
-                                <div className="mx-auto w-10 h-10 sm:w-12 sm:h-12 bg-primary rounded-lg flex items-center justify-center mb-3 sm:mb-4">
-                                    <stat.icon className="h-5 w-5 sm:h-6 sm:w-6 text-primary-foreground" />
-                                </div>
-                                <div className="academic-heading text-lg sm:text-2xl mb-1">{stat.value}</div>
-                                <div className="text-muted-foreground text-xs sm:text-sm">{stat.label}</div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
+            {/* Add extra padding after hero section */}
+            <div className="pb-8 md:pb-12 lg:pb-16"></div>
         </main>
     )
 } 

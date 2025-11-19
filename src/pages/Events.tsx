@@ -150,6 +150,11 @@ const Events = () => {
           </p>
         </div>
 
+        {/* Notices Section - Show First */}
+        <div className="mb-16">
+          <NoticesSection />
+        </div>
+
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-4 mb-8">
           <div className="flex items-center space-x-2">
@@ -335,11 +340,6 @@ const Events = () => {
             </Button>
           </div>
         )}
-
-        {/* Notices Section */}
-        <div className="mt-16">
-          <NoticesSection />
-        </div>
       </div>
     </div>
   );

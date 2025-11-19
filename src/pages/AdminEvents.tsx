@@ -45,12 +45,24 @@ const AdminEvents = () => {
 
   useEffect(() => {
     // Check if user is authenticated and is an admin
+    // Authentication is also handled by SimpleSecureRoute wrapper, but we check here too
+    if (simpleAuthService.isAuthExpired()) {
+      toast({
+        title: "Session Expired",
+        description: "Your session has expired. Please log in again.",
+        variant: "default"
+      });
+      simpleAuthService.clearAuth();
+      navigate('/admin/login');
+      return;
+    }
+
     if (!simpleAuthService.isAuthenticated() || !simpleAuthService.isAdmin()) {
       navigate('/admin/login');
     } else {
       loadEvents();
     }
-  }, [navigate]);
+  }, [navigate, toast]);
 
   const loadEvents = async () => {
     setLoading(true);
@@ -133,10 +145,23 @@ const AdminEvents = () => {
     try {
       setIsUploading(true);
       
-      // Prepare event data
-      const eventData = {
-        ...formData,
-        speakers: speakersArray
+      // Prepare event data - map to database column names
+      const eventData: any = {
+        title: formData.title,
+        type: formData.type,
+        date: formData.date,
+        time: formData.time,
+        location: formData.location,
+        is_virtual: formData.isVirtual || false, // Map isVirtual to is_virtual
+        description: formData.description,
+        speakers: speakersArray,
+        registration_url: formData.registrationUrl || null,
+        capacity: formData.capacity || null,
+        registered: formData.registered || 0,
+        image: formData.image || null,
+        status: formData.status || 'upcoming',
+        featured: formData.featured || false,
+        featured_order: formData.featured_order || null
       };
 
       console.log('Submitting event data:', eventData);
@@ -149,7 +174,8 @@ const AdminEvents = () => {
         const { data, error } = await supabase
           .from('events')
           .update(eventData)
-          .eq('id', editingEvent.id);
+          .eq('id', editingEvent.id)
+          .select();
 
         if (error) {
           console.error('Supabase update error:', error);
@@ -162,7 +188,8 @@ const AdminEvents = () => {
         console.log('Creating new event');
         const { data, error } = await (supabase as any)
           .from('events')
-          .insert([eventData]);
+          .insert([eventData])
+          .select();
 
         if (error) {
           console.error('Supabase insert error:', error);

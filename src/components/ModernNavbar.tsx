@@ -49,6 +49,32 @@ const ModernNavbar = () => {
   // Set up authentication state listener
   useEffect(() => {
     const checkAuth = () => {
+      // Check if session is expired
+      if (simpleAuthService.isAuthExpired()) {
+        // Clear auth and update state
+        simpleAuthService.clearAuth();
+        setAuthState({
+          isAuthenticated: false,
+          isAdmin: false,
+          user: null
+        });
+        
+        // Show expiration notification if user was previously authenticated
+        if (authState.isAuthenticated) {
+          toast({
+            title: "Session Expired",
+            description: "Your session has expired. Please log in again.",
+            variant: "default"
+          });
+        }
+        
+        // Redirect to login if on admin page
+        if (location.pathname.startsWith('/admin')) {
+          navigate('/admin/login');
+        }
+        return;
+      }
+
       const state = simpleAuthService.getAuthState();
       setAuthState(state);
     };
@@ -62,7 +88,7 @@ const ModernNavbar = () => {
     return () => {
       clearInterval(authCheckInterval);
     };
-  }, []);
+  }, [location.pathname, navigate, toast, authState.isAuthenticated]);
 
   // Handle scroll effect
   useEffect(() => {

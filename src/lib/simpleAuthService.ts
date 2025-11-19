@@ -8,33 +8,99 @@ export interface SimpleAuthState {
     email: string;
     role: string;
   } | null;
+  expiresAt?: number; // Unix timestamp in milliseconds
+  createdAt?: number; // Unix timestamp in milliseconds
 }
 
 class SimpleAuthService {
   private readonly ADMIN_EMAIL = 'usllscilg@gmail.com';
   private readonly ADMIN_PASSWORD = 'NewPassword123!';
   private readonly STORAGE_KEY = 'simple_admin_auth';
+  // Session expires after 8 hours (configurable)
+  private readonly SESSION_DURATION_MS = 8 * 60 * 60 * 1000; // 8 hours in milliseconds
 
-  // Check if user is authenticated
+  // Check if auth is expired
+  isAuthExpired(): boolean {
+    const authData = this.getStoredAuth();
+    if (!authData || !authData.expiresAt) {
+      return true; // No expiration time means expired/invalid
+    }
+    
+    const now = Date.now();
+    const isExpired = now >= authData.expiresAt;
+    
+    // Auto-clear expired sessions
+    if (isExpired) {
+      this.clearAuth();
+    }
+    
+    return isExpired;
+  }
+
+  // Check if user is authenticated (also checks expiration)
   isAuthenticated(): boolean {
+    if (this.isAuthExpired()) {
+      return false;
+    }
     const authData = this.getStoredAuth();
     return authData?.isAuthenticated || false;
   }
 
-  // Check if user is admin
+  // Check if user is admin (also checks expiration)
   isAdmin(): boolean {
+    if (this.isAuthExpired()) {
+      return false;
+    }
     const authData = this.getStoredAuth();
     return authData?.isAdmin || false;
   }
 
-  // Get current auth state
+  // Get current auth state (also checks expiration)
   getAuthState(): SimpleAuthState {
+    if (this.isAuthExpired()) {
+      return {
+        isAuthenticated: false,
+        isAdmin: false,
+        user: null
+      };
+    }
+    
     const authData = this.getStoredAuth();
     return {
       isAuthenticated: authData?.isAuthenticated || false,
       isAdmin: authData?.isAdmin || false,
-      user: authData?.user || null
+      user: authData?.user || null,
+      expiresAt: authData?.expiresAt,
+      createdAt: authData?.createdAt
     };
+  }
+
+  // Get time remaining until session expires (in milliseconds)
+  getTimeRemaining(): number {
+    const authData = this.getStoredAuth();
+    if (!authData || !authData.expiresAt) {
+      return 0;
+    }
+    
+    const now = Date.now();
+    const remaining = authData.expiresAt - now;
+    return Math.max(0, remaining);
+  }
+
+  // Get formatted time remaining (e.g., "2h 30m")
+  getFormattedTimeRemaining(): string {
+    const remaining = this.getTimeRemaining();
+    if (remaining === 0) {
+      return 'Expired';
+    }
+    
+    const hours = Math.floor(remaining / (60 * 60 * 1000));
+    const minutes = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
+    
+    if (hours > 0) {
+      return `${hours}h ${minutes}m`;
+    }
+    return `${minutes}m`;
   }
 
   // Sign in with credentials
@@ -42,13 +108,18 @@ class SimpleAuthService {
     try {
       // Simple credential check
       if (email === this.ADMIN_EMAIL && password === this.ADMIN_PASSWORD) {
+        const now = Date.now();
+        const expiresAt = now + this.SESSION_DURATION_MS;
+        
         const authData: SimpleAuthState = {
           isAuthenticated: true,
           isAdmin: true,
           user: {
             email: email,
             role: 'admin'
-          }
+          },
+          createdAt: now,
+          expiresAt: expiresAt
         };
 
         // Store in localStorage
@@ -67,6 +138,25 @@ class SimpleAuthService {
         error: 'Authentication failed' 
       };
     }
+  }
+
+  // Extend session expiration (refresh session)
+  extendSession(): boolean {
+    const authData = this.getStoredAuth();
+    if (!authData || !authData.isAuthenticated || this.isAuthExpired()) {
+      return false;
+    }
+
+    const now = Date.now();
+    const expiresAt = now + this.SESSION_DURATION_MS;
+
+    const updatedAuthData: SimpleAuthState = {
+      ...authData,
+      expiresAt: expiresAt
+    };
+
+    this.storeAuth(updatedAuthData);
+    return true;
   }
 
   // Sign out
@@ -96,13 +186,6 @@ class SimpleAuthService {
   // Clear stored authentication
   clearAuth(): void {
     localStorage.removeItem(this.STORAGE_KEY);
-  }
-
-  // Check if auth is expired (optional - you can set expiration time)
-  isAuthExpired(): boolean {
-    // For now, auth doesn't expire
-    // You can add expiration logic here if needed
-    return false;
   }
 }
 

@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { MessageSquare, Mail, Clock, CheckCircle, Archive, Trash2, Eye, Reply } from 'lucide-react';
-import { sessionService } from '@/lib/sessionService';
 import { ContactService, ContactMessage } from '@/lib/contactService';
 import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -24,12 +23,10 @@ const AdminContactMessages = () => {
   const [statusFilter, setStatusFilter] = useState<string>('all');
 
   useEffect(() => {
-    if (!sessionService.isLoggedIn()) {
-      navigate('/admin/login');
-      return;
-    }
+    // Fetch messages on component mount
+    // Authentication is handled by SimpleSecureRoute wrapper
     fetchMessages();
-  }, [navigate]);
+  }, []);
 
   const fetchMessages = async () => {
     try {
@@ -61,8 +58,15 @@ const AdminContactMessages = () => {
           title: "Status Updated",
           description: `Message status updated to ${newStatus}.`,
         });
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to update message status. Please try again.",
+          variant: "destructive"
+        });
       }
     } catch (error) {
+      console.error('Error updating message status:', error);
       toast({
         title: "Error",
         description: "Failed to update message status.",
@@ -72,7 +76,14 @@ const AdminContactMessages = () => {
   };
 
   const handleAddNotes = async () => {
-    if (!selectedMessage || !adminNotes.trim()) return;
+    if (!selectedMessage || !adminNotes.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Please enter notes before saving.",
+        variant: "destructive"
+      });
+      return;
+    }
 
     try {
       const success = await ContactService.addAdminNotes(selectedMessage.id, adminNotes);
@@ -90,8 +101,15 @@ const AdminContactMessages = () => {
           title: "Notes Added",
           description: "Admin notes have been saved.",
         });
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to add admin notes. Please try again.",
+          variant: "destructive"
+        });
       }
     } catch (error) {
+      console.error('Error adding admin notes:', error);
       toast({
         title: "Error",
         description: "Failed to add admin notes.",
@@ -109,8 +127,15 @@ const AdminContactMessages = () => {
           title: "Message Deleted",
           description: "Contact message has been deleted.",
         });
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to delete message. Please try again.",
+          variant: "destructive"
+        });
       }
     } catch (error) {
+      console.error('Error deleting message:', error);
       toast({
         title: "Error",
         description: "Failed to delete message.",
@@ -338,6 +363,7 @@ const AdminContactMessages = () => {
                                   }}
                                   className="mt-2"
                                   size="sm"
+                                  disabled={!adminNotes.trim()}
                                 >
                                   Save Notes
                                 </Button>

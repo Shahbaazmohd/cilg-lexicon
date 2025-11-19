@@ -360,20 +360,38 @@ const AdminBulletin = () => {
           )}
 
           <div className="space-y-6">
-            {bulletins.map((bulletin) => (
+            {bulletins.map((bulletin) => {
+              // Check if image_url is valid (not null, undefined, empty string, or whitespace)
+              const hasValidImage = bulletin.image_url && 
+                                   typeof bulletin.image_url === 'string' &&
+                                   bulletin.image_url.trim() !== '' && 
+                                   bulletin.image_url !== 'null' && 
+                                   bulletin.image_url !== 'undefined';
+              
+              return (
               <Card key={bulletin.id}>
                 <CardContent className="p-6">
                   <div className="flex space-x-4">
-                    {bulletin.image_url && (
-                      <div className="w-32 h-24 bg-muted rounded-md flex items-center justify-center overflow-hidden">
+                    {hasValidImage ? (
+                      <div className="w-32 h-24 bg-muted rounded-md flex items-center justify-center overflow-hidden flex-shrink-0">
                         <img 
                           src={bulletin.image_url} 
                           alt={bulletin.title}
                           className="w-full h-full object-cover"
+                          onError={(e) => {
+                            // Hide image if it fails to load
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            target.parentElement!.innerHTML = '<div class="w-full h-full flex items-center justify-center text-muted-foreground text-xs">No Image</div>';
+                          }}
                         />
                       </div>
+                    ) : (
+                      <div className="w-32 h-24 bg-muted rounded-md flex items-center justify-center flex-shrink-0">
+                        <Image className="h-8 w-8 text-muted-foreground/50" />
+                      </div>
                     )}
-                    <div className="flex-1">
+                    <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between mb-2">
                         <h3 className="text-xl font-serif font-semibold">{bulletin.title}</h3>
                         <div className="flex space-x-1">
@@ -437,7 +455,8 @@ const AdminBulletin = () => {
                   </div>
                 </CardContent>
               </Card>
-            ))}
+            );
+            })}
 
             {bulletins.length === 0 && (
               <Card>
