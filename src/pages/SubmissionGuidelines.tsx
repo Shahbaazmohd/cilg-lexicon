@@ -6,65 +6,52 @@ const SubmissionGuidelines = () => {
   return (
     <div className="academic-container py-12">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-serif font-bold text-foreground mb-8">Submission Guidelines</h1>
-        <div className="prose prose-lg max-w-none space-y-6">
+        <h1 className="text-4xl font-serif font-bold text-foreground mb-8">Submission Categories and Requirements</h1>
+        <div className="prose prose-lg max-w-none space-y-8">
           
           <section>
-            <p className="text-muted-foreground leading-relaxed">
-              We, at USLLS CILG Blog, believe that sustained academic deliberation is required to ensure that the field of International Law and International Relations grows continuously, and becomes the mainstream solution to disputes. Our aim is to provide a conducive platform that fosters discussions and deliberations pertaining to the field of International Law and International Relations by academicians, researchers, law students and legal practitioners. We hope to promote the culture of international affairs and acquire the viewpoints of the various stakeholders in the field. Hence with the above objectives in mind, we welcome all relevant submissions subject to the following guidelines:
+            <h2 className="text-2xl font-serif font-semibold mb-4">Theme for Contribution</h2>
+            <p className="academic-text text-lg leading-relaxed mb-4">
+              We welcome original contributions that engage with contemporary issues across the broad spectrum of international law and policy. Submissions may explore themes within Public International Law, Private International Law, Human Rights Law, International Trade Law, International Commercial Laws, International Criminal Law, and International Investment Laws. Please note that this is merely an indicative list of themes that CILG seeks to engage with.
+            </p>
+            <p className="academic-text text-lg leading-relaxed">
+              Interdisciplinary work that connects international law with politics, economics, technology, or environmental policy is particularly welcome.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-serif font-semibold mb-4">General Guidelines</h2>
-            <ul className="list-disc list-inside space-y-3 text-muted-foreground">
-              <li>Co-authorship is allowed up to two authors. The author(s) should refrain from mentioning the name, institutional affiliation, or any other details in the document to facilitate the double-blind review process.</li>
-              <li>Submissions should be original and unpublished work of the author(s). Any form of plagiarism will result in an automatic rejection. Moreover, if the Turnitin similarity index reports over 20% similarity (after making the relevant exclusions such as bibliography, quotes, small matches etc.), then the submission shall be rejected. The use of Artificial Intelligence (AI) tools like ChatGPT etc. is strictly prohibited.</li>
-              <li>Submissions should be concise. They should range between 1000-2000 words. Longer posts may be published in parts subject to the editorial board's discretion. The word limit is exclusive of the endnotes.</li>
+            <h2 className="text-2xl font-serif font-semibold mb-4">Guidelines for Contributing</h2>
+            <ul className="list-disc list-inside space-y-3 academic-text text-lg">
+              <li>Contributions must be between 1,000 and 2,000 words and may include articles, book reviews, case comments, analyses of recent judgments or legislative developments, and critical responses to previously published works. Contributors are requested to include a brief (one- to two-line) biography in the email accompanying their submission.</li>
+              <li>Co-authorship of a maximum of two authors is permitted; the details of which must be shared with the editors.</li>
+              <li>The title of the manuscript should be formatted to Times New Roman, Bold, Font Size 14, and a centred alignment.</li>
+              <li>The main body of the manuscript should be formatted to Times New Roman, Font Size 12 with 1.5 line spacing, and a justified alignment.</li>
+              <li>All sources must be hyperlinked within the text wherever possible; if not feasible, endnotes should be used instead, following a uniform citation style.</li>
             </ul>
           </section>
 
           <section>
-            <h2 className="text-2xl font-serif font-semibold mb-4">General Formatting Guidelines</h2>
-            
-            <h3 className="text-xl font-serif font-semibold mb-3">1. Formatting Typescript</h3>
-            <ul className="list-disc list-inside space-y-2 text-muted-foreground mb-6">
-              <li>Font Type: Times New Roman</li>
-              <li>Font Size: 12</li>
-              <li>Line Spacing: 1.5</li>
-              <li>Text Alignment: Justified</li>
-            </ul>
-
-            <h3 className="text-xl font-serif font-semibold mb-3">2. Citation Style</h3>
-            <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-              <li>Method of Citation: Endnotes</li>
-              <li>Format of Citation: BlueBook 21st Edition</li>
-              <li>Font Type: Times New Roman</li>
-              <li>Font Size: 10</li>
-              <li>Line Spacing: 1.0</li>
-              <li>Text Alignment: Justified</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-serif font-semibold mb-4">Review Process</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              All submissions will undergo a rigorous double-blind review process where the manuscript will be evaluated by two editors on different parameters. The review process ideally concludes within a period of 14 days from the date of receipt of the acknowledgment of the submission. Once the review is complete, the decision of acceptance (conditional or unconditional) or rejection will be communicated to the author. The authors will be provided a period of 10 days to make the necessary changes that may be suggested by the editorial board. It is expected that the authors will make all the changes in good faith.
+            <h2 className="text-2xl font-serif font-semibold mb-4">Submission Deadline</h2>
+            <p className="academic-text text-lg leading-relaxed">
+              Submissions are accepted on a rolling basis throughout the year.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-serif font-semibold mb-4">Copyright and Exclusivity</h2>
-            <ul className="list-disc list-inside space-y-3 text-muted-foreground">
-              <li>Upon acceptance of the manuscript for publication by the editorial board, the copyright over the manuscript is vested in the Blog. However, the moral rights over the manuscript shall vest in the author(s).</li>
-              <li>The Blog only accepts original and exclusive submissions. Once a manuscript is accepted, the same cannot be sent elsewhere for publication.</li>
+            <h2 className="text-2xl font-serif font-semibold mb-4">Review Procedure</h2>
+            <ul className="list-disc list-inside space-y-3 academic-text text-lg">
+              <li>All submissions undergo plagiarism and AI checks, followed by a multi-stage editorial review process to ensure quality, originality, and relevance.</li>
+              <li>We aim to respond to blog submissions within two to three weeks of receiving them.</li>
+              <li>Contributors may request an expedited review if the piece addresses a time-sensitive development, such as a recent case, treaty, or geopolitical event.</li>
+              <li>If revisions are requested, authors are expected to respond within seven days, unless an extension is granted upon request.</li>
+              <li>The editors reserve the right to make minor changes to grammar, formatting, and titles, and to reject submissions without providing substantive feedback.</li>
             </ul>
           </section>
 
           <section>
-            <h2 className="text-2xl font-serif font-semibold mb-4">Submission Procedure</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              We accept rolling submissions. All submissions must be made through the website only. No manuscript will be accepted for publishing through any other medium. An abstract of not more than 100 words must accompany the submission. The abstract is exclusive of the word limit for the article. The author(s) are also required to submit a short biography detailing their current designation and institutional affiliations.
+            <h2 className="text-2xl font-serif font-semibold mb-4">How to Submit?</h2>
+            <p className="academic-text text-lg leading-relaxed">
+              Contributors are required to submit their pieces in .doc or .docx format via email to <a href="mailto:cilgsubmission@gmail.com" className="text-academic hover:underline">cilgsubmission@gmail.com</a>, with the subject line clearly stating "Blog Submission – [Title of the Blog] – [Author's Name]" or they may submit their manuscript through the "submit manuscript" on the website.
             </p>
           </section>
 
@@ -75,25 +62,6 @@ const SubmissionGuidelines = () => {
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
-            
-            <div>
-              <Button 
-                asChild 
-                size="lg" 
-                variant="outline" 
-                className="border-academic text-academic hover:bg-academic hover:text-academic-foreground"
-              >
-                <a 
-                  href="https://docs.google.com/document/d/1a--QR3MfuMvNskbF6SDPk11MWhY50TYxjq-I95nWvkc/edit?usp=sharing" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex items-center space-x-2"
-                >
-                  <span>Guidelines</span>
-                  <ArrowRight className="h-4 w-4" />
-                </a>
-              </Button>
-            </div>
           </div>
         </div>
       </div>

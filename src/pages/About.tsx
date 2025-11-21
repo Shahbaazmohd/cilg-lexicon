@@ -48,9 +48,10 @@ const About = () => {
             About CILG
           </h1>
           <p className="academic-text text-xl max-w-3xl mx-auto">
-            The Cell for International Law and Governance stands as a beacon of excellence 
-            in legal scholarship and policy research, fostering innovative discourse on
-            global governance challenges.
+            The Cell for International Law and Governance (CILG) is an interdisciplinary platform 
+            dedicated to advancing global legal scholarship. By integrating international law, 
+            international relations, and international business, the Cell fosters informed dialogue 
+            and practical engagement with contemporary governance challenges.
           </p>
         </div>
 
@@ -62,10 +63,8 @@ const About = () => {
               <h2 className="academic-heading text-2xl">Our Mission</h2>
             </div>
             <p className="academic-text text-lg leading-relaxed">
-              To advance understanding and application of international law through rigorous 
-              research, innovative scholarship, and collaborative engagement with global 
-              academic and policy communities. We strive to bridge the gap between theoretical 
-              knowledge and practical governance solutions.
+              To promote rigorous research and holistic learning in international law while bridging 
+              the gap between academic study and real-world governance.
             </p>
           </div>
 
@@ -75,9 +74,8 @@ const About = () => {
               <h2 className="academic-heading text-2xl">Our Vision</h2>
             </div>
             <p className="academic-text text-lg leading-relaxed">
-              To be a globally recognized center of excellence that shapes the future of 
-              international law and governance through transformative research, education, 
-              and policy engagement that addresses the most pressing challenges of our time.
+              To be a leading academic hub shaping global discourse on international law and governance 
+              through impactful scholarship and meaningful student engagement.
             </p>
           </div>
         </div>
@@ -88,21 +86,17 @@ const About = () => {
             <h2 className="academic-heading text-3xl mb-6">Our Story</h2>
             <div className="space-y-6 academic-text text-lg">
               <p>
-                Established in 2010, the Cell for International Law and Governance emerged 
-                from a recognition that traditional approaches to international law needed
-                fresh perspectives and interdisciplinary insights.
+                The Cell for International Law and Governance was established in response to the 
+                growing need for an integrated approach to understanding global issues. As international 
+                legal, political, and economic systems became increasingly interconnected, the University 
+                School of Law and Legal Studies recognised the importance of preparing students for this 
+                evolving landscape.
               </p>
               <p>
-                Founded by a coalition of distinguished scholars and practitioners, CILG has 
-                grown to become a leading voice in international legal scholarship, hosting 
-                conferences, publishing research, and fostering dialogue between academia 
-                and practice.
-              </p>
-              <p>
-                Over the years, we have contributed to major policy discussions on climate 
-                governance, international criminal justice, human rights protection, and 
-                digital governance, establishing ourselves as thought leaders in these 
-                critical areas.
+                CILG was founded to unite these disciplines under one collaborative space, enabling 
+                students to explore international governance through research, discussion, and practical 
+                exposure. The Cell aims to build a strong foundation for cultivating globally aware 
+                professionals equipped to navigate the complexities of international affairs.
               </p>
             </div>
           </div>

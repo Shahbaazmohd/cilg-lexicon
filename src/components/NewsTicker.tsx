@@ -48,9 +48,9 @@ const NewsTicker = () => {
   return (
     <div className="bg-academic text-academic-foreground py-3 overflow-hidden">
       <div className="academic-container">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-0">
-          <div className="flex-shrink-0 sm:mr-6">
-            <span className="font-serif font-semibold text-xs sm:text-sm">LATEST BULLETIN:</span>
+        <div className="flex flex-row items-center gap-2 sm:gap-4">
+          <div className="flex-shrink-0">
+            <span className="font-serif font-semibold text-xs sm:text-sm whitespace-nowrap">LATEST BULLETIN:</span>
           </div>
           <div className="news-ticker flex-1 min-w-0">
             <div className="news-ticker-content">
