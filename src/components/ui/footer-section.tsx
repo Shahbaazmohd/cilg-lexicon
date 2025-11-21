@@ -81,9 +81,6 @@ function FooterSection() {
                 <Link to="/events" className="block py-1.5 transition-colors hover:text-academic text-primary-foreground/80">
                   Events
                 </Link>
-                <Link to="/resources" className="block py-1.5 transition-colors hover:text-academic text-primary-foreground/80">
-                  Resources
-                </Link>
               </nav>
             </div>
 
@@ -98,6 +95,9 @@ function FooterSection() {
                   <span>Research Papers</span>
                   <ExternalLink className="h-3 w-3" />
                 </a>
+                <Link to="/resources" className="block py-1.5 transition-colors hover:text-academic text-primary-foreground/80">
+                  Resources
+                </Link>
                 <Link to="/team" className="block py-1.5 transition-colors hover:text-academic text-primary-foreground/80">
                   Meet the Team
                 </Link>

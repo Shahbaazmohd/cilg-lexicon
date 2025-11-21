@@ -10,6 +10,9 @@ const BlogAbout = () => {
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-serif font-bold text-foreground mb-8">About the Blog</h1>
         <div className="prose prose-lg max-w-none">
+          <p className="text-lg academic-text leading-relaxed mb-6">
+            The USLLS-CILG International Law and Governance Blog is a student-led initiative dedicated to fostering informed dialogue and critical engagement with global legal developments. Managed by the student community of USLLS, GGSIPU, the blog aims to publish insightful and original pieces that address contemporary issues in public and private international law, international organisations, humanitarian law, trade law, international dispute resolution, and allied disciplines. The blog seeks to encourage discourse by presenting itself as a medium for young scholars, practitioners, and policy enthusiasts to voice their perspectives, respond to emerging developments, and contribute to the evolving discourse of international law.
+          </p>
           <p className="text-lg text-muted-foreground mb-6">
             The CILG Blog serves as a premier platform for scholarly discourse on international law and governance issues.
           </p>

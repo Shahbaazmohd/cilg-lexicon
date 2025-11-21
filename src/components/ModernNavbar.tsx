@@ -274,7 +274,7 @@ const ModernNavbar = () => {
                 />
                 <div className="hidden sm:block flex-shrink-0">
                   <p className="text-xs font-bold text-muted-foreground leading-tight">
-                    Centre for International<br />Law & Governance
+                    Cell for International<br />Law & Governance
                   </p>
                 </div>
               </Link>
