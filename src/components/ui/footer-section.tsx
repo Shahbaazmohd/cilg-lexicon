@@ -189,6 +189,14 @@ function FooterSection() {
               Cookie Settings
             </a>
           </nav>
+          <a
+            href="https://www.linkedin.com/in/arham-ahmed2101"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs sm:text-sm text-primary-foreground/60 transition-colors hover:text-academic"
+          >
+            Developed by Arham Ahmed
+          </a>
         </div>
       </div>
     </footer>
